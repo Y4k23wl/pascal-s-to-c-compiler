@@ -614,6 +614,15 @@ char *yytext;
 static int g_line = 1;
 static int g_col = 1;
 
+void lexer_reset_position(void) {
+    g_line = 1;
+    g_col = 1;
+    yylloc.first_line = 1;
+    yylloc.first_column = 1;
+    yylloc.last_line = 1;
+    yylloc.last_column = 1;
+}
+
 static void mark_token_start(void) {
     yylloc.first_line = g_line;
     yylloc.first_column = g_col;
@@ -668,9 +677,9 @@ static char *normalize_id(const char *src) {
         return (tok); \
     } while (0)
 
-#line 671 "pascal_s_lexer.c"
+#line 680 "pascal_s_lexer.c"
 
-#line 673 "pascal_s_lexer.c"
+#line 682 "pascal_s_lexer.c"
 
 #define INITIAL 0
 #define COMMENT 1
@@ -888,10 +897,10 @@ YY_DECL
 		}
 
 	{
-#line 84 "pascal_s_lexer.l"
+#line 93 "pascal_s_lexer.l"
 
 
-#line 894 "pascal_s_lexer.c"
+#line 903 "pascal_s_lexer.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -960,38 +969,38 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 86 "pascal_s_lexer.l"
+#line 95 "pascal_s_lexer.l"
 { advance_position(yytext); }
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 87 "pascal_s_lexer.l"
+#line 96 "pascal_s_lexer.l"
 { advance_position(yytext); }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 89 "pascal_s_lexer.l"
+#line 98 "pascal_s_lexer.l"
 { BEGIN(COMMENT); advance_position(yytext); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 90 "pascal_s_lexer.l"
+#line 99 "pascal_s_lexer.l"
 { advance_position(yytext); }
 	YY_BREAK
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 91 "pascal_s_lexer.l"
+#line 100 "pascal_s_lexer.l"
 { advance_position(yytext); }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 92 "pascal_s_lexer.l"
+#line 101 "pascal_s_lexer.l"
 { BEGIN(INITIAL); advance_position(yytext); }
 	YY_BREAK
 case YY_STATE_EOF(COMMENT):
-#line 93 "pascal_s_lexer.l"
+#line 102 "pascal_s_lexer.l"
 {
                                 fprintf(stderr,
                                         "[词法错误] 行：%d，列：%d - 未闭合注释\n",
@@ -1002,237 +1011,237 @@ case YY_STATE_EOF(COMMENT):
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 101 "pascal_s_lexer.l"
+#line 110 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(ASSIGN); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 102 "pascal_s_lexer.l"
+#line 111 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(LE); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 103 "pascal_s_lexer.l"
+#line 112 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(GE); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 104 "pascal_s_lexer.l"
+#line 113 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(NE); }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 105 "pascal_s_lexer.l"
+#line 114 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(RANGE); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 107 "pascal_s_lexer.l"
+#line 116 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(EQ); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 108 "pascal_s_lexer.l"
+#line 117 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(LT); }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 109 "pascal_s_lexer.l"
+#line 118 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(GT); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 110 "pascal_s_lexer.l"
+#line 119 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(PLUS); }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 111 "pascal_s_lexer.l"
+#line 120 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(MINUS); }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 112 "pascal_s_lexer.l"
+#line 121 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(MUL); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 113 "pascal_s_lexer.l"
+#line 122 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(SLASH); }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 114 "pascal_s_lexer.l"
+#line 123 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(SEMICOLON); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 115 "pascal_s_lexer.l"
+#line 124 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(DOT); }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 116 "pascal_s_lexer.l"
+#line 125 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(COMMA); }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 117 "pascal_s_lexer.l"
+#line 126 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(LPAREN); }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 118 "pascal_s_lexer.l"
+#line 127 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(RPAREN); }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 119 "pascal_s_lexer.l"
+#line 128 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(LBRACK); }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 120 "pascal_s_lexer.l"
+#line 129 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(RBRACK); }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 121 "pascal_s_lexer.l"
+#line 130 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(COLON); }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 123 "pascal_s_lexer.l"
+#line 132 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(PROGRAM); }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 124 "pascal_s_lexer.l"
+#line 133 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(CONST); }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 125 "pascal_s_lexer.l"
+#line 134 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(VAR); }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 126 "pascal_s_lexer.l"
+#line 135 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(PROCEDURE); }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 127 "pascal_s_lexer.l"
+#line 136 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(FUNCTION); }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 128 "pascal_s_lexer.l"
+#line 137 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(BEGIN_KW); }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 129 "pascal_s_lexer.l"
+#line 138 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(END_KW); }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 130 "pascal_s_lexer.l"
+#line 139 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(IF); }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 131 "pascal_s_lexer.l"
+#line 140 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(THEN); }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 132 "pascal_s_lexer.l"
+#line 141 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(ELSE); }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 133 "pascal_s_lexer.l"
+#line 142 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(FOR); }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 134 "pascal_s_lexer.l"
+#line 143 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(TO); }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 135 "pascal_s_lexer.l"
+#line 144 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(DO); }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 136 "pascal_s_lexer.l"
+#line 145 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(READ); }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 137 "pascal_s_lexer.l"
+#line 146 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(WRITE); }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 138 "pascal_s_lexer.l"
+#line 147 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(ARRAY); }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 139 "pascal_s_lexer.l"
+#line 148 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(OF); }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 140 "pascal_s_lexer.l"
+#line 149 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(INTEGER); }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 141 "pascal_s_lexer.l"
+#line 150 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(REAL); }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 142 "pascal_s_lexer.l"
+#line 151 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(BOOLEAN); }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 143 "pascal_s_lexer.l"
+#line 152 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(CHAR); }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 144 "pascal_s_lexer.l"
+#line 153 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(NOT); }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 145 "pascal_s_lexer.l"
+#line 154 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(DIV); }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 146 "pascal_s_lexer.l"
+#line 155 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(MOD); }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 147 "pascal_s_lexer.l"
+#line 156 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(AND); }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 148 "pascal_s_lexer.l"
+#line 157 "pascal_s_lexer.l"
 { RETURN_SIMPLE_TOKEN(OR); }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 150 "pascal_s_lexer.l"
+#line 159 "pascal_s_lexer.l"
 {
                                 mark_token_start();
                                 yylval.fval = strtod(yytext, NULL);
@@ -1242,7 +1251,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 157 "pascal_s_lexer.l"
+#line 166 "pascal_s_lexer.l"
 {
                                 mark_token_start();
                                 yylval.ival = (int)strtol(yytext, NULL, 10);
@@ -1252,7 +1261,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 164 "pascal_s_lexer.l"
+#line 173 "pascal_s_lexer.l"
 {
                                 mark_token_start();
                                 yylval.sval = dup_text(yytext);
@@ -1263,7 +1272,7 @@ YY_RULE_SETUP
 case 56:
 /* rule 56 can match eol */
 YY_RULE_SETUP
-#line 171 "pascal_s_lexer.l"
+#line 180 "pascal_s_lexer.l"
 {
                                 fprintf(stderr,
                                         "[词法错误] 行：%d，列：%d - 未闭合字符常量\n",
@@ -1274,7 +1283,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 179 "pascal_s_lexer.l"
+#line 188 "pascal_s_lexer.l"
 {
                                 mark_token_start();
                                 yylval.sval = normalize_id(yytext);
@@ -1284,7 +1293,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 186 "pascal_s_lexer.l"
+#line 195 "pascal_s_lexer.l"
 {
                                 fprintf(stderr,
                                         "[词法错误] 行：%d，列：%d - 非法标识符：%s（以数字开头）\n",
@@ -1295,12 +1304,12 @@ YY_RULE_SETUP
                              }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
-#line 195 "pascal_s_lexer.l"
+#line 204 "pascal_s_lexer.l"
 { return 0; }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 197 "pascal_s_lexer.l"
+#line 206 "pascal_s_lexer.l"
 {
                                 fprintf(stderr,
                                         "[词法错误] 行：%d，列：%d - 非法字符：%s\n",
@@ -1312,10 +1321,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 206 "pascal_s_lexer.l"
+#line 215 "pascal_s_lexer.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 1318 "pascal_s_lexer.c"
+#line 1327 "pascal_s_lexer.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2330,6 +2339,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 206 "pascal_s_lexer.l"
+#line 215 "pascal_s_lexer.l"
 
 

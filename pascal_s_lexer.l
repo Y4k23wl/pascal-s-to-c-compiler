@@ -13,6 +13,15 @@
 static int g_line = 1;
 static int g_col = 1;
 
+void lexer_reset_position(void) {
+    g_line = 1;
+    g_col = 1;
+    yylloc.first_line = 1;
+    yylloc.first_column = 1;
+    yylloc.last_line = 1;
+    yylloc.last_column = 1;
+}
+
 static void mark_token_start(void) {
     yylloc.first_line = g_line;
     yylloc.first_column = g_col;

@@ -1,9 +1,31 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+#include "ast.hpp"
 
 int yylex(void);
 void yyerror(const char *msg);
+void yyrestart(FILE *input_file);
+void lexer_reset_position(void);
+
+AstNode *g_ast_root = NULL;
+static int g_parse_failed = 0;
+
+static char *dup_text(const char *text) {
+    size_t len = strlen(text);
+    char *copy = (char *)malloc(len + 1);
+    if (copy == NULL) {
+        fprintf(stderr, "out of memory while duplicating parser text\n");
+        exit(EXIT_FAILURE);
+    }
+    memcpy(copy, text, len + 1);
+    return copy;
+}
+
+#define AST_LOC(loc) \
+    ast_make_location((loc).first_line, (loc).first_column, (loc).last_line, (loc).last_column)
 
 /*
  * This file is a parser-side contract for the Flex group.
@@ -29,6 +51,7 @@ void yyerror(const char *msg);
     char *sval;
     int ival;
     double fval;
+    struct AstNode *node;
 }
 
 %start programstruct
@@ -72,6 +95,21 @@ void yyerror(const char *msg);
 %token COLON       /* :  */
 %token RANGE       /* .. */
 
+%type <node> programstruct
+%type <node> program_head program_body
+%type <node> idlist
+%type <node> const_declarations const_declaration const_value
+%type <node> var_declarations var_declaration
+%type <node> type basic_type period
+%type <ival> digits
+%type <node> subprogram_declarations subprogram subprogram_head
+%type <node> formal_parameter parameter_list parameter var_parameter value_parameter
+%type <node> subprogram_body
+%type <node> compound_statement statement_list statement
+%type <node> variable_list variable id_varpart procedure_call expression_list
+%type <node> expression simple_expression term factor num
+%type <sval> relop addop mulop
+
 /* Precedence helpers */
 %nonassoc LOWER_THAN_ELSE
 %nonassoc ELSE
@@ -84,215 +122,509 @@ void yyerror(const char *msg);
 
 programstruct
     : program_head SEMICOLON program_body DOT
+      {
+          $$ = ast_make_program($1, $3, AST_LOC(@$));
+          g_ast_root = $$;
+      }
     ;
 
 program_head
     : PROGRAM ID LPAREN idlist RPAREN
+      {
+          $$ = ast_make_program_head($2, $4, AST_LOC(@$));
+          free($2);
+      }
     | PROGRAM ID
+      {
+          $$ = ast_make_program_head($2, NULL, AST_LOC(@$));
+          free($2);
+      }
     ;
 
 program_body
     : const_declarations var_declarations subprogram_declarations compound_statement
+      {
+          $$ = ast_make_block($1, $2, $3, $4, AST_LOC(@$));
+      }
     ;
 
 idlist
     : ID
+      {
+          $$ = ast_make_identifier_list(ast_make_identifier($1, AST_LOC(@1)), AST_LOC(@$));
+          free($1);
+      }
     | idlist COMMA ID
+      {
+          $$ = ast_append_list($1, ast_make_identifier($3, AST_LOC(@3)));
+          free($3);
+      }
     ;
 
 const_declarations
     : /* empty */
+      {
+          $$ = ast_new(AST_CONST_DECL_LIST, AST_LOC(@$));
+      }
     | CONST const_declaration SEMICOLON
+      {
+          $$ = $2;
+      }
     ;
 
 const_declaration
     : ID EQ const_value
+      {
+          $$ = ast_new(AST_CONST_DECL_LIST, AST_LOC(@$));
+          ast_append_list($$, ast_make_const_decl($1, $3, AST_LOC(@$)));
+          free($1);
+      }
     | const_declaration SEMICOLON ID EQ const_value
+      {
+          $$ = ast_append_list($1, ast_make_const_decl($3, $5, AST_LOC(@3)));
+          free($3);
+      }
     ;
 
 const_value
     : PLUS num
+      {
+          $$ = $2;
+      }
     | MINUS num
+      {
+          $$ = ast_make_unary_expr("-", $2, AST_LOC(@$));
+      }
     | num
+      {
+          $$ = $1;
+      }
     | CHAR_CONST
+      {
+          $$ = ast_new_text(AST_CHAR_LITERAL, AST_LOC(@1), $1);
+          free($1);
+      }
     ;
 
 var_declarations
     : /* empty */
+      {
+          $$ = ast_new(AST_VAR_DECL_LIST, AST_LOC(@$));
+      }
     | VAR var_declaration SEMICOLON
+      {
+          $$ = $2;
+      }
     ;
 
 var_declaration
     : idlist COLON type
+      {
+          $$ = ast_new(AST_VAR_DECL_LIST, AST_LOC(@$));
+          ast_append_list($$, ast_make_var_decl($1, $3, AST_LOC(@$)));
+      }
     | var_declaration SEMICOLON idlist COLON type
+      {
+          $$ = ast_append_list($1, ast_make_var_decl($3, $5, AST_LOC(@3)));
+      }
     ;
 
 type
     : basic_type
+      {
+          $$ = $1;
+      }
     | ARRAY LBRACK period RBRACK OF basic_type
+      {
+          $$ = ast_make_array_type($3, $6, AST_LOC(@$));
+      }
     ;
 
 basic_type
     : INTEGER
+      {
+          $$ = ast_make_basic_type("integer", AST_LOC(@1));
+      }
     | REAL
+      {
+          $$ = ast_make_basic_type("real", AST_LOC(@1));
+      }
     | BOOLEAN
+      {
+          $$ = ast_make_basic_type("boolean", AST_LOC(@1));
+      }
     | CHAR
+      {
+          $$ = ast_make_basic_type("char", AST_LOC(@1));
+      }
     ;
 
 period
     : digits RANGE digits
+      {
+          $$ = ast_new(AST_PERIOD_LIST, AST_LOC(@$));
+          ast_append_list($$, ast_make_period($1, $3, AST_LOC(@$)));
+      }
     | period COMMA digits RANGE digits
+      {
+          $$ = ast_append_list($1, ast_make_period($3, $5, AST_LOC(@3)));
+      }
     ;
 
 digits
     : INT_CONST
+      {
+          $$ = $1;
+      }
     ;
 
 subprogram_declarations
     : /* empty */
+      {
+          $$ = ast_new(AST_SUBPROGRAM_LIST, AST_LOC(@$));
+      }
     | subprogram_declarations subprogram SEMICOLON
+      {
+          $$ = ast_append_list($1, $2);
+      }
     ;
 
 subprogram
     : subprogram_head SEMICOLON subprogram_body
+      {
+          $$ = ast_make_subprogram($1, $3, AST_LOC(@$));
+      }
     ;
 
 subprogram_head
     : PROCEDURE ID formal_parameter
+      {
+          $$ = ast_make_subprogram_head(false, $2, $3, NULL, AST_LOC(@$));
+          free($2);
+      }
     | FUNCTION ID formal_parameter COLON basic_type
+      {
+          $$ = ast_make_subprogram_head(true, $2, $3, $5, AST_LOC(@$));
+          free($2);
+      }
     ;
 
 formal_parameter
     : /* empty */
+      {
+          $$ = ast_new(AST_PARAM_LIST, AST_LOC(@$));
+      }
     | LPAREN parameter_list RPAREN
+      {
+          $$ = $2;
+      }
     ;
 
 parameter_list
     : parameter
+      {
+          $$ = ast_new(AST_PARAM_LIST, AST_LOC(@$));
+          ast_append_list($$, $1);
+      }
     | parameter_list SEMICOLON parameter
+      {
+          $$ = ast_append_list($1, $3);
+      }
     ;
 
 parameter
     : var_parameter
+      {
+          $$ = $1;
+      }
     | value_parameter
+      {
+          $$ = $1;
+      }
     ;
 
 var_parameter
     : VAR value_parameter
+      {
+          $2->flag = true;
+          $2->loc = AST_LOC(@$);
+          $$ = $2;
+      }
     ;
 
 value_parameter
     : idlist COLON basic_type
+      {
+          $$ = ast_make_param_group(false, $1, $3, AST_LOC(@$));
+      }
     ;
 
 subprogram_body
     : const_declarations var_declarations compound_statement
+      {
+          $$ = ast_make_block($1, $2, ast_new(AST_SUBPROGRAM_LIST, AST_LOC(@$)), $3, AST_LOC(@$));
+      }
     ;
 
 compound_statement
     : BEGIN_KW statement_list END_KW
+      {
+          $$ = ast_make_compound_stmt($2, AST_LOC(@$));
+      }
     ;
 
 statement_list
     : statement
+      {
+          $$ = ast_new(AST_STATEMENT_LIST, AST_LOC(@$));
+          ast_append_list($$, $1);
+      }
     | statement_list SEMICOLON statement
+      {
+          $$ = ast_append_list($1, $3);
+      }
     ;
 
 statement
     : /* empty */
-    | variable assignop expression
+      {
+          $$ = ast_make_empty_stmt(AST_LOC(@$));
+      }
+    | variable ASSIGN expression
+      {
+          $$ = ast_make_assign_stmt($1, $3, AST_LOC(@$));
+      }
     | procedure_call
+      {
+          $$ = $1;
+      }
     | compound_statement
+      {
+          $$ = $1;
+      }
     | IF expression THEN statement %prec LOWER_THAN_ELSE
+      {
+          $$ = ast_make_if_stmt($2, $4, NULL, AST_LOC(@$));
+      }
     | IF expression THEN statement ELSE statement
-    | FOR ID assignop expression TO expression DO statement
+      {
+          $$ = ast_make_if_stmt($2, $4, $6, AST_LOC(@$));
+      }
+    | FOR ID ASSIGN expression TO expression DO statement
+      {
+          $$ = ast_make_for_stmt($2, $4, $6, $8, AST_LOC(@$));
+          free($2);
+      }
     | READ LPAREN variable_list RPAREN
+      {
+          $$ = ast_make_read_stmt($3, AST_LOC(@$));
+      }
     | WRITE LPAREN expression_list RPAREN
+      {
+          $$ = ast_make_write_stmt($3, AST_LOC(@$));
+      }
     ;
 
 variable_list
     : variable
+      {
+          $$ = ast_new(AST_VARIABLE_LIST, AST_LOC(@$));
+          ast_append_list($$, $1);
+      }
     | variable_list COMMA variable
+      {
+          $$ = ast_append_list($1, $3);
+      }
     ;
 
 variable
     : ID id_varpart
+      {
+          $$ = ast_make_var_ref($1, $2, AST_LOC(@$));
+          free($1);
+      }
     ;
 
 id_varpart
     : /* empty */
+      {
+          $$ = NULL;
+      }
     | LBRACK expression_list RBRACK
+      {
+          $$ = $2;
+      }
     ;
 
 procedure_call
     : ID
+      {
+          $$ = ast_make_call(AST_CALL_STMT, $1, NULL, AST_LOC(@$));
+          free($1);
+      }
     | ID LPAREN expression_list RPAREN
+      {
+          $$ = ast_make_call(AST_CALL_STMT, $1, $3, AST_LOC(@$));
+          free($1);
+      }
     ;
 
 expression_list
     : expression
+      {
+          $$ = ast_new(AST_EXPRESSION_LIST, AST_LOC(@$));
+          ast_append_list($$, $1);
+      }
     | expression_list COMMA expression
+      {
+          $$ = ast_append_list($1, $3);
+      }
     ;
 
 expression
     : simple_expression
+      {
+          $$ = $1;
+      }
     | simple_expression relop simple_expression
+      {
+          $$ = ast_make_binary_expr($2, $1, $3, AST_LOC(@$));
+          free($2);
+      }
     ;
 
 simple_expression
     : term
+      {
+          $$ = $1;
+      }
     | simple_expression addop term
+      {
+          $$ = ast_make_binary_expr($2, $1, $3, AST_LOC(@$));
+          free($2);
+      }
     ;
 
 term
     : factor
+      {
+          $$ = $1;
+      }
     | term mulop factor
+      {
+          $$ = ast_make_binary_expr($2, $1, $3, AST_LOC(@$));
+          free($2);
+      }
     ;
 
 factor
     : num
+      {
+          $$ = $1;
+      }
     | variable
+      {
+          $$ = $1;
+      }
     | LPAREN expression RPAREN
+      {
+          $$ = $2;
+      }
     | ID LPAREN expression_list RPAREN
+      {
+          $$ = ast_make_call(AST_CALL_EXPR, $1, $3, AST_LOC(@$));
+          free($1);
+      }
     | NOT factor
+      {
+          $$ = ast_make_unary_expr("not", $2, AST_LOC(@$));
+      }
     | MINUS factor %prec UMINUS
-    ;
-
-assignop
-    : ASSIGN
+      {
+          $$ = ast_make_unary_expr("-", $2, AST_LOC(@$));
+      }
     ;
 
 relop
     : EQ
+      {
+          $$ = dup_text("=");
+      }
     | NE
+      {
+          $$ = dup_text("<>");
+      }
     | LT
+      {
+          $$ = dup_text("<");
+      }
     | LE
+      {
+          $$ = dup_text("<=");
+      }
     | GT
+      {
+          $$ = dup_text(">");
+      }
     | GE
+      {
+          $$ = dup_text(">=");
+      }
     ;
 
 addop
     : PLUS
+      {
+          $$ = dup_text("+");
+      }
     | MINUS
+      {
+          $$ = dup_text("-");
+      }
     | OR
+      {
+          $$ = dup_text("or");
+      }
     ;
 
 mulop
     : MUL
+      {
+          $$ = dup_text("*");
+      }
     | SLASH
+      {
+          $$ = dup_text("/");
+      }
     | DIV
+      {
+          $$ = dup_text("div");
+      }
     | MOD
+      {
+          $$ = dup_text("mod");
+      }
     | AND
+      {
+          $$ = dup_text("and");
+      }
     ;
 
 num
     : INT_CONST
+      {
+          $$ = ast_new_int(AST_INT_LITERAL, AST_LOC(@1), $1);
+      }
     | REAL_CONST
+      {
+          $$ = ast_new_real(AST_REAL_LITERAL, AST_LOC(@1), $1);
+      }
     ;
 
 %%
 
 void yyerror(const char *msg) {
+    g_parse_failed = 1;
     fprintf(stderr,
             "parse error at %d:%d: %s\n",
             yylloc.first_line,
@@ -300,8 +632,33 @@ void yyerror(const char *msg) {
             msg);
 }
 
-int main(int argc, char **argv) {
-    (void)argc;
-    (void)argv;
-    return yyparse();
+AstNode *pascal_s_get_ast_root(void) {
+    return g_ast_root;
+}
+
+AstNode *parse_pascal_stream(FILE *input) {
+    g_parse_failed = 0;
+    g_ast_root = NULL;
+    lexer_reset_position();
+    yyrestart(input);
+
+    if (yyparse() != 0 || g_parse_failed) {
+        ast_free(g_ast_root);
+        g_ast_root = NULL;
+    }
+    return g_ast_root;
+}
+
+AstNode *parse_pascal_file(const char *path) {
+    FILE *input = fopen(path, "r");
+    AstNode *root;
+
+    if (input == NULL) {
+        perror(path);
+        return NULL;
+    }
+
+    root = parse_pascal_stream(input);
+    fclose(input);
+    return root;
 }
