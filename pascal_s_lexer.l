@@ -8,8 +8,6 @@
 
 #include "pascal_s_parser.tab.h"
 
-#define MAX_ID_LEN 8
-
 static int g_line = 1;
 static int g_col = 1;
 
@@ -55,17 +53,16 @@ static char *dup_text(const char *s) {
 
 static char *normalize_id(const char *src) {
     size_t n = strlen(src);
-    size_t m = n > MAX_ID_LEN ? MAX_ID_LEN : n;
-    char *p = (char *)malloc(m + 1);
+    char *p = (char *)malloc(n + 1);
     size_t i;
     if (p == NULL) {
         fprintf(stderr, "out of memory while normalizing identifier\n");
         exit(EXIT_FAILURE);
     }
-    for (i = 0; i < m; ++i) {
+    for (i = 0; i < n; ++i) {
         p[i] = (char)tolower((unsigned char)src[i]);
     }
-    p[m] = '\0';
+    p[n] = '\0';
     return p;
 }
 
@@ -81,8 +78,8 @@ static char *normalize_id(const char *src) {
 %x COMMENT
 
 DIGIT          [0-9]
-ID_START       [A-Za-z]
-ID_CHAR        [A-Za-z0-9]
+ID_START       [A-Za-z_]
+ID_CHAR        [A-Za-z0-9_]
 INT            {DIGIT}+
 EXP            [eE][+-]?{DIGIT}+
 REAL1          {DIGIT}+\.{DIGIT}+({EXP})?
@@ -106,6 +103,7 @@ BAD_CHAR_LIT   '[^'\n]*\n
                                         g_col);
                                 return 0;
                              }
+"//"[^\n]*                  { advance_position(yytext); }
 
 ":="                        { RETURN_SIMPLE_TOKEN(ASSIGN); }
 "<="                        { RETURN_SIMPLE_TOKEN(LE); }
@@ -142,6 +140,7 @@ BAD_CHAR_LIT   '[^'\n]*\n
 "for"                       { RETURN_SIMPLE_TOKEN(FOR); }
 "to"                        { RETURN_SIMPLE_TOKEN(TO); }
 "do"                        { RETURN_SIMPLE_TOKEN(DO); }
+"while"                     { RETURN_SIMPLE_TOKEN(WHILE); }
 "read"                      { RETURN_SIMPLE_TOKEN(READ); }
 "write"                     { RETURN_SIMPLE_TOKEN(WRITE); }
 "array"                     { RETURN_SIMPLE_TOKEN(ARRAY); }
@@ -151,6 +150,8 @@ BAD_CHAR_LIT   '[^'\n]*\n
 "boolean"                   { RETURN_SIMPLE_TOKEN(BOOLEAN); }
 "char"                      { RETURN_SIMPLE_TOKEN(CHAR); }
 "not"                       { RETURN_SIMPLE_TOKEN(NOT); }
+"true"                      { RETURN_SIMPLE_TOKEN(TRUE); }
+"false"                     { RETURN_SIMPLE_TOKEN(FALSE); }
 "div"                       { RETURN_SIMPLE_TOKEN(DIV); }
 "mod"                       { RETURN_SIMPLE_TOKEN(MOD); }
 "and"                       { RETURN_SIMPLE_TOKEN(AND); }

@@ -115,6 +115,7 @@ struct AstNode {
   - `AST_ASSIGN_STMT`
   - `AST_CALL_STMT`
   - `AST_IF_STMT`
+  - `AST_WHILE_STMT`
   - `AST_FOR_STMT`
   - `AST_READ_STMT`
   - `AST_WRITE_STMT`
@@ -125,6 +126,7 @@ struct AstNode {
   - `AST_CALL_EXPR`
   - `AST_BINARY_EXPR`
   - `AST_UNARY_EXPR`
+  - `AST_BOOL_LITERAL`
   - `AST_INT_LITERAL`
   - `AST_REAL_LITERAL`
   - `AST_CHAR_LITERAL`
@@ -188,10 +190,12 @@ struct AstNode {
 
 - `text`：常量名
 - `children[0]`：常量值节点
+  - 可能是 `AST_BOOL_LITERAL`
   - 可能是 `AST_INT_LITERAL`
   - 可能是 `AST_REAL_LITERAL`
   - 可能是 `AST_CHAR_LITERAL`
   - 可能是 `AST_UNARY_EXPR("-") + 数字`
+  - 可能是 `AST_UNARY_EXPR("+") + 数字`
 
 #### `AST_CONST_DECL_LIST`
 
@@ -350,13 +354,19 @@ struct AstNode {
 
 #### `AST_CALL_STMT`
 
-表示过程调用语句。
+表示语句位置的子程序调用。
 
-- `text`：过程名
+- `text`：被调用名字
 - `children.size()`：
   - `0` 或 `1`
 - `children[0]`：
   - 若存在，则为 `AST_EXPRESSION_LIST`
+
+说明：
+
+- 当前实现允许过程调用
+- 也允许函数调用结果被忽略
+- 零参调用既可以写成 `f`，也可以写成 `f()`
 
 #### `AST_IF_STMT`
 
@@ -366,6 +376,13 @@ struct AstNode {
 - `children[1]`：`then` 分支语句
 - `children[2]`：
   - 若存在，则为 `else` 分支语句
+
+#### `AST_WHILE_STMT`
+
+表示 `while ... do ...`。
+
+- `children[0]`：条件表达式
+- `children[1]`：循环体语句
 
 #### `AST_FOR_STMT`
 
@@ -439,6 +456,11 @@ struct AstNode {
 - `children[0]`：
   - 若存在，则为 `AST_EXPRESSION_LIST`
 
+说明：
+
+- 零参函数写成 `f()` 时构造 `AST_CALL_EXPR`
+- 若零参函数直接写成 `f`，语法阶段会先构造 `AST_VAR_REF("f")`，后续由语义分析识别成零参函数值引用
+
 #### `AST_BINARY_EXPR`
 
 表示二元运算表达式。
@@ -476,8 +498,18 @@ struct AstNode {
 
 当前可能的 `text`：
 
+- `"+"`
 - `"-"`
 - `"not"`
+
+#### `AST_BOOL_LITERAL`
+
+表示布尔字面量。
+
+- `flag`
+  - `true` 表示 `true`
+  - `false` 表示 `false`
+- 无子节点
 
 #### `AST_INT_LITERAL`
 
@@ -538,6 +570,8 @@ AST 的构造发生在 `pascal_s_parser.y` 的归约动作中。
 - 过程调用和函数调用分成两类
   - 出现在语句位置的是 `AST_CALL_STMT`
   - 出现在表达式位置的是 `AST_CALL_EXPR`
+- `while` 单独建模为 `AST_WHILE_STMT`
+- 布尔字面量单独建模为 `AST_BOOL_LITERAL`
 
 这意味着 AST 保留的是“语义结构”，不是逐 token 的语法树。
 
@@ -586,6 +620,11 @@ if (!ast_validate(stderr, root)) {
 SemanticAnalyzer analyzer;
 analyzer.analyze(root);
 ```
+
+当前驱动 `pascal_s_driver.cpp` 额外支持：
+
+- 默认只输出语义阶段结果
+- 加 `--dump-ast` 时输出 AST
 
 语义分析应依赖以下字段：
 

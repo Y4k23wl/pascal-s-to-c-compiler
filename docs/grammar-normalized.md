@@ -8,6 +8,7 @@ Notes:
 - Full-width punctuation in the original is normalized to ASCII punctuation.
 - `assignop`, `relop`, `addop`, and `mulop` are left as named grammar items here; the Bison file expands them into concrete tokens.
 - The original uses both `variable assignop expression` and `func_id assignop expression`. In a Bison skeleton, those two forms overlap syntactically when `func_id` is just an identifier, so the parser file merges them into one assignment form and leaves function-result checking to semantics.
+- The current parser has already been extended beyond this normalized baseline to match `testing/open_set`. Notable additions include `while`, `true` / `false`, `//` comments, empty `()`, unary `+`, and zero-argument calls.
 
 ```text
 programstruct -> program_head ; program_body .
@@ -60,6 +61,7 @@ subprogram_head -> procedure id formal_parameter
                  | function id formal_parameter : basic_type
 
 formal_parameter -> e
+                  | ( )
                   | ( parameter_list )
 
 parameter_list -> parameter
@@ -87,6 +89,7 @@ statement -> e
            | procedure_call
            | compound_statement
            | if expression then statement else_part
+           | while expression do statement
            | for id assignop expression to expression do statement
            | read ( variable_list )
            | write ( expression_list )
@@ -100,6 +103,7 @@ id_varpart -> e
             | [ expression_list ]
 
 procedure_call -> id
+                | id ( )
                 | id ( expression_list )
 
 else_part -> e
@@ -120,7 +124,11 @@ term -> factor
 factor -> num
         | variable
         | ( expression )
+        | id ( )
         | id ( expression_list )
+        | true
+        | false
         | not factor
+        | uplus factor
         | uminus factor
 ```

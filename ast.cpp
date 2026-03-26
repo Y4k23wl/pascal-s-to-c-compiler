@@ -42,6 +42,9 @@ void ast_dump_impl(FILE *out, const AstNode *node, int indent) {
     if (node->kind == AST_REAL_LITERAL) {
         meta << " value=" << node->real_value;
     }
+    if (node->kind == AST_BOOL_LITERAL) {
+        meta << " value=" << (node->flag ? "true" : "false");
+    }
     if (node->kind == AST_CHAR_LITERAL) {
         meta << " text=\"" << node->text << "\"";
     }
@@ -233,6 +236,12 @@ AstNode *ast_make_empty_stmt(AstLocation loc) {
     return ast_new(AST_EMPTY_STMT, loc);
 }
 
+AstNode *ast_make_bool_literal(bool value, AstLocation loc) {
+    AstNode *node = ast_new(AST_BOOL_LITERAL, loc);
+    node->flag = value;
+    return node;
+}
+
 AstNode *ast_make_var_ref(const char *name, AstNode *indices, AstLocation loc) {
     AstNode *node = ast_new_text(AST_VAR_REF, loc, name);
     if (indices != NULL) {
@@ -266,6 +275,13 @@ AstNode *ast_make_if_stmt(AstNode *cond,
     if (else_stmt != NULL) {
         ast_add_child(node, else_stmt);
     }
+    return node;
+}
+
+AstNode *ast_make_while_stmt(AstNode *cond, AstNode *body, AstLocation loc) {
+    AstNode *node = ast_new(AST_WHILE_STMT, loc);
+    ast_add_child(node, cond);
+    ast_add_child(node, body);
     return node;
 }
 
@@ -337,6 +353,7 @@ const char *ast_kind_name(AstKind kind) {
         case AST_CALL_STMT: return "CallStmt";
         case AST_CALL_EXPR: return "CallExpr";
         case AST_IF_STMT: return "IfStmt";
+        case AST_WHILE_STMT: return "WhileStmt";
         case AST_FOR_STMT: return "ForStmt";
         case AST_READ_STMT: return "ReadStmt";
         case AST_WRITE_STMT: return "WriteStmt";
@@ -345,6 +362,7 @@ const char *ast_kind_name(AstKind kind) {
         case AST_EXPRESSION_LIST: return "ExpressionList";
         case AST_BINARY_EXPR: return "BinaryExpr";
         case AST_UNARY_EXPR: return "UnaryExpr";
+        case AST_BOOL_LITERAL: return "BoolLiteral";
         case AST_INT_LITERAL: return "IntLiteral";
         case AST_REAL_LITERAL: return "RealLiteral";
         case AST_CHAR_LITERAL: return "CharLiteral";
@@ -399,25 +417,20 @@ bool ast_validate(FILE *out, const AstNode *node) {
         case AST_WRITE_STMT:
             ok = (child_count == 1);
             break;
-        case AST_EMPTY_STMT:
-        case AST_INT_LITERAL:
-        case AST_REAL_LITERAL:
-        case AST_CHAR_LITERAL:
-        case AST_IDENTIFIER:
-        case AST_BASIC_TYPE:
-        case AST_PERIOD:
-            ok = (child_count == 0);
-            break;
         case AST_CALL_STMT:
         case AST_CALL_EXPR:
         case AST_VAR_REF:
             ok = (child_count <= 1) && !node->text.empty();
             break;
         case AST_IF_STMT:
-            ok = (child_count == 2 || child_count == 3);
+        case AST_WHILE_STMT:
+            ok = (child_count == 2 || (node->kind == AST_IF_STMT && child_count == 3));
             break;
         case AST_FOR_STMT:
             ok = (child_count == 3) && !node->text.empty();
+            break;
+        case AST_BOOL_LITERAL:
+            ok = (child_count == 0);
             break;
         case AST_UNARY_EXPR:
             ok = (child_count == 1) && !node->text.empty();
@@ -432,6 +445,15 @@ bool ast_validate(FILE *out, const AstNode *node) {
         case AST_VARIABLE_LIST:
         case AST_EXPRESSION_LIST:
             ok = true;
+            break;
+        case AST_EMPTY_STMT:
+        case AST_INT_LITERAL:
+        case AST_REAL_LITERAL:
+        case AST_CHAR_LITERAL:
+        case AST_IDENTIFIER:
+        case AST_BASIC_TYPE:
+        case AST_PERIOD:
+            ok = (child_count == 0);
             break;
         default:
             ok = false;

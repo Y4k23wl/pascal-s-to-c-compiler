@@ -60,11 +60,11 @@ static char *dup_text(const char *text) {
 %token PROGRAM CONST VAR PROCEDURE FUNCTION
 %token BEGIN_KW END_KW
 %token IF THEN ELSE
-%token FOR TO DO
+%token FOR TO DO WHILE
 %token READ WRITE
 %token ARRAY OF
 %token INTEGER REAL BOOLEAN CHAR
-%token NOT
+%token NOT TRUE FALSE
 %token DIV MOD AND OR
 
 /* Identifiers and constants */
@@ -204,6 +204,14 @@ const_value
           $$ = ast_new_text(AST_CHAR_LITERAL, AST_LOC(@1), $1);
           free($1);
       }
+    | TRUE
+      {
+          $$ = ast_make_bool_literal(true, AST_LOC(@1));
+      }
+    | FALSE
+      {
+          $$ = ast_make_bool_literal(false, AST_LOC(@1));
+      }
     ;
 
 var_declarations
@@ -314,6 +322,10 @@ formal_parameter
       {
           $$ = ast_new(AST_PARAM_LIST, AST_LOC(@$));
       }
+    | LPAREN RPAREN
+      {
+          $$ = ast_new(AST_PARAM_LIST, AST_LOC(@$));
+      }
     | LPAREN parameter_list RPAREN
       {
           $$ = $2;
@@ -410,6 +422,10 @@ statement
       {
           $$ = ast_make_if_stmt($2, $4, $6, AST_LOC(@$));
       }
+    | WHILE expression DO statement
+      {
+          $$ = ast_make_while_stmt($2, $4, AST_LOC(@$));
+      }
     | FOR ID ASSIGN expression TO expression DO statement
       {
           $$ = ast_make_for_stmt($2, $4, $6, $8, AST_LOC(@$));
@@ -458,6 +474,11 @@ id_varpart
 
 procedure_call
     : ID
+      {
+          $$ = ast_make_call(AST_CALL_STMT, $1, NULL, AST_LOC(@$));
+          free($1);
+      }
+    | ID LPAREN RPAREN
       {
           $$ = ast_make_call(AST_CALL_STMT, $1, NULL, AST_LOC(@$));
           free($1);
@@ -535,9 +556,26 @@ factor
           $$ = ast_make_call(AST_CALL_EXPR, $1, $3, AST_LOC(@$));
           free($1);
       }
+    | ID LPAREN RPAREN
+      {
+          $$ = ast_make_call(AST_CALL_EXPR, $1, NULL, AST_LOC(@$));
+          free($1);
+      }
+    | TRUE
+      {
+          $$ = ast_make_bool_literal(true, AST_LOC(@1));
+      }
+    | FALSE
+      {
+          $$ = ast_make_bool_literal(false, AST_LOC(@1));
+      }
     | NOT factor
       {
           $$ = ast_make_unary_expr("not", $2, AST_LOC(@$));
+      }
+    | PLUS factor %prec UMINUS
+      {
+          $$ = ast_make_unary_expr("+", $2, AST_LOC(@$));
       }
     | MINUS factor %prec UMINUS
       {

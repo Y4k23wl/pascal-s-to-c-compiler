@@ -38,6 +38,7 @@ enum AstKind {
     AST_CALL_STMT,
     AST_CALL_EXPR,
     AST_IF_STMT,
+    AST_WHILE_STMT,
     AST_FOR_STMT,
     AST_READ_STMT,
     AST_WRITE_STMT,
@@ -46,6 +47,7 @@ enum AstKind {
     AST_EXPRESSION_LIST,
     AST_BINARY_EXPR,
     AST_UNARY_EXPR,
+    AST_BOOL_LITERAL,
     AST_INT_LITERAL,
     AST_REAL_LITERAL,
     AST_CHAR_LITERAL
@@ -98,6 +100,7 @@ AstNode *ast_make_subprogram(AstNode *head, AstNode *body, AstLocation loc);
 AstNode *ast_make_param_group(bool by_ref, AstNode *ids, AstNode *type, AstLocation loc);
 AstNode *ast_make_compound_stmt(AstNode *statements, AstLocation loc);
 AstNode *ast_make_empty_stmt(AstLocation loc);
+AstNode *ast_make_bool_literal(bool value, AstLocation loc);
 AstNode *ast_make_var_ref(const char *name, AstNode *indices, AstLocation loc);
 AstNode *ast_make_call(AstKind kind, const char *name, AstNode *args, AstLocation loc);
 AstNode *ast_make_assign_stmt(AstNode *target, AstNode *expr, AstLocation loc);
@@ -105,6 +108,7 @@ AstNode *ast_make_if_stmt(AstNode *cond,
                           AstNode *then_stmt,
                           AstNode *else_stmt,
                           AstLocation loc);
+AstNode *ast_make_while_stmt(AstNode *cond, AstNode *body, AstLocation loc);
 AstNode *ast_make_for_stmt(const char *name,
                            AstNode *start_expr,
                            AstNode *end_expr,

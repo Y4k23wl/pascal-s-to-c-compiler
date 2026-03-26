@@ -52,45 +52,48 @@
      FOR = 268,
      TO = 269,
      DO = 270,
-     READ = 271,
-     WRITE = 272,
-     ARRAY = 273,
-     OF = 274,
-     INTEGER = 275,
-     REAL = 276,
-     BOOLEAN = 277,
-     CHAR = 278,
-     NOT = 279,
-     DIV = 280,
-     MOD = 281,
-     AND = 282,
-     OR = 283,
-     ID = 284,
-     INT_CONST = 285,
-     REAL_CONST = 286,
-     CHAR_CONST = 287,
-     ASSIGN = 288,
-     EQ = 289,
-     NE = 290,
-     LT = 291,
-     LE = 292,
-     GT = 293,
-     GE = 294,
-     PLUS = 295,
-     MINUS = 296,
-     MUL = 297,
-     SLASH = 298,
-     SEMICOLON = 299,
-     DOT = 300,
-     COMMA = 301,
-     LPAREN = 302,
-     RPAREN = 303,
-     LBRACK = 304,
-     RBRACK = 305,
-     COLON = 306,
-     RANGE = 307,
-     LOWER_THAN_ELSE = 308,
-     UMINUS = 309
+     WHILE = 271,
+     READ = 272,
+     WRITE = 273,
+     ARRAY = 274,
+     OF = 275,
+     INTEGER = 276,
+     REAL = 277,
+     BOOLEAN = 278,
+     CHAR = 279,
+     NOT = 280,
+     TRUE = 281,
+     FALSE = 282,
+     DIV = 283,
+     MOD = 284,
+     AND = 285,
+     OR = 286,
+     ID = 287,
+     INT_CONST = 288,
+     REAL_CONST = 289,
+     CHAR_CONST = 290,
+     ASSIGN = 291,
+     EQ = 292,
+     NE = 293,
+     LT = 294,
+     LE = 295,
+     GT = 296,
+     GE = 297,
+     PLUS = 298,
+     MINUS = 299,
+     MUL = 300,
+     SLASH = 301,
+     SEMICOLON = 302,
+     DOT = 303,
+     COMMA = 304,
+     LPAREN = 305,
+     RPAREN = 306,
+     LBRACK = 307,
+     RBRACK = 308,
+     COLON = 309,
+     RANGE = 310,
+     LOWER_THAN_ELSE = 311,
+     UMINUS = 312
    };
 #endif
 /* Tokens.  */
@@ -107,52 +110,55 @@
 #define FOR 268
 #define TO 269
 #define DO 270
-#define READ 271
-#define WRITE 272
-#define ARRAY 273
-#define OF 274
-#define INTEGER 275
-#define REAL 276
-#define BOOLEAN 277
-#define CHAR 278
-#define NOT 279
-#define DIV 280
-#define MOD 281
-#define AND 282
-#define OR 283
-#define ID 284
-#define INT_CONST 285
-#define REAL_CONST 286
-#define CHAR_CONST 287
-#define ASSIGN 288
-#define EQ 289
-#define NE 290
-#define LT 291
-#define LE 292
-#define GT 293
-#define GE 294
-#define PLUS 295
-#define MINUS 296
-#define MUL 297
-#define SLASH 298
-#define SEMICOLON 299
-#define DOT 300
-#define COMMA 301
-#define LPAREN 302
-#define RPAREN 303
-#define LBRACK 304
-#define RBRACK 305
-#define COLON 306
-#define RANGE 307
-#define LOWER_THAN_ELSE 308
-#define UMINUS 309
+#define WHILE 271
+#define READ 272
+#define WRITE 273
+#define ARRAY 274
+#define OF 275
+#define INTEGER 276
+#define REAL 277
+#define BOOLEAN 278
+#define CHAR 279
+#define NOT 280
+#define TRUE 281
+#define FALSE 282
+#define DIV 283
+#define MOD 284
+#define AND 285
+#define OR 286
+#define ID 287
+#define INT_CONST 288
+#define REAL_CONST 289
+#define CHAR_CONST 290
+#define ASSIGN 291
+#define EQ 292
+#define NE 293
+#define LT 294
+#define LE 295
+#define GT 296
+#define GE 297
+#define PLUS 298
+#define MINUS 299
+#define MUL 300
+#define SLASH 301
+#define SEMICOLON 302
+#define DOT 303
+#define COMMA 304
+#define LPAREN 305
+#define RPAREN 306
+#define LBRACK 307
+#define RBRACK 308
+#define COLON 309
+#define RANGE 310
+#define LOWER_THAN_ELSE 311
+#define UMINUS 312
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 50 "pascal_s_parser.y"
+#line 50 "code/pascal_s_parser.y"
 {
     char *sval;
     int ival;
@@ -160,7 +166,7 @@ typedef union YYSTYPE
     struct AstNode *node;
 }
 /* Line 1529 of yacc.c.  */
-#line 164 "pascal_s_parser.tab.h"
+#line 170 "code/pascal_s_parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
