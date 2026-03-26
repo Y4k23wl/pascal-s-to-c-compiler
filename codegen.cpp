@@ -307,7 +307,7 @@ void CodeGenerator::emit_stmt(const AstNode *node) {
                         emit_line("scanf(\"%d\", " + emit_address_of(var) + ");");
                         break;
                     case TypeKind::Real:
-                        emit_line("scanf(\"%lf\", " + emit_address_of(var) + ");");
+                        emit_line("scanf(\"%f\", " + emit_address_of(var) + ");");
                         break;
                     case TypeKind::Char:
                         emit_line("scanf(\" %c\", " + emit_address_of(var) + ");");
@@ -451,8 +451,8 @@ std::string CodeGenerator::emit_expr_with_parent(const AstNode *node,
             if (node->text == "/") {
                 if (lhs_info->type.kind == TypeKind::Integer &&
                     rhs_info->type.kind == TypeKind::Integer) {
-                    text = "(double)" + emit_expr_with_parent(lhs, current_precedence, false) +
-                           " / (double)" +
+                    text = "(float)" + emit_expr_with_parent(lhs, current_precedence, false) +
+                           " / (float)" +
                            emit_expr_with_parent(rhs, current_precedence, true);
                     break;
                 }
@@ -540,7 +540,7 @@ std::string CodeGenerator::emit_default_value(const SemType &type) const {
         case TypeKind::Integer:
             return "0";
         case TypeKind::Real:
-            return "0.0";
+            return "0.0f";
         case TypeKind::Boolean:
             return "false";
         case TypeKind::Char:
@@ -605,7 +605,7 @@ std::string CodeGenerator::c_type_name(const SemType &type) const {
         case TypeKind::Integer:
             return "int";
         case TypeKind::Real:
-            return "double";
+            return "float";
         case TypeKind::Boolean:
             return "bool";
         case TypeKind::Char:
@@ -646,13 +646,13 @@ std::string CodeGenerator::binary_op_to_c(const std::string &op) const {
 std::string CodeGenerator::format_real_literal(double value) const {
     std::ostringstream out;
     out << std::setprecision(17) << value;
-    const std::string text = out.str();
+    std::string text = out.str();
     if (text.find('.') == std::string::npos &&
         text.find('e') == std::string::npos &&
         text.find('E') == std::string::npos) {
-        return text + ".0";
+        text += ".0";
     }
-    return text;
+    return text + "f";
 }
 
 int CodeGenerator::expr_precedence(const AstNode *node) const {

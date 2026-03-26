@@ -1,37 +1,84 @@
 #include <cstdio>
 #include <cstring>
+#include <string>
 
 #include "codegen.hpp"
 #include "pascal_s_frontend.hpp"
 #include "semantic.hpp"
 
+namespace {
+
+void print_usage(const char *argv0) {
+    std::fprintf(stderr, "usage: %s -i source.pas [--dump-ast]\n", argv0);
+}
+
+std::string replace_extension_with_c(const char *input_path) {
+    std::string path(input_path);
+    std::string::size_type slash_pos = path.find_last_of("/\\");
+    std::string::size_type dot_pos = path.find_last_of('.');
+
+    if (dot_pos == std::string::npos ||
+        (slash_pos != std::string::npos && dot_pos < slash_pos)) {
+        path += ".c";
+    } else {
+        path.replace(dot_pos, std::string::npos, ".c");
+    }
+    return path;
+}
+
+bool write_text_file(const std::string &path, const std::string &content) {
+    FILE *out = std::fopen(path.c_str(), "wb");
+    if (out == NULL) {
+        std::perror(path.c_str());
+        return false;
+    }
+
+    const size_t bytes_to_write = content.size();
+    const size_t bytes_written = std::fwrite(content.data(), 1, bytes_to_write, out);
+    if (std::fclose(out) != 0) {
+        std::perror(path.c_str());
+        return false;
+    }
+    if (bytes_written != bytes_to_write) {
+        std::fprintf(stderr, "failed to write complete output file: %s\n", path.c_str());
+        return false;
+    }
+    return true;
+}
+
+}  // namespace
+
 int main(int argc, char **argv) {
     AstNode *root;
     bool dump_ast = false;
     const char *input_path = NULL;
+    std::string output_path;
 
-    if (argc > 3) {
-        std::fprintf(stderr, "usage: %s [--dump-ast] [source.pas]\n", argv[0]);
-        return 1;
-    }
-
-    if (argc >= 2 && std::strcmp(argv[1], "--dump-ast") == 0) {
-        dump_ast = true;
-        if (argc == 3) {
-            input_path = argv[2];
+    for (int i = 1; i < argc; ++i) {
+        if (std::strcmp(argv[i], "--dump-ast") == 0) {
+            dump_ast = true;
+            continue;
         }
-    } else if (argc == 2) {
-        input_path = argv[1];
-    } else if (argc == 3) {
-        std::fprintf(stderr, "usage: %s [--dump-ast] [source.pas]\n", argv[0]);
+        if (std::strcmp(argv[i], "-i") == 0) {
+            if (i + 1 >= argc || input_path != NULL) {
+                print_usage(argv[0]);
+                return 1;
+            }
+            input_path = argv[++i];
+            continue;
+        }
+
+        print_usage(argv[0]);
         return 1;
     }
 
-    if (input_path != NULL) {
-        root = parse_pascal_file(input_path);
-    } else {
-        root = parse_pascal_stream(stdin);
+    if (input_path == NULL) {
+        print_usage(argv[0]);
+        return 1;
     }
+
+    output_path = replace_extension_with_c(input_path);
+    root = parse_pascal_file(input_path);
 
     if (root == NULL) {
         return 1;
@@ -58,7 +105,11 @@ int main(int argc, char **argv) {
 
     CodeGenerator generator;
     std::string c_code = generator.generate(root, sem);
-    std::fputs(c_code.c_str(), stdout);
+    if (!write_text_file(output_path, c_code)) {
+        ast_free(root);
+        g_ast_root = NULL;
+        return 1;
+    }
 
     ast_free(root);
     g_ast_root = NULL;
