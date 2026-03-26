@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstring>
 
+#include "codegen.hpp"
 #include "pascal_s_frontend.hpp"
 #include "semantic.hpp"
 
@@ -52,9 +53,13 @@ int main(int argc, char **argv) {
     }
 
     if (dump_ast) {
-        ast_dump(stdout, root, 0);
+        ast_dump(stderr, root, 0);
     }
-    std::fprintf(stdout, "semantic analysis: ok\n");
+
+    CodeGenerator generator;
+    std::string c_code = generator.generate(root, sem);
+    std::fputs(c_code.c_str(), stdout);
+
     ast_free(root);
     g_ast_root = NULL;
     return 0;
