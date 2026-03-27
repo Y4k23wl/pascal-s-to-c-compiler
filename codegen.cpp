@@ -83,7 +83,6 @@ void CodeGenerator::emit_helpers() {
     emit_line("static void write_real(double value) {");
     ++indent_level_;
     emit_line("char buffer[64];");
-    emit_line("char formatted[64];");
     emit_line("char *exp = NULL;");
     emit_line("int exponent = 0;");
     emit_line("char sign;");
@@ -110,8 +109,7 @@ void CodeGenerator::emit_helpers() {
     --indent_level_;
     emit_line("}");
     emit_line("*exp = '\\0';");
-    emit_line("snprintf(formatted, sizeof(formatted), \"%sE%c%03d\", buffer, sign, exponent);");
-    emit_line("printf(\"%s\", formatted);");
+    emit_line("printf(\"%sE%c%03d\", buffer, sign, exponent);");
     --indent_level_;
     emit_line("}");
     emit_line();
