@@ -17,6 +17,23 @@ std::string join_strings(const std::vector<std::string> &parts) {
     return out.str();
 }
 
+std::string join_expressions(const std::vector<std::string> &parts) {
+    std::ostringstream out;
+    for (size_t i = 0; i < parts.size(); ++i) {
+        if (i != 0) {
+            out << ", ";
+        }
+        out << parts[i];
+    }
+    return out.str();
+}
+
+std::string size_literal(size_t value) {
+    std::ostringstream out;
+    out << value;
+    return out.str();
+}
+
 }  // namespace
 
 std::string CodeGenerator::generate(const AstNode *root, const SemanticResult &sem) {
@@ -34,6 +51,8 @@ void CodeGenerator::reset(const SemanticResult &sem) {
     sem_ = &sem;
     indent_level_ = 0;
     for_temp_counter_ = 0;
+    call_temp_capacity_ = CallTempState();
+    call_temp_usage_ = CallTempState();
     owner_scopes_.clear();
 
     for (size_t i = 0; i < sem.scope_storage.size(); ++i) {
@@ -44,13 +63,16 @@ void CodeGenerator::reset(const SemanticResult &sem) {
 
 void CodeGenerator::emit_program(const AstNode *node) {
     const AstNode *block = child_at(node, 1);
+    plan_call_temps(node);
 
     emit_line("#include <stdio.h>");
     emit_line("#include <stdbool.h>");
+    emit_line("#include <stdint.h>");
     emit_line("#include <string.h>");
     emit_line();
 
     emit_helpers();
+    emit_call_temp_decls();
     emit_global_decls(block);
     emit_prototypes(child_at(block, 2));
     emit_subprograms(child_at(block, 2));
@@ -58,6 +80,42 @@ void CodeGenerator::emit_program(const AstNode *node) {
 }
 
 void CodeGenerator::emit_helpers() {
+    emit_line("static void write_real(double value) {");
+    ++indent_level_;
+    emit_line("char buffer[64];");
+    emit_line("char formatted[64];");
+    emit_line("char *exp = NULL;");
+    emit_line("int exponent = 0;");
+    emit_line("char sign;");
+    emit_line("if (snprintf(buffer, sizeof(buffer), \" %.16E\", value) < 0) {");
+    ++indent_level_;
+    emit_line("return;");
+    --indent_level_;
+    emit_line("}");
+    emit_line("exp = strchr(buffer, 'E');");
+    emit_line("if (exp == NULL) {");
+    ++indent_level_;
+    emit_line("printf(\"%s\", buffer);");
+    emit_line("return;");
+    --indent_level_;
+    emit_line("}");
+    emit_line("sign = exp[1];");
+    emit_line("for (char *p = exp + 2; *p != '\\0'; ++p) {");
+    ++indent_level_;
+    emit_line("if (*p >= '0' && *p <= '9') {");
+    ++indent_level_;
+    emit_line("exponent = exponent * 10 + (*p - '0');");
+    --indent_level_;
+    emit_line("}");
+    --indent_level_;
+    emit_line("}");
+    emit_line("*exp = '\\0';");
+    emit_line("snprintf(formatted, sizeof(formatted), \"%sE%c%03d\", buffer, sign, exponent);");
+    emit_line("printf(\"%s\", formatted);");
+    --indent_level_;
+    emit_line("}");
+    emit_line();
+
     emit_line("static bool read_bool(bool *out_value) {");
     ++indent_level_;
     emit_line("char buffer[16];");
@@ -89,6 +147,65 @@ void CodeGenerator::emit_helpers() {
     --indent_level_;
     emit_line("}");
     emit_line();
+}
+
+void CodeGenerator::plan_call_temps(const AstNode *node) {
+    if (node == NULL) {
+        return;
+    }
+
+    if (node->kind == AST_CALL_EXPR || node->kind == AST_CALL_STMT) {
+        const Symbol *callee = resolved_symbol(node);
+        const AstNode *arg_list = child_at(node, 0);
+        if (callee != NULL && arg_list != NULL) {
+            for (size_t i = 0; i < arg_list->children.size() && i < callee->params.size(); ++i) {
+                const ParamInfo &param = callee->params[i];
+                if (param.by_ref) {
+                    next_call_ref_temp(param.type);
+                } else {
+                    next_call_value_temp(param.type);
+                }
+            }
+        }
+    }
+
+    for (size_t i = 0; i < node->children.size(); ++i) {
+        plan_call_temps(node->children[i]);
+    }
+}
+
+void CodeGenerator::emit_call_temp_decls() {
+    if (call_temp_capacity_.int_values != 0) {
+        emit_line("static int16_t __call_tmp_i[" + size_literal(call_temp_capacity_.int_values) + "];");
+    }
+    if (call_temp_capacity_.real_values != 0) {
+        emit_line("static double __call_tmp_r[" + size_literal(call_temp_capacity_.real_values) + "];");
+    }
+    if (call_temp_capacity_.bool_values != 0) {
+        emit_line("static bool __call_tmp_b[" + size_literal(call_temp_capacity_.bool_values) + "];");
+    }
+    if (call_temp_capacity_.char_values != 0) {
+        emit_line("static char __call_tmp_c[" + size_literal(call_temp_capacity_.char_values) + "];");
+    }
+    if (call_temp_capacity_.int_refs != 0) {
+        emit_line("static int16_t * __call_tmp_pi[" + size_literal(call_temp_capacity_.int_refs) + "];");
+    }
+    if (call_temp_capacity_.real_refs != 0) {
+        emit_line("static double * __call_tmp_pr[" + size_literal(call_temp_capacity_.real_refs) + "];");
+    }
+    if (call_temp_capacity_.bool_refs != 0) {
+        emit_line("static bool * __call_tmp_pb[" + size_literal(call_temp_capacity_.bool_refs) + "];");
+    }
+    if (call_temp_capacity_.char_refs != 0) {
+        emit_line("static char * __call_tmp_pc[" + size_literal(call_temp_capacity_.char_refs) + "];");
+    }
+    if (call_temp_capacity_.int_values != 0 || call_temp_capacity_.real_values != 0 ||
+        call_temp_capacity_.bool_values != 0 || call_temp_capacity_.char_values != 0 ||
+        call_temp_capacity_.int_refs != 0 || call_temp_capacity_.real_refs != 0 ||
+        call_temp_capacity_.bool_refs != 0 || call_temp_capacity_.char_refs != 0) {
+        emit_line();
+    }
+    call_temp_usage_ = CallTempState();
 }
 
 void CodeGenerator::emit_global_decls(const AstNode *block) {
@@ -304,10 +421,10 @@ void CodeGenerator::emit_stmt(const AstNode *node) {
                 assert(info != NULL);
                 switch (info->type.kind) {
                     case TypeKind::Integer:
-                        emit_line("scanf(\"%d\", " + emit_address_of(var) + ");");
+                        emit_line("scanf(\"%hd\", " + emit_address_of(var) + ");");
                         break;
                     case TypeKind::Real:
-                        emit_line("scanf(\"%f\", " + emit_address_of(var) + ");");
+                        emit_line("scanf(\"%lf\", " + emit_address_of(var) + ");");
                         break;
                     case TypeKind::Char:
                         emit_line("scanf(\" %c\", " + emit_address_of(var) + ");");
@@ -333,10 +450,10 @@ void CodeGenerator::emit_stmt(const AstNode *node) {
                 assert(info != NULL);
                 switch (info->type.kind) {
                     case TypeKind::Integer:
-                        emit_line("printf(\"%d\", " + emit_expr(expr) + ");");
+                        emit_line("printf(\"%d\", (int)" + emit_expr(expr) + ");");
                         break;
                     case TypeKind::Real:
-                        emit_line("printf(\"%g\", " + emit_expr(expr) + ");");
+                        emit_line("write_real(" + emit_expr(expr) + ");");
                         break;
                     case TypeKind::Char:
                         emit_line("printf(\"%c\", " + emit_expr(expr) + ");");
@@ -451,8 +568,8 @@ std::string CodeGenerator::emit_expr_with_parent(const AstNode *node,
             if (node->text == "/") {
                 if (lhs_info->type.kind == TypeKind::Integer &&
                     rhs_info->type.kind == TypeKind::Integer) {
-                    text = "(float)" + emit_expr_with_parent(lhs, current_precedence, false) +
-                           " / (float)" +
+                    text = "(double)" + emit_expr_with_parent(lhs, current_precedence, false) +
+                           " / (double)" +
                            emit_expr_with_parent(rhs, current_precedence, true);
                     break;
                 }
@@ -509,19 +626,34 @@ std::string CodeGenerator::emit_var_ref(const AstNode *node) {
 }
 
 std::string CodeGenerator::emit_call(const Symbol &callee, const AstNode *arg_list) {
-    std::vector<std::string> args;
-    if (arg_list != NULL) {
-        args.reserve(arg_list->children.size());
-        for (size_t i = 0; i < arg_list->children.size(); ++i) {
-            const AstNode *arg = arg_list->children[i];
-            if (i < callee.params.size() && callee.params[i].by_ref) {
-                args.push_back(emit_address_of(arg));
-            } else {
-                args.push_back(emit_expr(arg));
-            }
-        }
+    if (arg_list == NULL || arg_list->children.empty()) {
+        return callee.c_name + "()";
     }
-    return callee.c_name + "(" + join_strings(args) + ")";
+
+    std::vector<std::string> args;
+    std::vector<std::string> steps;
+    args.reserve(arg_list->children.size());
+    steps.reserve(arg_list->children.size() + 1);
+
+    args.resize(arg_list->children.size());
+    for (size_t i = arg_list->children.size(); i > 0; --i) {
+        const size_t arg_index = i - 1;
+        const AstNode *arg = arg_list->children[arg_index];
+        std::string temp_name;
+        if (arg_index < callee.params.size() && callee.params[arg_index].by_ref) {
+            temp_name = next_call_ref_temp(callee.params[arg_index].type);
+            steps.push_back(temp_name + " = " + emit_address_of(arg));
+        } else {
+            const SemType &type =
+                arg_index < callee.params.size() ? callee.params[arg_index].type : expr_info(arg)->type;
+            temp_name = next_call_value_temp(type);
+            steps.push_back(temp_name + " = " + emit_expr(arg));
+        }
+        args[arg_index] = temp_name;
+    }
+
+    steps.push_back(callee.c_name + "(" + join_strings(args) + ")");
+    return "(" + join_expressions(steps) + ")";
 }
 
 std::string CodeGenerator::emit_address_of(const AstNode *node) {
@@ -540,7 +672,7 @@ std::string CodeGenerator::emit_default_value(const SemType &type) const {
         case TypeKind::Integer:
             return "0";
         case TypeKind::Real:
-            return "0.0f";
+            return "0.0";
         case TypeKind::Boolean:
             return "false";
         case TypeKind::Char:
@@ -562,7 +694,9 @@ std::string CodeGenerator::emit_decl(const Symbol &symbol,
         out << "const ";
     }
 
-    if (symbol.by_ref) {
+    if (with_const && symbol.type.kind == TypeKind::Integer) {
+        out << "int " << symbol.c_name;
+    } else if (symbol.by_ref) {
         out << c_type_name(symbol.type) << " *" << symbol.c_name;
     } else if (symbol.type.kind == TypeKind::Array) {
         out << c_type_name(*symbol.type.element_type) << " " << symbol.c_name;
@@ -603,9 +737,9 @@ std::string CodeGenerator::emit_signature(const Symbol &symbol) const {
 std::string CodeGenerator::c_type_name(const SemType &type) const {
     switch (type.kind) {
         case TypeKind::Integer:
-            return "int";
+            return "int16_t";
         case TypeKind::Real:
-            return "float";
+            return "double";
         case TypeKind::Boolean:
             return "bool";
         case TypeKind::Char:
@@ -652,7 +786,65 @@ std::string CodeGenerator::format_real_literal(double value) const {
         text.find('E') == std::string::npos) {
         text += ".0";
     }
-    return text + "f";
+    return text;
+}
+
+std::string CodeGenerator::next_call_value_temp(const SemType &type) {
+    std::ostringstream out;
+    switch (type.kind) {
+        case TypeKind::Integer:
+            out << "__call_tmp_i[" << call_temp_usage_.int_values++ << "]";
+            call_temp_capacity_.int_values =
+                std::max(call_temp_capacity_.int_values, call_temp_usage_.int_values);
+            return out.str();
+        case TypeKind::Real:
+            out << "__call_tmp_r[" << call_temp_usage_.real_values++ << "]";
+            call_temp_capacity_.real_values =
+                std::max(call_temp_capacity_.real_values, call_temp_usage_.real_values);
+            return out.str();
+        case TypeKind::Boolean:
+            out << "__call_tmp_b[" << call_temp_usage_.bool_values++ << "]";
+            call_temp_capacity_.bool_values =
+                std::max(call_temp_capacity_.bool_values, call_temp_usage_.bool_values);
+            return out.str();
+        case TypeKind::Char:
+            out << "__call_tmp_c[" << call_temp_usage_.char_values++ << "]";
+            call_temp_capacity_.char_values =
+                std::max(call_temp_capacity_.char_values, call_temp_usage_.char_values);
+            return out.str();
+        default:
+            assert(false);
+            return "__call_tmp_invalid";
+    }
+}
+
+std::string CodeGenerator::next_call_ref_temp(const SemType &type) {
+    std::ostringstream out;
+    switch (type.kind) {
+        case TypeKind::Integer:
+            out << "__call_tmp_pi[" << call_temp_usage_.int_refs++ << "]";
+            call_temp_capacity_.int_refs =
+                std::max(call_temp_capacity_.int_refs, call_temp_usage_.int_refs);
+            return out.str();
+        case TypeKind::Real:
+            out << "__call_tmp_pr[" << call_temp_usage_.real_refs++ << "]";
+            call_temp_capacity_.real_refs =
+                std::max(call_temp_capacity_.real_refs, call_temp_usage_.real_refs);
+            return out.str();
+        case TypeKind::Boolean:
+            out << "__call_tmp_pb[" << call_temp_usage_.bool_refs++ << "]";
+            call_temp_capacity_.bool_refs =
+                std::max(call_temp_capacity_.bool_refs, call_temp_usage_.bool_refs);
+            return out.str();
+        case TypeKind::Char:
+            out << "__call_tmp_pc[" << call_temp_usage_.char_refs++ << "]";
+            call_temp_capacity_.char_refs =
+                std::max(call_temp_capacity_.char_refs, call_temp_usage_.char_refs);
+            return out.str();
+        default:
+            assert(false);
+            return "__call_tmp_invalid";
+    }
 }
 
 int CodeGenerator::expr_precedence(const AstNode *node) const {

@@ -380,7 +380,101 @@ ans := a[...] + a[...] + a[...] + ...
 
 这样表达式深度不再受 C++ 调用栈限制，`56_long_code2.pas` 随后即可通过。
 
-## 8. 最终结果
+## 8. 端到端输出对拍中暴露的代码生成问题
+
+前面的回归主要验证“能否通过词法、语法、语义阶段”。在把 `testing/open_set` 进一步升级成端到端输出对拍后，又额外暴露出三类代码生成问题。
+
+本轮对拍方式是：
+
+1. 用当前 `pascc` 把 `.pas` 翻译成 `.c`
+2. 用 `cc -std=c99` 把生成的 C 编译成可执行文件
+3. 用 Free Pascal Compiler 3.2.2 直接编译同一份 Pascal 源程序
+4. 若存在同名 `.in` 文件，则两边都喂同一份标准输入
+5. 精确比对两个程序的标准输出
+
+对应自动化脚本是 [testing/run_output_consistency.sh](/Users/yuanweitu/Desktop/college/编译课设/testing/run_output_consistency.sh)。
+
+### 8.1 `write(real)` 格式与精度不一致
+
+#### 现象
+
+`14_div.pas`、`51_var_name.pas`、`65_float.pas` 都暴露了这个问题：
+
+- `2.0` 被打印成 `2`
+- 多参数 `write(...)` 时实数前缺少 Pascal 默认的前导空格
+- 浮点结果只保留了很短的有效数字
+
+#### 根因
+
+旧代码生成把 Pascal `real` 映射成 C `float`，并直接发射：
+
+```c
+printf("%g", expr);
+```
+
+这和当前 FPC 默认的 `write(real)` 行为不一致。FPC 参考输出使用的是带前导空格、16 位小数、3 位指数宽度的科学计数法。
+
+#### 修正
+
+在 [codegen.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/codegen.cpp) 中做了两步修正：
+
+1. 把 Pascal `real` 的目标类型从 `float` 调整成 `double`
+2. 新增 `write_real()` 辅助函数，统一输出兼容 FPC 的科学计数法格式
+
+### 8.2 `integer` 的运行时表示与参考编译器不一致
+
+#### 现象
+
+`42_color.pas` 的 Pascal 参考输出是 `-26056`，而旧生成器按宿主 C 的 `int` 语义执行时输出成了 `39480`。
+
+#### 根因
+
+在当前测试环境下，FPC 的 `integer` 变量、参数、函数返回值体现为 16 位有符号整数语义；而旧生成器把它们全部映射成了宿主平台上的 32 位 `int`。
+
+但同时，`const modn = 1000000007;` 这类无显式类型的整型常量又不能在声明阶段直接截断成 16 位。
+
+#### 修正
+
+在 [codegen.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/codegen.cpp) 中把目标表示拆开处理：
+
+- `integer` 变量、数组元素、参数、函数返回值 -> `int16_t`
+- 整型常量声明 -> `const int`
+
+并同步调整了整数读写格式串。
+
+### 8.3 调用实参的求值顺序被错误交给了 C
+
+#### 现象
+
+`57_many_params.pas` 中存在大量带副作用的调用实参：
+
+```pascal
+param16(getint(i), getint(i), ..., getint(i))
+```
+
+旧生成器直接发射成 C 调用后，得到的结果与 Pascal 参考程序不一致。
+
+#### 根因
+
+C 语言函数调用实参的求值顺序未指定；如果直接生成：
+
+```c
+fn(getint(&i), getint(&i), ...);
+```
+
+就会把 Pascal 语义泄漏成宿主 C 的不确定行为。
+
+另外，用 FPC 做最小验证后可确认：当前环境下参考 Pascal 编译器对这类实参求值采用的是“从右到左”顺序。
+
+#### 修正
+
+在 [codegen.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/codegen.cpp) 的 `emit_call()` 中，不再直接拼实参表达式，而是：
+
+1. 先为值参和 `var` 参分别准备 `__call_tmp_*` 临时槽
+2. 按“从右到左”的顺序把每个实参求值进临时槽
+3. 再按原参数位置调用真正的 C 函数
+
+## 9. 最终结果
 
 完成以上修正后，使用下面的批量命令回归：
 
@@ -390,7 +484,7 @@ for f in testing/open_set/*.pas; do
 done
 ```
 
-当前 `testing/open_set/*.pas` 已全部通过词法、语法和语义阶段。
+当前 `testing/open_set/*.pas` 已全部通过词法、语法和语义阶段；在端到端输出对拍下，`70/70` 个样例也已全部与 Pascal 参考程序输出一致。
 
 需要注意的是：
 

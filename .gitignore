@@ -1,0 +1,5 @@
+pascc
+
+testing/output_consistency_results/
+testing/tmp_check/
+testing/open_set/*.c
