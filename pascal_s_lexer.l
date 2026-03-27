@@ -10,10 +10,35 @@
 
 static int g_line = 1;
 static int g_col = 1;
+static int g_lex_error_count = 0;
+static int g_lex_failed = 0;
+static int g_lex_stop_scanning = 0;
+static int g_lex_scan_terminated_early = 0;
+static const int kMaxLexErrors = 20;
+
+int pascal_s_should_stop_scanning(void);
+
+static int note_lex_error(void) {
+    g_lex_failed = 1;
+    g_lex_error_count += 1;
+    if (g_lex_error_count >= kMaxLexErrors) {
+        if (!g_lex_stop_scanning) {
+            fprintf(stderr, "[词法错误] 行：%d，列：%d - 词法错误过多，停止扫描\n", g_line, g_col);
+        }
+        g_lex_stop_scanning = 1;
+        g_lex_scan_terminated_early = 1;
+        return 1;
+    }
+    return 0;
+}
 
 void lexer_reset_position(void) {
     g_line = 1;
     g_col = 1;
+    g_lex_error_count = 0;
+    g_lex_failed = 0;
+    g_lex_stop_scanning = 0;
+    g_lex_scan_terminated_early = 0;
     yylloc.first_line = 1;
     yylloc.first_column = 1;
     yylloc.last_line = 1;
@@ -73,6 +98,10 @@ static char *normalize_id(const char *src) {
         return (tok); \
     } while (0)
 
+#define YY_USER_ACTION \
+    if (g_lex_stop_scanning || pascal_s_should_stop_scanning()) \
+        return 0;
+
 %}
 
 %x COMMENT
@@ -101,6 +130,8 @@ BAD_CHAR_LIT   '[^'\n]*\n
                                         "[词法错误] 行：%d，列：%d - 未闭合注释\n",
                                         g_line,
                                         g_col);
+                                g_lex_scan_terminated_early = 1;
+                                note_lex_error();
                                 return 0;
                              }
 "//"[^\n]*                  { advance_position(yytext); }
@@ -184,6 +215,9 @@ BAD_CHAR_LIT   '[^'\n]*\n
                                         g_line,
                                         g_col);
                                 advance_position(yytext);
+                                if (note_lex_error()) {
+                                    return 0;
+                                }
                              }
 
 {ID_START}{ID_CHAR}*         {
@@ -200,6 +234,9 @@ BAD_CHAR_LIT   '[^'\n]*\n
                                         g_col,
                                         yytext);
                                 advance_position(yytext);
+                                if (note_lex_error()) {
+                                    return 0;
+                                }
                              }
 
 <<EOF>>                      { return 0; }
@@ -211,6 +248,21 @@ BAD_CHAR_LIT   '[^'\n]*\n
                                         g_col,
                                         yytext);
                                 advance_position(yytext);
+                                if (note_lex_error()) {
+                                    return 0;
+                                }
                              }
 
 %%
+
+int lexer_had_error(void) {
+    return g_lex_failed;
+}
+
+int lexer_error_count(void) {
+    return g_lex_error_count;
+}
+
+int lexer_scan_terminated_early(void) {
+    return g_lex_scan_terminated_early;
+}

@@ -81,6 +81,16 @@ int main(int argc, char **argv) {
     root = parse_pascal_file(input_path);
 
     if (root == NULL) {
+        if (pascal_s_had_lexical_error()) {
+            std::fprintf(stderr,
+                         "编译终止：词法阶段共发现 %d 个错误\n",
+                         pascal_s_lexical_error_count());
+        }
+        if (pascal_s_had_syntax_error()) {
+            std::fprintf(stderr,
+                         "编译终止：语法阶段共发现 %d 个错误\n",
+                         pascal_s_syntax_error_count());
+        }
         return 1;
     }
 
@@ -94,6 +104,9 @@ int main(int argc, char **argv) {
     SemanticResult sem = analyzer.analyze(root);
     if (!sem.ok) {
         print_semantic_errors(stderr, sem.errors);
+        std::fprintf(stderr,
+                     "编译终止：语义阶段共发现 %zu 个错误\n",
+                     sem.errors.size());
         ast_free(root);
         g_ast_root = NULL;
         return 1;

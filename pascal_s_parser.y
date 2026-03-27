@@ -9,9 +9,16 @@ int yylex(void);
 void yyerror(const char *msg);
 void yyrestart(FILE *input_file);
 void lexer_reset_position(void);
+int lexer_had_error(void);
+int lexer_error_count(void);
+int lexer_scan_terminated_early(void);
 
 AstNode *g_ast_root = NULL;
 static int g_parse_failed = 0;
+static int g_parse_error_count = 0;
+static int g_parse_error_limit_hit = 0;
+static int g_parse_stop_requested = 0;
+static const int kMaxParseErrors = 20;
 
 static char *dup_text(const char *text) {
     size_t len = strlen(text);
@@ -26,6 +33,10 @@ static char *dup_text(const char *text) {
 
 #define AST_LOC(loc) \
     ast_make_location((loc).first_line, (loc).first_column, (loc).last_line, (loc).last_column)
+
+static void parser_note_at(int line, int col, const char *stage, const char *msg) {
+    fprintf(stderr, "[%s] 行：%d，列：%d - %s\n", stage, line, col, msg);
+}
 
 /*
  * This file is a parser-side contract for the Flex group.
@@ -55,6 +66,7 @@ static char *dup_text(const char *text) {
 }
 
 %start programstruct
+%expect 2
 
 /* Keywords */
 %token PROGRAM CONST VAR PROCEDURE FUNCTION
@@ -330,6 +342,15 @@ formal_parameter
       {
           $$ = $2;
       }
+    | LPAREN error RPAREN
+      {
+          parser_note_at(@2.first_line,
+                         @2.first_column,
+                         "语法恢复",
+                         "形参列表存在语法错误，已恢复到右括号");
+          yyerrok;
+          $$ = ast_new(AST_PARAM_LIST, AST_LOC(@$));
+      }
     ;
 
 parameter_list
@@ -383,6 +404,15 @@ compound_statement
       {
           $$ = ast_make_compound_stmt($2, AST_LOC(@$));
       }
+    | BEGIN_KW error END_KW
+      {
+          parser_note_at(@2.first_line,
+                         @2.first_column,
+                         "语法恢复",
+                         "复合语句内部存在语法错误，已恢复到 end");
+          yyerrok;
+          $$ = ast_make_compound_stmt(ast_new(AST_STATEMENT_LIST, AST_LOC(@$)), AST_LOC(@$));
+      }
     ;
 
 statement_list
@@ -393,6 +423,24 @@ statement_list
       }
     | statement_list SEMICOLON statement
       {
+          $$ = ast_append_list($1, $3);
+      }
+    | statement_list SEMICOLON error
+      {
+          parser_note_at(@3.first_line,
+                         @3.first_column,
+                         "语法恢复",
+                         "语句存在语法错误，已跳过到下一个分号或 end 后继续");
+          yyerrok;
+          $$ = $1;
+      }
+    | statement_list error statement
+      {
+          parser_note_at(@2.first_line,
+                         @2.first_column,
+                         "语法恢复",
+                         "语句之间可能缺少分号，已恢复并继续");
+          yyerrok;
           $$ = ast_append_list($1, $3);
       }
     ;
@@ -435,9 +483,27 @@ statement
       {
           $$ = ast_make_read_stmt($3, AST_LOC(@$));
       }
+    | READ LPAREN error RPAREN
+      {
+          parser_note_at(@3.first_line,
+                         @3.first_column,
+                         "语法恢复",
+                         "read 参数列表存在语法错误，已恢复到右括号");
+          yyerrok;
+          $$ = ast_make_read_stmt(ast_new(AST_VARIABLE_LIST, AST_LOC(@$)), AST_LOC(@$));
+      }
     | WRITE LPAREN expression_list RPAREN
       {
           $$ = ast_make_write_stmt($3, AST_LOC(@$));
+      }
+    | WRITE LPAREN error RPAREN
+      {
+          parser_note_at(@3.first_line,
+                         @3.first_column,
+                         "语法恢复",
+                         "write 参数列表存在语法错误，已恢复到右括号");
+          yyerrok;
+          $$ = ast_make_write_stmt(ast_new(AST_EXPRESSION_LIST, AST_LOC(@$)), AST_LOC(@$));
       }
     ;
 
@@ -470,6 +536,15 @@ id_varpart
       {
           $$ = $2;
       }
+    | LBRACK error RBRACK
+      {
+          parser_note_at(@2.first_line,
+                         @2.first_column,
+                         "语法恢复",
+                         "数组下标列表存在语法错误，已恢复到右中括号");
+          yyerrok;
+          $$ = ast_new(AST_EXPRESSION_LIST, AST_LOC(@$));
+      }
     ;
 
 procedure_call
@@ -486,6 +561,19 @@ procedure_call
     | ID LPAREN expression_list RPAREN
       {
           $$ = ast_make_call(AST_CALL_STMT, $1, $3, AST_LOC(@$));
+          free($1);
+      }
+    | ID LPAREN error RPAREN
+      {
+          parser_note_at(@3.first_line,
+                         @3.first_column,
+                         "语法恢复",
+                         "调用实参列表存在语法错误，已恢复到右括号");
+          yyerrok;
+          $$ = ast_make_call(AST_CALL_STMT,
+                             $1,
+                             ast_new(AST_EXPRESSION_LIST, AST_LOC(@$)),
+                             AST_LOC(@$));
           free($1);
       }
     ;
@@ -554,6 +642,19 @@ factor
     | ID LPAREN expression_list RPAREN
       {
           $$ = ast_make_call(AST_CALL_EXPR, $1, $3, AST_LOC(@$));
+          free($1);
+      }
+    | ID LPAREN error RPAREN
+      {
+          parser_note_at(@3.first_line,
+                         @3.first_column,
+                         "语法恢复",
+                         "函数调用实参列表存在语法错误，已恢复到右括号");
+          yyerrok;
+          $$ = ast_make_call(AST_CALL_EXPR,
+                             $1,
+                             ast_new(AST_EXPRESSION_LIST, AST_LOC(@$)),
+                             AST_LOC(@$));
           free($1);
       }
     | ID LPAREN RPAREN
@@ -662,12 +763,31 @@ num
 %%
 
 void yyerror(const char *msg) {
+    if (lexer_scan_terminated_early()) {
+        g_parse_failed = 1;
+        return;
+    }
+
     g_parse_failed = 1;
-    fprintf(stderr,
-            "parse error at %d:%d: %s\n",
-            yylloc.first_line,
-            yylloc.first_column,
-            msg);
+    if (g_parse_error_limit_hit) {
+        return;
+    }
+
+    g_parse_error_count += 1;
+    parser_note_at(yylloc.first_line, yylloc.first_column, "语法错误", msg);
+
+    if (g_parse_error_count >= kMaxParseErrors) {
+        g_parse_error_limit_hit = 1;
+        g_parse_stop_requested = 1;
+        parser_note_at(yylloc.first_line,
+                       yylloc.first_column,
+                       "语法错误",
+                       "语法错误过多，停止继续分析");
+    }
+}
+
+int pascal_s_should_stop_scanning(void) {
+    return g_parse_stop_requested;
 }
 
 AstNode *pascal_s_get_ast_root(void) {
@@ -676,6 +796,9 @@ AstNode *pascal_s_get_ast_root(void) {
 
 AstNode *parse_pascal_stream(FILE *input) {
     g_parse_failed = 0;
+    g_parse_error_count = 0;
+    g_parse_error_limit_hit = 0;
+    g_parse_stop_requested = 0;
     g_ast_root = NULL;
     lexer_reset_position();
     yyrestart(input);
@@ -699,4 +822,20 @@ AstNode *parse_pascal_file(const char *path) {
     root = parse_pascal_stream(input);
     fclose(input);
     return root;
+}
+
+bool pascal_s_had_lexical_error(void) {
+    return lexer_had_error() != 0;
+}
+
+int pascal_s_lexical_error_count(void) {
+    return lexer_error_count();
+}
+
+bool pascal_s_had_syntax_error(void) {
+    return g_parse_error_count > 0;
+}
+
+int pascal_s_syntax_error_count(void) {
+    return g_parse_error_count;
 }

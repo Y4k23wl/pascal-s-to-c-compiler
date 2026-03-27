@@ -604,6 +604,10 @@ AST 的构造发生在 `pascal_s_parser.y` 的归约动作中。
 - `parse_pascal_stream(FILE *input)`
 - `parse_pascal_file(const char *path)`
 - `pascal_s_get_ast_root()`
+- `pascal_s_had_lexical_error()`
+- `pascal_s_lexical_error_count()`
+- `pascal_s_had_syntax_error()`
+- `pascal_s_syntax_error_count()`
 
 推荐语义分析入口形式：
 
@@ -620,6 +624,12 @@ if (!ast_validate(stderr, root)) {
 SemanticAnalyzer analyzer;
 analyzer.analyze(root);
 ```
+
+错误恢复接入后，接口约定补充为：
+
+- 词法或语法阶段即使进行了恢复，只要最终出现错误，`parse_pascal_*` 仍返回 `nullptr`
+- 恢复期间构造的占位节点仍应满足 AST 结构约束，避免把错误传播成空指针崩溃
+- 语句恢复优先使用空语句、空参数列表、空表达式列表这类现有节点，而不是额外引入复杂错误节点
 
 当前驱动 `pascal_s_driver.cpp` 额外支持：
 

@@ -6,8 +6,12 @@
 
 - `open_set/`
   - Pascal 样例集及其配套 `.in` 输入文件
+- `error_recovery/`
+  - 专门用于错误恢复验证的错误样例
 - `run_output_consistency.sh`
   - 端到端对拍脚本
+- `run_error_recovery_checks.sh`
+  - 错误恢复回归脚本，收集错误输出日志
 
 ## 用法
 
@@ -25,6 +29,18 @@
 4. 用 `fpc` 编译同一份 Pascal 源程序
 5. 运行两边可执行文件并逐样例比对标准输出
 
+错误恢复样例可在 `code/` 仓库根目录执行：
+
+```bash
+./testing/run_error_recovery_checks.sh
+```
+
+该脚本会：
+
+1. 重新编译当前源码生成 `./pascc`
+2. 逐个运行 `testing/error_recovery/*.pas`
+3. 将每个样例的标准输出、标准错误和退出码写入结果目录
+
 ## 依赖
 
 - `cc`
@@ -35,6 +51,7 @@
 默认输出目录：
 
 - `testing/output_consistency_results/`
+- `testing/error_recovery_results/`
 
 其中：
 
