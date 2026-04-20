@@ -5,7 +5,6 @@
 
 static void write_real(double value) {
     char buffer[64];
-    char formatted[64];
     char *exp = NULL;
     int exponent = 0;
     char sign;
@@ -24,8 +23,7 @@ static void write_real(double value) {
         }
     }
     *exp = '\0';
-    snprintf(formatted, sizeof(formatted), "%sE%c%03d", buffer, sign, exponent);
-    printf("%s", formatted);
+    printf("%sE%c%03d", buffer, sign, exponent);
 }
 
 static bool read_bool(bool *out_value) {
@@ -48,31 +46,13 @@ static void write_bool(bool value) {
     printf("%s", value ? "true" : "false");
 }
 
-const int c_a = 10;
-const int c_b = 3;
-int16_t g_i;
-int16_t g_x;
-double g_y;
+int16_t g_a;
+int16_t g_b;
 
 int main(void) {
-    g_x = c_a + c_b * 2;
-    g_y = 3.1400000000000001;
-    if (g_x > 10)
-    {
-        printf("%d", (int)g_x);
-    }
-    else
-    {
-        printf("%d", (int)c_b);
-    }
-    {
-        int __for_end_1 = 5;
-        for (g_i = 1; g_i <= __for_end_1; ++g_i)
-        {
-            printf("%d", (int)g_i);
-        }
-    }
-    scanf("%hd", (&(g_x)));
-    write_real(g_y);
+    g_a = 10;
+    g_b = -1;
+    printf("%d", (int)g_a + g_b);
+    ;
     return 0;
 }
