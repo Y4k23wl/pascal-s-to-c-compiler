@@ -19,6 +19,7 @@ cmake --build build --config Release
 - 用 `bison` 生成词法/语法分析相关代码
 - 用 `flex` 生成词法分析器代码
 - 编译并链接生成 `build/bin/pascc`
+- 此时程序会在`build/bin/pascc`
 
 如果需要从干净目录重新全量构建：
 
