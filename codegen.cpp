@@ -80,36 +80,9 @@ void CodeGenerator::emit_program(const AstNode *node) {
 }
 
 void CodeGenerator::emit_helpers() {
-    emit_line("static void write_real(double value) {");
+    emit_line("static void write_real(float value) {");
     ++indent_level_;
-    emit_line("char buffer[64];");
-    emit_line("char *exp = NULL;");
-    emit_line("int exponent = 0;");
-    emit_line("char sign;");
-    emit_line("if (snprintf(buffer, sizeof(buffer), \" %.16E\", value) < 0) {");
-    ++indent_level_;
-    emit_line("return;");
-    --indent_level_;
-    emit_line("}");
-    emit_line("exp = strchr(buffer, 'E');");
-    emit_line("if (exp == NULL) {");
-    ++indent_level_;
-    emit_line("printf(\"%s\", buffer);");
-    emit_line("return;");
-    --indent_level_;
-    emit_line("}");
-    emit_line("sign = exp[1];");
-    emit_line("for (char *p = exp + 2; *p != '\\0'; ++p) {");
-    ++indent_level_;
-    emit_line("if (*p >= '0' && *p <= '9') {");
-    ++indent_level_;
-    emit_line("exponent = exponent * 10 + (*p - '0');");
-    --indent_level_;
-    emit_line("}");
-    --indent_level_;
-    emit_line("}");
-    emit_line("*exp = '\\0';");
-    emit_line("printf(\"%sE%c%03d\", buffer, sign, exponent);");
+    emit_line("printf(\"%f\", value);");
     --indent_level_;
     emit_line("}");
     emit_line();
@@ -174,10 +147,10 @@ void CodeGenerator::plan_call_temps(const AstNode *node) {
 
 void CodeGenerator::emit_call_temp_decls() {
     if (call_temp_capacity_.int_values != 0) {
-        emit_line("static int16_t __call_tmp_i[" + size_literal(call_temp_capacity_.int_values) + "];");
+        emit_line("static int __call_tmp_i[" + size_literal(call_temp_capacity_.int_values) + "];");
     }
     if (call_temp_capacity_.real_values != 0) {
-        emit_line("static double __call_tmp_r[" + size_literal(call_temp_capacity_.real_values) + "];");
+        emit_line("static float __call_tmp_r[" + size_literal(call_temp_capacity_.real_values) + "];");
     }
     if (call_temp_capacity_.bool_values != 0) {
         emit_line("static bool __call_tmp_b[" + size_literal(call_temp_capacity_.bool_values) + "];");
@@ -186,10 +159,10 @@ void CodeGenerator::emit_call_temp_decls() {
         emit_line("static char __call_tmp_c[" + size_literal(call_temp_capacity_.char_values) + "];");
     }
     if (call_temp_capacity_.int_refs != 0) {
-        emit_line("static int16_t * __call_tmp_pi[" + size_literal(call_temp_capacity_.int_refs) + "];");
+        emit_line("static int * __call_tmp_pi[" + size_literal(call_temp_capacity_.int_refs) + "];");
     }
     if (call_temp_capacity_.real_refs != 0) {
-        emit_line("static double * __call_tmp_pr[" + size_literal(call_temp_capacity_.real_refs) + "];");
+        emit_line("static float * __call_tmp_pr[" + size_literal(call_temp_capacity_.real_refs) + "];");
     }
     if (call_temp_capacity_.bool_refs != 0) {
         emit_line("static bool * __call_tmp_pb[" + size_literal(call_temp_capacity_.bool_refs) + "];");
@@ -419,10 +392,10 @@ void CodeGenerator::emit_stmt(const AstNode *node) {
                 assert(info != NULL);
                 switch (info->type.kind) {
                     case TypeKind::Integer:
-                        emit_line("scanf(\"%hd\", " + emit_address_of(var) + ");");
+                        emit_line("scanf(\"%d\", " + emit_address_of(var) + ");");
                         break;
                     case TypeKind::Real:
-                        emit_line("scanf(\"%lf\", " + emit_address_of(var) + ");");
+                        emit_line("scanf(\"%f\", " + emit_address_of(var) + ");");
                         break;
                     case TypeKind::Char:
                         emit_line("scanf(\" %c\", " + emit_address_of(var) + ");");
@@ -566,8 +539,8 @@ std::string CodeGenerator::emit_expr_with_parent(const AstNode *node,
             if (node->text == "/") {
                 if (lhs_info->type.kind == TypeKind::Integer &&
                     rhs_info->type.kind == TypeKind::Integer) {
-                    text = "(double)" + emit_expr_with_parent(lhs, current_precedence, false) +
-                           " / (double)" +
+                    text = "(float)" + emit_expr_with_parent(lhs, current_precedence, false) +
+                           " / (float)" +
                            emit_expr_with_parent(rhs, current_precedence, true);
                     break;
                 }
@@ -735,9 +708,9 @@ std::string CodeGenerator::emit_signature(const Symbol &symbol) const {
 std::string CodeGenerator::c_type_name(const SemType &type) const {
     switch (type.kind) {
         case TypeKind::Integer:
-            return "int16_t";
+            return "int";
         case TypeKind::Real:
-            return "double";
+            return "float";
         case TypeKind::Boolean:
             return "bool";
         case TypeKind::Char:
