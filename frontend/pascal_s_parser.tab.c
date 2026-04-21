@@ -184,7 +184,7 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 1 "code/pascal_s_parser.y"
+#line 1 "frontend/pascal_s_parser.y"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -262,7 +262,7 @@ static void parser_note_at(int line, int col, const char *stage, const char *msg
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 61 "code/pascal_s_parser.y"
+#line 61 "frontend/pascal_s_parser.y"
 {
     char *sval;
     int ival;
@@ -270,7 +270,7 @@ typedef union YYSTYPE
     struct AstNode *node;
 }
 /* Line 193 of yacc.c.  */
-#line 274 "code/pascal_s_parser.tab.c"
+#line 274 "frontend/pascal_s_parser.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -295,7 +295,7 @@ typedef struct YYLTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 299 "code/pascal_s_parser.tab.c"
+#line 299 "frontend/pascal_s_parser.tab.c"
 
 #ifdef short
 # undef short
@@ -1716,7 +1716,7 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 137 "code/pascal_s_parser.y"
+#line 137 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_program((yyvsp[(1) - (4)].node), (yyvsp[(3) - (4)].node), AST_LOC((yyloc)));
           g_ast_root = (yyval.node);
@@ -1724,7 +1724,7 @@ yyreduce:
     break;
 
   case 3:
-#line 145 "code/pascal_s_parser.y"
+#line 145 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_program_head((yyvsp[(2) - (5)].sval), (yyvsp[(4) - (5)].node), AST_LOC((yyloc)));
           free((yyvsp[(2) - (5)].sval));
@@ -1732,7 +1732,7 @@ yyreduce:
     break;
 
   case 4:
-#line 150 "code/pascal_s_parser.y"
+#line 150 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_program_head((yyvsp[(2) - (2)].sval), NULL, AST_LOC((yyloc)));
           free((yyvsp[(2) - (2)].sval));
@@ -1740,14 +1740,14 @@ yyreduce:
     break;
 
   case 5:
-#line 158 "code/pascal_s_parser.y"
+#line 158 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_block((yyvsp[(1) - (4)].node), (yyvsp[(2) - (4)].node), (yyvsp[(3) - (4)].node), (yyvsp[(4) - (4)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 6:
-#line 165 "code/pascal_s_parser.y"
+#line 165 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_identifier_list(ast_make_identifier((yyvsp[(1) - (1)].sval), AST_LOC((yylsp[(1) - (1)]))), AST_LOC((yyloc)));
           free((yyvsp[(1) - (1)].sval));
@@ -1755,7 +1755,7 @@ yyreduce:
     break;
 
   case 7:
-#line 170 "code/pascal_s_parser.y"
+#line 170 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_append_list((yyvsp[(1) - (3)].node), ast_make_identifier((yyvsp[(3) - (3)].sval), AST_LOC((yylsp[(3) - (3)]))));
           free((yyvsp[(3) - (3)].sval));
@@ -1763,21 +1763,21 @@ yyreduce:
     break;
 
   case 8:
-#line 178 "code/pascal_s_parser.y"
+#line 178 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_CONST_DECL_LIST, AST_LOC((yyloc)));
       ;}
     break;
 
   case 9:
-#line 182 "code/pascal_s_parser.y"
+#line 182 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(2) - (3)].node);
       ;}
     break;
 
   case 10:
-#line 189 "code/pascal_s_parser.y"
+#line 189 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_CONST_DECL_LIST, AST_LOC((yyloc)));
           ast_append_list((yyval.node), ast_make_const_decl((yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].node), AST_LOC((yyloc))));
@@ -1786,7 +1786,7 @@ yyreduce:
     break;
 
   case 11:
-#line 195 "code/pascal_s_parser.y"
+#line 195 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_append_list((yyvsp[(1) - (5)].node), ast_make_const_decl((yyvsp[(3) - (5)].sval), (yyvsp[(5) - (5)].node), AST_LOC((yylsp[(3) - (5)]))));
           free((yyvsp[(3) - (5)].sval));
@@ -1794,28 +1794,28 @@ yyreduce:
     break;
 
   case 12:
-#line 203 "code/pascal_s_parser.y"
+#line 203 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(2) - (2)].node);
       ;}
     break;
 
   case 13:
-#line 207 "code/pascal_s_parser.y"
+#line 207 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_unary_expr("-", (yyvsp[(2) - (2)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 14:
-#line 211 "code/pascal_s_parser.y"
+#line 211 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(1) - (1)].node);
       ;}
     break;
 
   case 15:
-#line 215 "code/pascal_s_parser.y"
+#line 215 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new_text(AST_CHAR_LITERAL, AST_LOC((yylsp[(1) - (1)])), (yyvsp[(1) - (1)].sval));
           free((yyvsp[(1) - (1)].sval));
@@ -1823,35 +1823,35 @@ yyreduce:
     break;
 
   case 16:
-#line 220 "code/pascal_s_parser.y"
+#line 220 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_bool_literal(true, AST_LOC((yylsp[(1) - (1)])));
       ;}
     break;
 
   case 17:
-#line 224 "code/pascal_s_parser.y"
+#line 224 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_bool_literal(false, AST_LOC((yylsp[(1) - (1)])));
       ;}
     break;
 
   case 18:
-#line 231 "code/pascal_s_parser.y"
+#line 231 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_VAR_DECL_LIST, AST_LOC((yyloc)));
       ;}
     break;
 
   case 19:
-#line 235 "code/pascal_s_parser.y"
+#line 235 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(2) - (3)].node);
       ;}
     break;
 
   case 20:
-#line 242 "code/pascal_s_parser.y"
+#line 242 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_VAR_DECL_LIST, AST_LOC((yyloc)));
           ast_append_list((yyval.node), ast_make_var_decl((yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), AST_LOC((yyloc))));
@@ -1859,56 +1859,56 @@ yyreduce:
     break;
 
   case 21:
-#line 247 "code/pascal_s_parser.y"
+#line 247 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_append_list((yyvsp[(1) - (5)].node), ast_make_var_decl((yyvsp[(3) - (5)].node), (yyvsp[(5) - (5)].node), AST_LOC((yylsp[(3) - (5)]))));
       ;}
     break;
 
   case 22:
-#line 254 "code/pascal_s_parser.y"
+#line 254 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(1) - (1)].node);
       ;}
     break;
 
   case 23:
-#line 258 "code/pascal_s_parser.y"
+#line 258 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_array_type((yyvsp[(3) - (6)].node), (yyvsp[(6) - (6)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 24:
-#line 265 "code/pascal_s_parser.y"
+#line 265 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_basic_type("integer", AST_LOC((yylsp[(1) - (1)])));
       ;}
     break;
 
   case 25:
-#line 269 "code/pascal_s_parser.y"
+#line 269 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_basic_type("real", AST_LOC((yylsp[(1) - (1)])));
       ;}
     break;
 
   case 26:
-#line 273 "code/pascal_s_parser.y"
+#line 273 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_basic_type("boolean", AST_LOC((yylsp[(1) - (1)])));
       ;}
     break;
 
   case 27:
-#line 277 "code/pascal_s_parser.y"
+#line 277 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_basic_type("char", AST_LOC((yylsp[(1) - (1)])));
       ;}
     break;
 
   case 28:
-#line 284 "code/pascal_s_parser.y"
+#line 284 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_PERIOD_LIST, AST_LOC((yyloc)));
           ast_append_list((yyval.node), ast_make_period((yyvsp[(1) - (3)].ival), (yyvsp[(3) - (3)].ival), AST_LOC((yyloc))));
@@ -1916,42 +1916,42 @@ yyreduce:
     break;
 
   case 29:
-#line 289 "code/pascal_s_parser.y"
+#line 289 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_append_list((yyvsp[(1) - (5)].node), ast_make_period((yyvsp[(3) - (5)].ival), (yyvsp[(5) - (5)].ival), AST_LOC((yylsp[(3) - (5)]))));
       ;}
     break;
 
   case 30:
-#line 296 "code/pascal_s_parser.y"
+#line 296 "frontend/pascal_s_parser.y"
     {
           (yyval.ival) = (yyvsp[(1) - (1)].ival);
       ;}
     break;
 
   case 31:
-#line 303 "code/pascal_s_parser.y"
+#line 303 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_SUBPROGRAM_LIST, AST_LOC((yyloc)));
       ;}
     break;
 
   case 32:
-#line 307 "code/pascal_s_parser.y"
+#line 307 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_append_list((yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node));
       ;}
     break;
 
   case 33:
-#line 314 "code/pascal_s_parser.y"
+#line 314 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_subprogram((yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 34:
-#line 321 "code/pascal_s_parser.y"
+#line 321 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_subprogram_head(false, (yyvsp[(2) - (3)].sval), (yyvsp[(3) - (3)].node), NULL, AST_LOC((yyloc)));
           free((yyvsp[(2) - (3)].sval));
@@ -1959,7 +1959,7 @@ yyreduce:
     break;
 
   case 35:
-#line 326 "code/pascal_s_parser.y"
+#line 326 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_subprogram_head(true, (yyvsp[(2) - (5)].sval), (yyvsp[(3) - (5)].node), (yyvsp[(5) - (5)].node), AST_LOC((yyloc)));
           free((yyvsp[(2) - (5)].sval));
@@ -1967,28 +1967,28 @@ yyreduce:
     break;
 
   case 36:
-#line 334 "code/pascal_s_parser.y"
+#line 334 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_PARAM_LIST, AST_LOC((yyloc)));
       ;}
     break;
 
   case 37:
-#line 338 "code/pascal_s_parser.y"
+#line 338 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_PARAM_LIST, AST_LOC((yyloc)));
       ;}
     break;
 
   case 38:
-#line 342 "code/pascal_s_parser.y"
+#line 342 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(2) - (3)].node);
       ;}
     break;
 
   case 39:
-#line 346 "code/pascal_s_parser.y"
+#line 346 "frontend/pascal_s_parser.y"
     {
           parser_note_at((yylsp[(2) - (3)]).first_line,
                          (yylsp[(2) - (3)]).first_column,
@@ -2000,7 +2000,7 @@ yyreduce:
     break;
 
   case 40:
-#line 358 "code/pascal_s_parser.y"
+#line 358 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_PARAM_LIST, AST_LOC((yyloc)));
           ast_append_list((yyval.node), (yyvsp[(1) - (1)].node));
@@ -2008,28 +2008,28 @@ yyreduce:
     break;
 
   case 41:
-#line 363 "code/pascal_s_parser.y"
+#line 363 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_append_list((yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node));
       ;}
     break;
 
   case 42:
-#line 370 "code/pascal_s_parser.y"
+#line 370 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(1) - (1)].node);
       ;}
     break;
 
   case 43:
-#line 374 "code/pascal_s_parser.y"
+#line 374 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(1) - (1)].node);
       ;}
     break;
 
   case 44:
-#line 381 "code/pascal_s_parser.y"
+#line 381 "frontend/pascal_s_parser.y"
     {
           (yyvsp[(2) - (2)].node)->flag = true;
           (yyvsp[(2) - (2)].node)->loc = AST_LOC((yyloc));
@@ -2038,28 +2038,28 @@ yyreduce:
     break;
 
   case 45:
-#line 390 "code/pascal_s_parser.y"
+#line 390 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_param_group(false, (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 46:
-#line 397 "code/pascal_s_parser.y"
+#line 397 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_block((yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), ast_new(AST_SUBPROGRAM_LIST, AST_LOC((yyloc))), (yyvsp[(3) - (3)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 47:
-#line 404 "code/pascal_s_parser.y"
+#line 404 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_compound_stmt((yyvsp[(2) - (3)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 48:
-#line 408 "code/pascal_s_parser.y"
+#line 408 "frontend/pascal_s_parser.y"
     {
           parser_note_at((yylsp[(2) - (3)]).first_line,
                          (yylsp[(2) - (3)]).first_column,
@@ -2071,7 +2071,7 @@ yyreduce:
     break;
 
   case 49:
-#line 420 "code/pascal_s_parser.y"
+#line 420 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_STATEMENT_LIST, AST_LOC((yyloc)));
           ast_append_list((yyval.node), (yyvsp[(1) - (1)].node));
@@ -2079,14 +2079,14 @@ yyreduce:
     break;
 
   case 50:
-#line 425 "code/pascal_s_parser.y"
+#line 425 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_append_list((yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node));
       ;}
     break;
 
   case 51:
-#line 429 "code/pascal_s_parser.y"
+#line 429 "frontend/pascal_s_parser.y"
     {
           parser_note_at((yylsp[(3) - (3)]).first_line,
                          (yylsp[(3) - (3)]).first_column,
@@ -2098,7 +2098,7 @@ yyreduce:
     break;
 
   case 52:
-#line 438 "code/pascal_s_parser.y"
+#line 438 "frontend/pascal_s_parser.y"
     {
           parser_note_at((yylsp[(2) - (3)]).first_line,
                          (yylsp[(2) - (3)]).first_column,
@@ -2110,56 +2110,56 @@ yyreduce:
     break;
 
   case 53:
-#line 450 "code/pascal_s_parser.y"
+#line 450 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_empty_stmt(AST_LOC((yyloc)));
       ;}
     break;
 
   case 54:
-#line 454 "code/pascal_s_parser.y"
+#line 454 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_assign_stmt((yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 55:
-#line 458 "code/pascal_s_parser.y"
+#line 458 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(1) - (1)].node);
       ;}
     break;
 
   case 56:
-#line 462 "code/pascal_s_parser.y"
+#line 462 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(1) - (1)].node);
       ;}
     break;
 
   case 57:
-#line 466 "code/pascal_s_parser.y"
+#line 466 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_if_stmt((yyvsp[(2) - (4)].node), (yyvsp[(4) - (4)].node), NULL, AST_LOC((yyloc)));
       ;}
     break;
 
   case 58:
-#line 470 "code/pascal_s_parser.y"
+#line 470 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_if_stmt((yyvsp[(2) - (6)].node), (yyvsp[(4) - (6)].node), (yyvsp[(6) - (6)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 59:
-#line 474 "code/pascal_s_parser.y"
+#line 474 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_while_stmt((yyvsp[(2) - (4)].node), (yyvsp[(4) - (4)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 60:
-#line 478 "code/pascal_s_parser.y"
+#line 478 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_for_stmt((yyvsp[(2) - (8)].sval), (yyvsp[(4) - (8)].node), (yyvsp[(6) - (8)].node), (yyvsp[(8) - (8)].node), AST_LOC((yyloc)));
           free((yyvsp[(2) - (8)].sval));
@@ -2167,14 +2167,14 @@ yyreduce:
     break;
 
   case 61:
-#line 483 "code/pascal_s_parser.y"
+#line 483 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_read_stmt((yyvsp[(3) - (4)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 62:
-#line 487 "code/pascal_s_parser.y"
+#line 487 "frontend/pascal_s_parser.y"
     {
           parser_note_at((yylsp[(3) - (4)]).first_line,
                          (yylsp[(3) - (4)]).first_column,
@@ -2186,14 +2186,14 @@ yyreduce:
     break;
 
   case 63:
-#line 496 "code/pascal_s_parser.y"
+#line 496 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_write_stmt((yyvsp[(3) - (4)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 64:
-#line 500 "code/pascal_s_parser.y"
+#line 500 "frontend/pascal_s_parser.y"
     {
           parser_note_at((yylsp[(3) - (4)]).first_line,
                          (yylsp[(3) - (4)]).first_column,
@@ -2205,7 +2205,7 @@ yyreduce:
     break;
 
   case 65:
-#line 512 "code/pascal_s_parser.y"
+#line 512 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_VARIABLE_LIST, AST_LOC((yyloc)));
           ast_append_list((yyval.node), (yyvsp[(1) - (1)].node));
@@ -2213,14 +2213,14 @@ yyreduce:
     break;
 
   case 66:
-#line 517 "code/pascal_s_parser.y"
+#line 517 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_append_list((yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node));
       ;}
     break;
 
   case 67:
-#line 524 "code/pascal_s_parser.y"
+#line 524 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_var_ref((yyvsp[(1) - (2)].sval), (yyvsp[(2) - (2)].node), AST_LOC((yyloc)));
           free((yyvsp[(1) - (2)].sval));
@@ -2228,21 +2228,21 @@ yyreduce:
     break;
 
   case 68:
-#line 532 "code/pascal_s_parser.y"
+#line 532 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = NULL;
       ;}
     break;
 
   case 69:
-#line 536 "code/pascal_s_parser.y"
+#line 536 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(2) - (3)].node);
       ;}
     break;
 
   case 70:
-#line 540 "code/pascal_s_parser.y"
+#line 540 "frontend/pascal_s_parser.y"
     {
           parser_note_at((yylsp[(2) - (3)]).first_line,
                          (yylsp[(2) - (3)]).first_column,
@@ -2254,7 +2254,7 @@ yyreduce:
     break;
 
   case 71:
-#line 552 "code/pascal_s_parser.y"
+#line 552 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_call(AST_CALL_STMT, (yyvsp[(1) - (1)].sval), NULL, AST_LOC((yyloc)));
           free((yyvsp[(1) - (1)].sval));
@@ -2262,7 +2262,7 @@ yyreduce:
     break;
 
   case 72:
-#line 557 "code/pascal_s_parser.y"
+#line 557 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_call(AST_CALL_STMT, (yyvsp[(1) - (3)].sval), NULL, AST_LOC((yyloc)));
           free((yyvsp[(1) - (3)].sval));
@@ -2270,7 +2270,7 @@ yyreduce:
     break;
 
   case 73:
-#line 562 "code/pascal_s_parser.y"
+#line 562 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_call(AST_CALL_STMT, (yyvsp[(1) - (4)].sval), (yyvsp[(3) - (4)].node), AST_LOC((yyloc)));
           free((yyvsp[(1) - (4)].sval));
@@ -2278,7 +2278,7 @@ yyreduce:
     break;
 
   case 74:
-#line 567 "code/pascal_s_parser.y"
+#line 567 "frontend/pascal_s_parser.y"
     {
           parser_note_at((yylsp[(3) - (4)]).first_line,
                          (yylsp[(3) - (4)]).first_column,
@@ -2294,7 +2294,7 @@ yyreduce:
     break;
 
   case 75:
-#line 583 "code/pascal_s_parser.y"
+#line 583 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_EXPRESSION_LIST, AST_LOC((yyloc)));
           ast_append_list((yyval.node), (yyvsp[(1) - (1)].node));
@@ -2302,21 +2302,21 @@ yyreduce:
     break;
 
   case 76:
-#line 588 "code/pascal_s_parser.y"
+#line 588 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_append_list((yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node));
       ;}
     break;
 
   case 77:
-#line 595 "code/pascal_s_parser.y"
+#line 595 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(1) - (1)].node);
       ;}
     break;
 
   case 78:
-#line 599 "code/pascal_s_parser.y"
+#line 599 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_binary_expr((yyvsp[(2) - (3)].sval), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), AST_LOC((yyloc)));
           free((yyvsp[(2) - (3)].sval));
@@ -2324,14 +2324,14 @@ yyreduce:
     break;
 
   case 79:
-#line 607 "code/pascal_s_parser.y"
+#line 607 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(1) - (1)].node);
       ;}
     break;
 
   case 80:
-#line 611 "code/pascal_s_parser.y"
+#line 611 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_binary_expr((yyvsp[(2) - (3)].sval), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), AST_LOC((yyloc)));
           free((yyvsp[(2) - (3)].sval));
@@ -2339,14 +2339,14 @@ yyreduce:
     break;
 
   case 81:
-#line 619 "code/pascal_s_parser.y"
+#line 619 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(1) - (1)].node);
       ;}
     break;
 
   case 82:
-#line 623 "code/pascal_s_parser.y"
+#line 623 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_binary_expr((yyvsp[(2) - (3)].sval), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), AST_LOC((yyloc)));
           free((yyvsp[(2) - (3)].sval));
@@ -2354,28 +2354,28 @@ yyreduce:
     break;
 
   case 83:
-#line 631 "code/pascal_s_parser.y"
+#line 631 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(1) - (1)].node);
       ;}
     break;
 
   case 84:
-#line 635 "code/pascal_s_parser.y"
+#line 635 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(1) - (1)].node);
       ;}
     break;
 
   case 85:
-#line 639 "code/pascal_s_parser.y"
+#line 639 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(2) - (3)].node);
       ;}
     break;
 
   case 86:
-#line 643 "code/pascal_s_parser.y"
+#line 643 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_call(AST_CALL_EXPR, (yyvsp[(1) - (4)].sval), (yyvsp[(3) - (4)].node), AST_LOC((yyloc)));
           free((yyvsp[(1) - (4)].sval));
@@ -2383,7 +2383,7 @@ yyreduce:
     break;
 
   case 87:
-#line 648 "code/pascal_s_parser.y"
+#line 648 "frontend/pascal_s_parser.y"
     {
           parser_note_at((yylsp[(3) - (4)]).first_line,
                          (yylsp[(3) - (4)]).first_column,
@@ -2399,7 +2399,7 @@ yyreduce:
     break;
 
   case 88:
-#line 661 "code/pascal_s_parser.y"
+#line 661 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_call(AST_CALL_EXPR, (yyvsp[(1) - (3)].sval), NULL, AST_LOC((yyloc)));
           free((yyvsp[(1) - (3)].sval));
@@ -2407,147 +2407,147 @@ yyreduce:
     break;
 
   case 89:
-#line 666 "code/pascal_s_parser.y"
+#line 666 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_bool_literal(true, AST_LOC((yylsp[(1) - (1)])));
       ;}
     break;
 
   case 90:
-#line 670 "code/pascal_s_parser.y"
+#line 670 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_bool_literal(false, AST_LOC((yylsp[(1) - (1)])));
       ;}
     break;
 
   case 91:
-#line 674 "code/pascal_s_parser.y"
+#line 674 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_unary_expr("not", (yyvsp[(2) - (2)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 92:
-#line 678 "code/pascal_s_parser.y"
+#line 678 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_unary_expr("+", (yyvsp[(2) - (2)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 93:
-#line 682 "code/pascal_s_parser.y"
+#line 682 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_unary_expr("-", (yyvsp[(2) - (2)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 94:
-#line 689 "code/pascal_s_parser.y"
+#line 689 "frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("=");
       ;}
     break;
 
   case 95:
-#line 693 "code/pascal_s_parser.y"
+#line 693 "frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("<>");
       ;}
     break;
 
   case 96:
-#line 697 "code/pascal_s_parser.y"
+#line 697 "frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("<");
       ;}
     break;
 
   case 97:
-#line 701 "code/pascal_s_parser.y"
+#line 701 "frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("<=");
       ;}
     break;
 
   case 98:
-#line 705 "code/pascal_s_parser.y"
+#line 705 "frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text(">");
       ;}
     break;
 
   case 99:
-#line 709 "code/pascal_s_parser.y"
+#line 709 "frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text(">=");
       ;}
     break;
 
   case 100:
-#line 716 "code/pascal_s_parser.y"
+#line 716 "frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("+");
       ;}
     break;
 
   case 101:
-#line 720 "code/pascal_s_parser.y"
+#line 720 "frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("-");
       ;}
     break;
 
   case 102:
-#line 724 "code/pascal_s_parser.y"
+#line 724 "frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("or");
       ;}
     break;
 
   case 103:
-#line 731 "code/pascal_s_parser.y"
+#line 731 "frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("*");
       ;}
     break;
 
   case 104:
-#line 735 "code/pascal_s_parser.y"
+#line 735 "frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("/");
       ;}
     break;
 
   case 105:
-#line 739 "code/pascal_s_parser.y"
+#line 739 "frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("div");
       ;}
     break;
 
   case 106:
-#line 743 "code/pascal_s_parser.y"
+#line 743 "frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("mod");
       ;}
     break;
 
   case 107:
-#line 747 "code/pascal_s_parser.y"
+#line 747 "frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("and");
       ;}
     break;
 
   case 108:
-#line 754 "code/pascal_s_parser.y"
+#line 754 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new_int(AST_INT_LITERAL, AST_LOC((yylsp[(1) - (1)])), (yyvsp[(1) - (1)].ival));
       ;}
     break;
 
   case 109:
-#line 758 "code/pascal_s_parser.y"
+#line 758 "frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new_real(AST_REAL_LITERAL, AST_LOC((yylsp[(1) - (1)])), (yyvsp[(1) - (1)].fval));
       ;}
@@ -2555,7 +2555,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 2559 "code/pascal_s_parser.tab.c"
+#line 2559 "frontend/pascal_s_parser.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2775,7 +2775,7 @@ yyreturn:
 }
 
 
-#line 763 "code/pascal_s_parser.y"
+#line 763 "frontend/pascal_s_parser.y"
 
 
 void yyerror(const char *msg) {

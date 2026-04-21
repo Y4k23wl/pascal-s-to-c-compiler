@@ -7,7 +7,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include "ast.hpp"
+#include "../frontend/ast.hpp"
 
 enum class TypeKind {
     Integer,

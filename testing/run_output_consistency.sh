@@ -5,7 +5,8 @@ set -u
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CODE_DIR="$ROOT_DIR"
 TEST_DIR="$ROOT_DIR/testing/open_set"
-PASCC_BIN="$ROOT_DIR/pascc"
+CMAKE_BUILD_DIR="$ROOT_DIR/build"
+PASCC_BIN="$CMAKE_BUILD_DIR/bin/pascc"
 RESULT_DIR="${1:-$ROOT_DIR/testing/output_consistency_results}"
 LOG_DIR="$RESULT_DIR/logs"
 CASE_DIR_ROOT="$RESULT_DIR/cases"
@@ -24,14 +25,16 @@ if ! command -v fpc >/dev/null 2>&1; then
 fi
 
 build_pascc() {
-  c++ -std=c++17 -I"$CODE_DIR" \
-    "$CODE_DIR/pascal_s_driver.cpp" \
-    "$CODE_DIR/ast.cpp" \
-    "$CODE_DIR/semantic.cpp" \
-    "$CODE_DIR/codegen.cpp" \
-    "$CODE_DIR/pascal_s_parser.tab.c" \
-    "$CODE_DIR/pascal_s_lexer.c" \
-    -o "$PASCC_BIN" >"$BUILD_LOG" 2>&1
+  if ! cmake -S "$CODE_DIR" -B "$CMAKE_BUILD_DIR" -DCMAKE_BUILD_TYPE=Release >"$BUILD_LOG" 2>&1; then
+    return 1
+  fi
+  if ! cmake --build "$CMAKE_BUILD_DIR" --config Release >>"$BUILD_LOG" 2>&1; then
+    return 1
+  fi
+  if [[ -x "$CMAKE_BUILD_DIR/bin/pascc.exe" ]]; then
+    PASCC_BIN="$CMAKE_BUILD_DIR/bin/pascc.exe"
+  fi
+  [[ -x "$PASCC_BIN" ]]
 }
 
 run_case() {

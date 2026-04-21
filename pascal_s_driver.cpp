@@ -2,9 +2,9 @@
 #include <cstring>
 #include <string>
 
-#include "codegen.hpp"
-#include "pascal_s_frontend.hpp"
-#include "semantic.hpp"
+#include "codegen/codegen.hpp"
+#include "frontend/pascal_s_frontend.hpp"
+#include "semantic/semantic.hpp"
 
 namespace {
 

@@ -4,8 +4,8 @@
 #include <string>
 #include <unordered_map>
 
-#include "ast.hpp"
-#include "semantic.hpp"
+#include "../frontend/ast.hpp"
+#include "../semantic/semantic.hpp"
 
 class CodeGenerator {
 public:
