@@ -8,3 +8,5 @@ compile_commands.json
 testing/output_consistency_results/
 testing/tmp_check/
 testing/open_set/*.c
+testing/error_recovery_results/
+testing/__pycache__

@@ -12,13 +12,35 @@
   - 端到端对拍脚本
 - `run_error_recovery_checks.sh`
   - 错误恢复回归脚本，收集错误输出日志
+- `run_tests.py`
+  - Python 测试驱动脚本，提供Windows测试入口
+
+
+# 这个测试（所谓的开放集对拍）在做什么事？
+### 对于我们的编译器：
+对每个pascal源代码`program.pas`，生成`program.c`，再用gcc编译出`program.exe`
+### 对于pascal编译器：
+对每个pascal源代码`program.pas`，用pascal编译器直接生成`program.exe`，这说明<u>**你需要装一个pascal编译器**</u>  
+
+之后比对这两个程序的<u>**输出结果是否一致**</u>
+
 
 ## 用法
 
-在 `code/` 仓库根目录执行：
+在 `code/` 仓库根目录执行，可任选 shell 脚本或 Python 脚本。
+
+开放集对拍：
+
+Shell 入口（适合Mac和Linux）：
 
 ```bash
 ./testing/run_output_consistency.sh
+```
+
+Python 入口（适合Windows）：
+
+```bash
+python ./testing/run_tests.py output-consistency
 ```
 
 脚本会自动：
@@ -31,8 +53,16 @@
 
 错误恢复样例可在 `code/` 仓库根目录执行：
 
+Shell 入口：
+
 ```bash
 ./testing/run_error_recovery_checks.sh
+```
+
+Python 入口：
+
+```bash
+python ./testing/run_tests.py error-recovery
 ```
 
 该脚本会：
@@ -70,6 +100,7 @@ build/bin/pascc
 - `c++`
 - `flex`
 - `bison`
+- `python3`
 - `cc`
 - `fpc`
 
