@@ -50,7 +50,9 @@ enum AstKind {
     AST_BOOL_LITERAL,
     AST_INT_LITERAL,
     AST_REAL_LITERAL,
-    AST_CHAR_LITERAL
+    AST_CHAR_LITERAL,
+    AST_STRING_LITERAL,
+    AST_BREAK_STMT
 };
 
 struct AstNode {
@@ -100,6 +102,7 @@ AstNode *ast_make_subprogram(AstNode *head, AstNode *body, AstLocation loc);
 AstNode *ast_make_param_group(bool by_ref, AstNode *ids, AstNode *type, AstLocation loc);
 AstNode *ast_make_compound_stmt(AstNode *statements, AstLocation loc);
 AstNode *ast_make_empty_stmt(AstLocation loc);
+AstNode *ast_make_break_stmt(AstLocation loc);
 AstNode *ast_make_bool_literal(bool value, AstLocation loc);
 AstNode *ast_make_var_ref(const char *name, AstNode *indices, AstLocation loc);
 AstNode *ast_make_call(AstKind kind, const char *name, AstNode *args, AstLocation loc);

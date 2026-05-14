@@ -64,6 +64,7 @@ private:
     std::string emit_signature(const Symbol &symbol) const;
     std::string c_type_name(const SemType &type) const;
     std::string binary_op_to_c(const std::string &op) const;
+    std::string string_literal_to_c(const std::string &text) const;
     std::string format_real_literal(double value) const;
     std::string next_call_value_temp(const SemType &type);
     std::string next_call_ref_temp(const SemType &type);

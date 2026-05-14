@@ -340,6 +340,9 @@ void CodeGenerator::emit_stmt(const AstNode *node) {
         case AST_EMPTY_STMT:
             emit_line(";");
             return;
+        case AST_BREAK_STMT:
+            emit_line("break;");
+            return;
         case AST_ASSIGN_STMT: {
             const AstNode *target = child_at(node, 0);
             const AstNode *expr = child_at(node, 1);
@@ -403,6 +406,7 @@ void CodeGenerator::emit_stmt(const AstNode *node) {
                     case TypeKind::Boolean:
                         emit_line("read_bool(" + emit_address_of(var) + ");");
                         break;
+                    case TypeKind::String:
                     default:
                         assert(false);
                         break;
@@ -428,6 +432,9 @@ void CodeGenerator::emit_stmt(const AstNode *node) {
                         break;
                     case TypeKind::Char:
                         emit_line("printf(\"%c\", " + emit_expr(expr) + ");");
+                        break;
+                    case TypeKind::String:
+                        emit_line("printf(\"%s\", " + emit_expr(expr) + ");");
                         break;
                     case TypeKind::Boolean:
                         emit_line("write_bool(" + emit_expr(expr) + ");");
@@ -494,6 +501,9 @@ std::string CodeGenerator::emit_expr_with_parent(const AstNode *node,
             break;
         case AST_CHAR_LITERAL:
             text = node->text;
+            break;
+        case AST_STRING_LITERAL:
+            text = string_literal_to_c(node->text);
             break;
         case AST_VAR_REF:
             text = emit_var_ref(node);
@@ -648,6 +658,8 @@ std::string CodeGenerator::emit_default_value(const SemType &type) const {
             return "false";
         case TypeKind::Char:
             return "'\\0'";
+        case TypeKind::String:
+            return "NULL";
         case TypeKind::Array:
         case TypeKind::Void:
         case TypeKind::Invalid:
@@ -661,7 +673,7 @@ std::string CodeGenerator::emit_decl(const Symbol &symbol,
                                      const std::string *init) const {
     std::ostringstream out;
 
-    if (with_const) {
+    if (with_const && symbol.type.kind != TypeKind::String) {
         out << "const ";
     }
 
@@ -715,6 +727,8 @@ std::string CodeGenerator::c_type_name(const SemType &type) const {
             return "bool";
         case TypeKind::Char:
             return "char";
+        case TypeKind::String:
+            return "const char *";
         case TypeKind::Void:
             return "void";
         case TypeKind::Array:
@@ -746,6 +760,45 @@ std::string CodeGenerator::binary_op_to_c(const std::string &op) const {
         return "||";
     }
     return op;
+}
+
+std::string CodeGenerator::string_literal_to_c(const std::string &text) const {
+    std::ostringstream out;
+    out << "\"";
+    const size_t begin = (!text.empty() && text[0] == '\'') ? 1 : 0;
+    const size_t end = (text.size() > begin && text[text.size() - 1] == '\'')
+                           ? text.size() - 1
+                           : text.size();
+    for (size_t i = begin; i < end; ++i) {
+        const char ch = text[i];
+        if (ch == '\'' && i + 1 < end && text[i + 1] == '\'') {
+            out << "'";
+            ++i;
+            continue;
+        }
+        switch (ch) {
+            case '\\':
+                out << "\\\\";
+                break;
+            case '"':
+                out << "\\\"";
+                break;
+            case '\n':
+                out << "\\n";
+                break;
+            case '\r':
+                out << "\\r";
+                break;
+            case '\t':
+                out << "\\t";
+                break;
+            default:
+                out << ch;
+                break;
+        }
+    }
+    out << "\"";
+    return out.str();
 }
 
 std::string CodeGenerator::format_real_literal(double value) const {
@@ -839,6 +892,7 @@ int CodeGenerator::expr_precedence(const AstNode *node) const {
         case AST_INT_LITERAL:
         case AST_REAL_LITERAL:
         case AST_CHAR_LITERAL:
+        case AST_STRING_LITERAL:
         case AST_VAR_REF:
         case AST_CALL_EXPR:
             return 80;

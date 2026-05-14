@@ -72,7 +72,7 @@ static void parser_note_at(int line, int col, const char *stage, const char *msg
 %token PROGRAM CONST VAR PROCEDURE FUNCTION
 %token BEGIN_KW END_KW
 %token IF THEN ELSE
-%token FOR TO DO WHILE
+%token FOR TO DO WHILE BREAK
 %token READ WRITE
 %token ARRAY OF
 %token INTEGER REAL BOOLEAN CHAR
@@ -84,6 +84,7 @@ static void parser_note_at(int line, int col, const char *stage, const char *msg
 %token <ival> INT_CONST
 %token <fval> REAL_CONST
 %token <sval> CHAR_CONST
+%token <sval> STRING_CONST
 
 /* Operators and delimiters */
 %token ASSIGN      /* := */
@@ -214,6 +215,11 @@ const_value
     | CHAR_CONST
       {
           $$ = ast_new_text(AST_CHAR_LITERAL, AST_LOC(@1), $1);
+          free($1);
+      }
+    | STRING_CONST
+      {
+          $$ = ast_new_text(AST_STRING_LITERAL, AST_LOC(@1), $1);
           free($1);
       }
     | TRUE
@@ -458,6 +464,10 @@ statement
       {
           $$ = $1;
       }
+    | BREAK
+      {
+          $$ = ast_make_break_stmt(AST_LOC(@1));
+      }
     | compound_statement
       {
           $$ = $1;
@@ -669,6 +679,11 @@ factor
     | FALSE
       {
           $$ = ast_make_bool_literal(false, AST_LOC(@1));
+      }
+    | STRING_CONST
+      {
+          $$ = ast_new_text(AST_STRING_LITERAL, AST_LOC(@1), $1);
+          free($1);
       }
     | NOT factor
       {

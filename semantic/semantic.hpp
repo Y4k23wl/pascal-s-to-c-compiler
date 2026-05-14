@@ -14,6 +14,7 @@ enum class TypeKind {
     Real,
     Boolean,
     Char,
+    String,
     Array,
     Void,
     Invalid

@@ -45,7 +45,7 @@ void ast_dump_impl(FILE *out, const AstNode *node, int indent) {
     if (node->kind == AST_BOOL_LITERAL) {
         meta << " value=" << (node->flag ? "true" : "false");
     }
-    if (node->kind == AST_CHAR_LITERAL) {
+    if (node->kind == AST_CHAR_LITERAL || node->kind == AST_STRING_LITERAL) {
         meta << " text=\"" << node->text << "\"";
     }
     if (node->kind == AST_PARAM_GROUP) {
@@ -236,6 +236,10 @@ AstNode *ast_make_empty_stmt(AstLocation loc) {
     return ast_new(AST_EMPTY_STMT, loc);
 }
 
+AstNode *ast_make_break_stmt(AstLocation loc) {
+    return ast_new(AST_BREAK_STMT, loc);
+}
+
 AstNode *ast_make_bool_literal(bool value, AstLocation loc) {
     AstNode *node = ast_new(AST_BOOL_LITERAL, loc);
     node->flag = value;
@@ -366,6 +370,8 @@ const char *ast_kind_name(AstKind kind) {
         case AST_INT_LITERAL: return "IntLiteral";
         case AST_REAL_LITERAL: return "RealLiteral";
         case AST_CHAR_LITERAL: return "CharLiteral";
+        case AST_STRING_LITERAL: return "StringLiteral";
+        case AST_BREAK_STMT: return "BreakStmt";
         default: return "Unknown";
     }
 }
@@ -447,9 +453,11 @@ bool ast_validate(FILE *out, const AstNode *node) {
             ok = true;
             break;
         case AST_EMPTY_STMT:
+        case AST_BREAK_STMT:
         case AST_INT_LITERAL:
         case AST_REAL_LITERAL:
         case AST_CHAR_LITERAL:
+        case AST_STRING_LITERAL:
         case AST_IDENTIFIER:
         case AST_BASIC_TYPE:
         case AST_PERIOD:

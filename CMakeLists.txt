@@ -37,6 +37,11 @@ add_executable(
   "${FLEX_PascalLexer_OUTPUTS}"
 )
 
+add_executable(
+  dummy_pascc
+  testing/dummy.cpp
+)
+
 target_include_directories(
   pascc
   PRIVATE
@@ -56,6 +61,17 @@ endif()
 set_target_properties(
   pascc
   PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/bin"
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin"
+    RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_BINARY_DIR}/bin"
+    RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${CMAKE_BINARY_DIR}/bin"
+)
+
+set_target_properties(
+  dummy_pascc
+  PROPERTIES
+    OUTPUT_NAME "pascc_dummy"
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
     RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/bin"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin"

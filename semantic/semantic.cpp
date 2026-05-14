@@ -63,11 +63,16 @@ bool comparable_types(const SemType &lhs, const SemType &rhs) {
            (lhs.kind == TypeKind::Char || lhs.kind == TypeKind::Boolean);
 }
 
-bool io_compatible_type(const SemType &type) {
+bool read_compatible_type(const SemType &type) {
     return type.kind == TypeKind::Integer ||
            type.kind == TypeKind::Real ||
            type.kind == TypeKind::Boolean ||
            type.kind == TypeKind::Char;
+}
+
+bool write_compatible_type(const SemType &type) {
+    return read_compatible_type(type) ||
+           type.kind == TypeKind::String;
 }
 
 class AnalyzerImpl {
@@ -78,6 +83,7 @@ public:
         current_function_ = NULL;
         current_function_name_.clear();
         current_function_type_ = make_type(TypeKind::Void);
+        loop_depth_ = 0;
         subprogram_symbols_.clear();
         subprogram_param_specs_.clear();
         used_c_names_.clear();
@@ -410,6 +416,9 @@ private:
             case AST_WRITE_STMT:
                 analyze_write_stmt(node);
                 return;
+            case AST_BREAK_STMT:
+                analyze_break_stmt(node);
+                return;
             default:
                 report_error(node,
                              "语义分析遇到无法处理的语句节点：" +
@@ -433,14 +442,9 @@ private:
 
         ExprInfo lhs_info;
         bool is_function_result = false;
-        if (is_current_function_result_ref(target)) {
-            lhs_info = make_expr_info(current_function_type_, true, true, current_function_);
-            remember_expr_info(target, lhs_info);
-            result_.function_result_refs.insert(target);
-            is_function_result = true;
-        } else {
-            lhs_info = analyze_expr(target);
-        }
+        lhs_info = analyze_assignment_target(target);
+        is_function_result = result_.function_result_refs.find(target) !=
+                             result_.function_result_refs.end();
 
         ExprInfo rhs_info = analyze_expr(expr);
 
@@ -503,7 +507,9 @@ private:
             report_error(child_at(node, 0), "while 条件表达式必须是 boolean");
         }
 
+        ++loop_depth_;
         analyze_stmt(child_at(node, 1));
+        --loop_depth_;
     }
 
     void analyze_for_stmt(const AstNode *node) {
@@ -536,7 +542,9 @@ private:
             report_error(child_at(node, 1), "for 终止表达式必须是 integer");
         }
 
+        ++loop_depth_;
         analyze_stmt(child_at(node, 2));
+        --loop_depth_;
     }
 
     void analyze_read_stmt(const AstNode *node) {
@@ -545,17 +553,23 @@ private:
             return;
         }
         for (size_t i = 0; i < vars->children.size(); ++i) {
-            ExprInfo info = analyze_expr(vars->children[i]);
+            ExprInfo info = analyze_assignment_target(vars->children[i]);
             if (info.type.kind == TypeKind::Array) {
                 report_error(vars->children[i], "read 不支持整个数组");
                 continue;
             }
             if (!info.is_assignable && info.type.kind != TypeKind::Invalid) {
                 report_error(vars->children[i], "read 参数必须是可赋值左值");
-            } else if (info.type.kind != TypeKind::Invalid && !io_compatible_type(info.type)) {
+            } else if (info.type.kind != TypeKind::Invalid && !read_compatible_type(info.type)) {
                 report_error(vars->children[i],
                              "read 仅支持 integer、real、boolean、char 类型");
             }
+        }
+    }
+
+    void analyze_break_stmt(const AstNode *node) {
+        if (loop_depth_ == 0) {
+            report_error(node, "break 语句只能出现在循环内部");
         }
     }
 
@@ -568,9 +582,9 @@ private:
             ExprInfo info = analyze_expr(exprs->children[i]);
             if (info.type.kind == TypeKind::Array) {
                 report_error(exprs->children[i], "write 不支持直接输出整个数组");
-            } else if (info.type.kind != TypeKind::Invalid && !io_compatible_type(info.type)) {
+            } else if (info.type.kind != TypeKind::Invalid && !write_compatible_type(info.type)) {
                 report_error(exprs->children[i],
-                             "write 仅支持 integer、real、boolean、char 类型");
+                             "write 仅支持 integer、real、boolean、char、string 类型");
             }
         }
     }
@@ -648,6 +662,8 @@ private:
                 return make_expr_info(make_type(TypeKind::Real), false, false, NULL);
             case AST_CHAR_LITERAL:
                 return make_expr_info(make_type(TypeKind::Char), false, false, NULL);
+            case AST_STRING_LITERAL:
+                return make_expr_info(make_type(TypeKind::String), false, false, NULL);
             case AST_VAR_REF:
                 return analyze_var_ref(node);
             case AST_CALL_EXPR:
@@ -729,6 +745,16 @@ private:
         ExprInfo info = compute_expr_info(node);
         remember_expr_info(node, info);
         return info;
+    }
+
+    ExprInfo analyze_assignment_target(const AstNode *target) {
+        if (is_current_function_result_ref(target)) {
+            ExprInfo info = make_expr_info(current_function_type_, true, true, current_function_);
+            remember_expr_info(target, info);
+            result_.function_result_refs.insert(target);
+            return info;
+        }
+        return analyze_expr(target);
     }
 
     ExprInfo analyze_var_ref(const AstNode *node) {
@@ -1073,6 +1099,7 @@ private:
     const Symbol *current_function_;
     std::string current_function_name_;
     SemType current_function_type_;
+    int loop_depth_;
     std::unordered_map<const AstNode *, const Symbol *> subprogram_symbols_;
     std::unordered_map<const AstNode *, std::vector<ParamSpec> > subprogram_param_specs_;
     std::unordered_set<std::string> used_c_names_;
@@ -1132,6 +1159,8 @@ std::string type_to_string(const SemType &type) {
             return "boolean";
         case TypeKind::Char:
             return "char";
+        case TypeKind::String:
+            return "string";
         case TypeKind::Void:
             return "void";
         case TypeKind::Invalid:

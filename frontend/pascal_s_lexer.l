@@ -114,6 +114,7 @@ EXP            [eE][+-]?{DIGIT}+
 REAL1          {DIGIT}+\.{DIGIT}+({EXP})?
 REAL2          {DIGIT}+{EXP}
 CHAR_LIT       '([^\\'\n]|\\[nrt'\\])'
+STRING_LIT     '([^'\n]|'')*'
 BAD_CHAR_LIT   '[^'\n]*\n
 
 %%
@@ -172,6 +173,7 @@ BAD_CHAR_LIT   '[^'\n]*\n
 "to"                        { RETURN_SIMPLE_TOKEN(TO); }
 "do"                        { RETURN_SIMPLE_TOKEN(DO); }
 "while"                     { RETURN_SIMPLE_TOKEN(WHILE); }
+"break"                     { RETURN_SIMPLE_TOKEN(BREAK); }
 "read"                      { RETURN_SIMPLE_TOKEN(READ); }
 "write"                     { RETURN_SIMPLE_TOKEN(WRITE); }
 "array"                     { RETURN_SIMPLE_TOKEN(ARRAY); }
@@ -207,6 +209,13 @@ BAD_CHAR_LIT   '[^'\n]*\n
                                 yylval.sval = dup_text(yytext);
                                 advance_position(yytext);
                                 return CHAR_CONST;
+                             }
+
+{STRING_LIT}                 {
+                                mark_token_start();
+                                yylval.sval = dup_text(yytext);
+                                advance_position(yytext);
+                                return STRING_CONST;
                              }
 
 {BAD_CHAR_LIT}               {
