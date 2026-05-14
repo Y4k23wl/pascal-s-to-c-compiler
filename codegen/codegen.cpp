@@ -63,7 +63,6 @@ void CodeGenerator::reset(const SemanticResult &sem) {
 
 void CodeGenerator::emit_program(const AstNode *node) {
     const AstNode *block = child_at(node, 1);
-    plan_call_temps(node);
 
     emit_line("#include <stdio.h>");
     emit_line("#include <stdbool.h>");
@@ -72,7 +71,6 @@ void CodeGenerator::emit_program(const AstNode *node) {
     emit_line();
 
     emit_helpers();
-    emit_call_temp_decls();
     emit_global_decls(block);
     emit_prototypes(child_at(block, 2));
     emit_subprograms(child_at(block, 2));
@@ -145,35 +143,41 @@ void CodeGenerator::plan_call_temps(const AstNode *node) {
     }
 }
 
-void CodeGenerator::emit_call_temp_decls() {
+void CodeGenerator::emit_local_call_temp_decls() {
+    bool emitted = false;
     if (call_temp_capacity_.int_values != 0) {
-        emit_line("static int __call_tmp_i[" + size_literal(call_temp_capacity_.int_values) + "];");
+        emit_line("int __call_tmp_i[" + size_literal(call_temp_capacity_.int_values) + "];");
+        emitted = true;
     }
     if (call_temp_capacity_.real_values != 0) {
-        emit_line("static float __call_tmp_r[" + size_literal(call_temp_capacity_.real_values) + "];");
+        emit_line("float __call_tmp_r[" + size_literal(call_temp_capacity_.real_values) + "];");
+        emitted = true;
     }
     if (call_temp_capacity_.bool_values != 0) {
-        emit_line("static bool __call_tmp_b[" + size_literal(call_temp_capacity_.bool_values) + "];");
+        emit_line("bool __call_tmp_b[" + size_literal(call_temp_capacity_.bool_values) + "];");
+        emitted = true;
     }
     if (call_temp_capacity_.char_values != 0) {
-        emit_line("static char __call_tmp_c[" + size_literal(call_temp_capacity_.char_values) + "];");
+        emit_line("char __call_tmp_c[" + size_literal(call_temp_capacity_.char_values) + "];");
+        emitted = true;
     }
     if (call_temp_capacity_.int_refs != 0) {
-        emit_line("static int * __call_tmp_pi[" + size_literal(call_temp_capacity_.int_refs) + "];");
+        emit_line("int * __call_tmp_pi[" + size_literal(call_temp_capacity_.int_refs) + "];");
+        emitted = true;
     }
     if (call_temp_capacity_.real_refs != 0) {
-        emit_line("static float * __call_tmp_pr[" + size_literal(call_temp_capacity_.real_refs) + "];");
+        emit_line("float * __call_tmp_pr[" + size_literal(call_temp_capacity_.real_refs) + "];");
+        emitted = true;
     }
     if (call_temp_capacity_.bool_refs != 0) {
-        emit_line("static bool * __call_tmp_pb[" + size_literal(call_temp_capacity_.bool_refs) + "];");
+        emit_line("bool * __call_tmp_pb[" + size_literal(call_temp_capacity_.bool_refs) + "];");
+        emitted = true;
     }
     if (call_temp_capacity_.char_refs != 0) {
-        emit_line("static char * __call_tmp_pc[" + size_literal(call_temp_capacity_.char_refs) + "];");
+        emit_line("char * __call_tmp_pc[" + size_literal(call_temp_capacity_.char_refs) + "];");
+        emitted = true;
     }
-    if (call_temp_capacity_.int_values != 0 || call_temp_capacity_.real_values != 0 ||
-        call_temp_capacity_.bool_values != 0 || call_temp_capacity_.char_values != 0 ||
-        call_temp_capacity_.int_refs != 0 || call_temp_capacity_.real_refs != 0 ||
-        call_temp_capacity_.bool_refs != 0 || call_temp_capacity_.char_refs != 0) {
+    if (emitted) {
         emit_line();
     }
     call_temp_usage_ = CallTempState();
@@ -243,6 +247,12 @@ void CodeGenerator::emit_subprogram(const AstNode *subprogram) {
     }
 
     emit_local_decls(block, local_scope);
+
+    call_temp_capacity_ = CallTempState();
+    call_temp_usage_ = CallTempState();
+    plan_call_temps(child_at(block, 3));
+    emit_local_call_temp_decls();
+
     emit_statement_list(child_at(child_at(block, 3), 0));
 
     if (symbol->kind == SymbolKind::Function) {
@@ -258,6 +268,12 @@ void CodeGenerator::emit_main(const AstNode *program) {
 
     emit_line("int main(void) {");
     ++indent_level_;
+
+    call_temp_capacity_ = CallTempState();
+    call_temp_usage_ = CallTempState();
+    plan_call_temps(child_at(block, 3));
+    emit_local_call_temp_decls();
+
     emit_statement_list(child_at(child_at(block, 3), 0));
     emit_line("return 0;");
     --indent_level_;

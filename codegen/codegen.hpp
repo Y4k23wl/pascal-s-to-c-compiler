@@ -38,7 +38,7 @@ private:
     void emit_program(const AstNode *node);
     void emit_helpers();
     void plan_call_temps(const AstNode *node);
-    void emit_call_temp_decls();
+    void emit_local_call_temp_decls();
     void emit_global_decls(const AstNode *block);
     void emit_prototypes(const AstNode *subprogram_list);
     void emit_subprograms(const AstNode *subprogram_list);

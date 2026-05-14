@@ -7,7 +7,7 @@ testing文件夹下包含自动化测试内容
 
 # 如何编译出程序？
 
-在 `code/` 目录下配置并构建：
+在根目录下配置并构建：
 
 ```bash
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
