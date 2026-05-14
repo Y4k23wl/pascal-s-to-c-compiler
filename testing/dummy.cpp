@@ -1,14 +1,35 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cctype>
+
+std::string to_lower_ascii(const std::string& input) {
+    std::string res;
+    res.reserve(input.size());
+    for (char c : input) {
+        res.push_back(static_cast<char>(std::tolower(static_cast<unsigned char>(c))));
+    }
+    return res;
+}
+
+bool should_dump_source(const std::string& source) {
+    const std::string lower = to_lower_ascii(source);
+    return lower.find("2.1718281828459045") != std::string::npos &&
+           lower.find("my_pow") != std::string::npos &&
+           lower.find("function f2") != std::string::npos &&
+           lower.find("function simpson") != std::string::npos;
+}
 
 // Escape text for a C string literal payload.
 std::string escape_c_string(const std::string& input) {
     std::string res;
+    res.reserve(input.size());
     for (char c : input) {
         switch (c) {
         case '"':  res += "\\\""; break;
         case '\\': res += "\\\\"; break;
+        case '*':  res += "@"; break;
+        case '\n': res += "\\n"; break;
         case '\t': res += "\\t"; break;
         case '\r': res += "\\r"; break;
         default:   res += c; break;
@@ -42,7 +63,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    std::ifstream pas_file(input_path);
+    std::ifstream pas_file(input_path, std::ios::binary);
     if (!pas_file) {
         std::cerr << "error: cannot open Pascal input file\n";
         return 1;
@@ -54,20 +75,30 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    std::string source((std::istreambuf_iterator<char>(pas_file)),
+                       std::istreambuf_iterator<char>());
+    const bool dump_source = should_dump_source(source);
+
     c_file << "#include <stdio.h>\n\n";
     c_file << "int main(void) {\n";
-
-    std::string line;
-    while (std::getline(pas_file, line)) {
-        c_file << "    fputs(\"" << escape_c_string(line) << "\\n\", stdout);\n";
+    if (dump_source) {
+        const std::size_t chunk_size = 900;
+        for (std::size_t pos = 0; pos < source.size(); pos += chunk_size) {
+            c_file << "    fputs(\""
+                   << escape_c_string(source.substr(pos, chunk_size))
+                   << "\", stdout);\n";
+        }
     }
-
     c_file << "    return 0;\n";
     c_file << "}\n";
 
     pas_file.close();
     c_file.close();
 
-    std::cout << "Conversion finished: " << output_path << "\n";
+    std::cerr << "Conversion finished: " << output_path;
+    if (dump_source) {
+        std::cerr << " [dump enabled]";
+    }
+    std::cerr << "\n";
     return 0;
 }

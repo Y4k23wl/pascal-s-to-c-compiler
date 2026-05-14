@@ -80,7 +80,7 @@ void CodeGenerator::emit_program(const AstNode *node) {
 }
 
 void CodeGenerator::emit_helpers() {
-    emit_line("static void write_real(double value) {");
+    emit_line("static void write_real(float value) {");
     ++indent_level_;
     emit_line("printf(\"%f\", value);");
     --indent_level_;
@@ -150,7 +150,7 @@ void CodeGenerator::emit_call_temp_decls() {
         emit_line("static int __call_tmp_i[" + size_literal(call_temp_capacity_.int_values) + "];");
     }
     if (call_temp_capacity_.real_values != 0) {
-        emit_line("static double __call_tmp_r[" + size_literal(call_temp_capacity_.real_values) + "];");
+        emit_line("static float __call_tmp_r[" + size_literal(call_temp_capacity_.real_values) + "];");
     }
     if (call_temp_capacity_.bool_values != 0) {
         emit_line("static bool __call_tmp_b[" + size_literal(call_temp_capacity_.bool_values) + "];");
@@ -162,7 +162,7 @@ void CodeGenerator::emit_call_temp_decls() {
         emit_line("static int * __call_tmp_pi[" + size_literal(call_temp_capacity_.int_refs) + "];");
     }
     if (call_temp_capacity_.real_refs != 0) {
-        emit_line("static double * __call_tmp_pr[" + size_literal(call_temp_capacity_.real_refs) + "];");
+        emit_line("static float * __call_tmp_pr[" + size_literal(call_temp_capacity_.real_refs) + "];");
     }
     if (call_temp_capacity_.bool_refs != 0) {
         emit_line("static bool * __call_tmp_pb[" + size_literal(call_temp_capacity_.bool_refs) + "];");
@@ -398,7 +398,7 @@ void CodeGenerator::emit_stmt(const AstNode *node) {
                         emit_line("scanf(\"%d\", " + emit_address_of(var) + ");");
                         break;
                     case TypeKind::Real:
-                        emit_line("scanf(\"%lf\", " + emit_address_of(var) + ");");
+                        emit_line("scanf(\"%f\", " + emit_address_of(var) + ");");
                         break;
                     case TypeKind::Char:
                         emit_line("scanf(\" %c\", " + emit_address_of(var) + ");");
@@ -549,8 +549,8 @@ std::string CodeGenerator::emit_expr_with_parent(const AstNode *node,
             if (node->text == "/") {
                 if (lhs_info->type.kind == TypeKind::Integer &&
                     rhs_info->type.kind == TypeKind::Integer) {
-                    text = "(double)" + emit_expr_with_parent(lhs, current_precedence, false) +
-                           " / (double)" +
+                    text = "(float)" + emit_expr_with_parent(lhs, current_precedence, false) +
+                           " / (float)" +
                            emit_expr_with_parent(rhs, current_precedence, true);
                     break;
                 }
@@ -722,7 +722,7 @@ std::string CodeGenerator::c_type_name(const SemType &type) const {
         case TypeKind::Integer:
             return "int";
         case TypeKind::Real:
-            return "double";
+            return "float";
         case TypeKind::Boolean:
             return "bool";
         case TypeKind::Char:
