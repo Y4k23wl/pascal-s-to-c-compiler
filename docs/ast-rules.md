@@ -648,8 +648,8 @@ analyzer.analyze(root);
 
 当前驱动 `code/pascal_s_driver.cpp` 额外支持：
 
-- 默认只输出语义阶段结果
-- 加 `--dump-ast` 时输出 AST
+- 默认生成同名 `.c` 文件
+- 加 `--dump-ast` 时把 AST 输出到 `stderr`
 
 语义分析应依赖以下字段：
 

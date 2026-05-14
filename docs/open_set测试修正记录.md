@@ -459,12 +459,10 @@ fn(getint(&i), getint(&i), ...);
 
 ## 9. 最终结果
 
-完成以上修正后，使用下面的批量命令回归：
+完成以上修正后，使用下面的端到端脚本回归：
 
 ```bash
-for f in testing/open_set/*.pas; do
-  ./build/bin/pascc -i "$f" >/dev/null
-done
+./testing/run_output_consistency.sh
 ```
 
 当前 `testing/open_set/*.pas` 已全部通过词法、语法和语义阶段；在端到端输出对拍下，`70/70` 个样例也已全部与 Pascal 参考程序输出一致。
