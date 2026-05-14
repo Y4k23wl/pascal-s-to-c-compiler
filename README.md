@@ -1,7 +1,7 @@
 # 你的代码在哪里？
 
 frontend文件夹下包含词法分析与语法分析模块  
-semantic文件夹下包含语法分析模块  
+semantic文件夹下包含语义分析模块  
 codegen文件夹下包含目标代码生成模块  
 testing文件夹下包含自动化测试内容
 
@@ -16,7 +16,7 @@ cmake --build build --config Release
 
 这会自动：
 
-- 用 `bison` 生成词法/语法分析相关代码
+- 用 `bison` 生成语法分析相关代码
 - 用 `flex` 生成词法分析器代码
 - 编译并链接生成 `build/bin/pascc`
 - 此时程序会在`build/bin/pascc`

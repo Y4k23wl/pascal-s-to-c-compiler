@@ -10,12 +10,12 @@
 
 对应代码文件：
 
-- `code/pascal_s_lexer.l`
-- `code/pascal_s_parser.y`
-- `code/ast.hpp`
-- `code/ast.cpp`
-- `code/semantic.hpp`
-- `code/semantic.cpp`
+- `code/frontend/pascal_s_lexer.l`
+- `code/frontend/pascal_s_parser.y`
+- `code/frontend/ast.hpp`
+- `code/frontend/ast.cpp`
+- `code/semantic/semantic.hpp`
+- `code/semantic/semantic.cpp`
 - `code/pascal_s_driver.cpp`
 
 ## 1. 回归方式
@@ -24,7 +24,7 @@
 
 ```bash
 for f in testing/open_set/*.pas; do
-  ./code/pascal_s_frontend "$f"
+  ./build/bin/pascc -i "$f" >/dev/null
 done
 ```
 
@@ -52,7 +52,7 @@ done
 
 #### 修正
 
-在 [pascal_s_lexer.l](/Users/yuanweitu/Desktop/college/编译课设/code/pascal_s_lexer.l) 中新增：
+在 [pascal_s_lexer.l](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_lexer.l) 中新增：
 
 ```lex
 "//"[^\n]*                  { advance_position(yytext); }
@@ -88,7 +88,7 @@ ID_START [A-Za-z_]
 ID_CHAR  [A-Za-z0-9_]
 ```
 
-修正位置仍在 [pascal_s_lexer.l](/Users/yuanweitu/Desktop/college/编译课设/code/pascal_s_lexer.l)。
+修正位置仍在 [pascal_s_lexer.l](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_lexer.l)。
 
 ### 2.3 标识符被截断到 8 位
 
@@ -103,7 +103,7 @@ ID_CHAR  [A-Za-z0-9_]
 
 删除 `MAX_ID_LEN` 截断逻辑，让 `normalize_id()` 保留完整名字，只做小写归一化。
 
-修改位置： [pascal_s_lexer.l](/Users/yuanweitu/Desktop/college/编译课设/code/pascal_s_lexer.l)
+修改位置： [pascal_s_lexer.l](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_lexer.l)
 
 ## 3. 语法层问题与修正
 
@@ -122,7 +122,7 @@ while cond do
 
 #### 修正
 
-在 [pascal_s_parser.y](/Users/yuanweitu/Desktop/college/编译课设/code/pascal_s_parser.y) 中：
+在 [pascal_s_parser.y](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y) 中：
 
 1. 新增 `WHILE` token
 2. 为 `statement` 增加：
@@ -151,14 +151,14 @@ flag := true;
 
 #### 修正
 
-在 [pascal_s_lexer.l](/Users/yuanweitu/Desktop/college/编译课设/code/pascal_s_lexer.l) 中新增：
+在 [pascal_s_lexer.l](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_lexer.l) 中新增：
 
 ```lex
 "true"  { RETURN_SIMPLE_TOKEN(TRUE); }
 "false" { RETURN_SIMPLE_TOKEN(FALSE); }
 ```
 
-在 [pascal_s_parser.y](/Users/yuanweitu/Desktop/college/编译课设/code/pascal_s_parser.y) 中把它们接到：
+在 [pascal_s_parser.y](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y) 中把它们接到：
 
 - `const_value`
 - `factor`
@@ -179,7 +179,7 @@ flag := true;
 
 #### 修正
 
-在 [pascal_s_parser.y](/Users/yuanweitu/Desktop/college/编译课设/code/pascal_s_parser.y) 中补了：
+在 [pascal_s_parser.y](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y) 中补了：
 
 - `formal_parameter -> ( )`
 - `procedure_call -> ID LPAREN RPAREN`
@@ -201,7 +201,7 @@ a := a - - 4 + +b;
 
 #### 修正
 
-在 [pascal_s_parser.y](/Users/yuanweitu/Desktop/college/编译课设/code/pascal_s_parser.y) 的 `factor` 中补了：
+在 [pascal_s_parser.y](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y) 的 `factor` 中补了：
 
 ```bison
 | PLUS factor %prec UMINUS
@@ -214,7 +214,7 @@ a := a - - 4 + +b;
 
 ### 4.1 缺少 `AST_WHILE_STMT`
 
-为了支持 `while`，在 [ast.hpp](/Users/yuanweitu/Desktop/college/编译课设/code/ast.hpp) 和 [ast.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/ast.cpp) 中新增：
+为了支持 `while`，在 [ast.hpp](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/ast.hpp) 和 [ast.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/ast.cpp) 中新增：
 
 - `AST_WHILE_STMT`
 - `ast_make_while_stmt(...)`
@@ -237,8 +237,8 @@ a := a - - 4 + +b;
 
 这部分修改在：
 
-- [ast.hpp](/Users/yuanweitu/Desktop/college/编译课设/code/ast.hpp)
-- [ast.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/ast.cpp)
+- [ast.hpp](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/ast.hpp)
+- [ast.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/ast.cpp)
 
 ## 5. 语义层问题与修正
 
@@ -260,7 +260,7 @@ a := defn;
 
 #### 修正
 
-在 [semantic.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/semantic.cpp) 的 `analyze_var_ref()` 中改成：
+在 [semantic.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/semantic/semantic.cpp) 的 `analyze_var_ref()` 中改成：
 
 1. 若命中的是函数符号
 2. 且没有下标
@@ -289,7 +289,7 @@ exgcd(a, b, x[0], y[0]);
 
 #### 修正
 
-在 [semantic.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/semantic.cpp) 的 `analyze_call_stmt()` 中放宽规则：
+在 [semantic.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/semantic/semantic.cpp) 的 `analyze_call_stmt()` 中放宽规则：
 
 - `Procedure` 合法
 - `Function` 也合法，只是返回值被忽略
@@ -310,7 +310,7 @@ write(not a);
 
 #### 修正
 
-在 [semantic.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/semantic.cpp) 的一元表达式处理中，把 `not` 放宽为：
+在 [semantic.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/semantic/semantic.cpp) 的一元表达式处理中，把 `not` 放宽为：
 
 - 接受 `boolean`
 - 也接受 `integer`
@@ -320,7 +320,7 @@ write(not a);
 
 ### 5.4 新增 `while` 语义检查
 
-为了配合新的 `AST_WHILE_STMT`，在 [semantic.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/semantic.cpp) 中新增 `analyze_while_stmt()`：
+为了配合新的 `AST_WHILE_STMT`，在 [semantic.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/semantic/semantic.cpp) 中新增 `analyze_while_stmt()`：
 
 - 先分析条件
 - 要求条件类型是 `boolean`
@@ -371,7 +371,7 @@ ans := a[...] + a[...] + a[...] + ...
 
 ### 7.3 修正
 
-在 [semantic.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/semantic.cpp) 中把深表达式分析改成显式栈：
+在 [semantic.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/semantic/semantic.cpp) 中把深表达式分析改成显式栈：
 
 1. `analyze_expr()` 对 `AST_UNARY_EXPR` / `AST_BINARY_EXPR` 走 `analyze_expr_iterative()`
 2. `analyze_expr_iterative()` 使用 `std::vector<std::pair<const AstNode *, bool> >` 做后序遍历
@@ -401,46 +401,27 @@ ans := a[...] + a[...] + a[...] + ...
 `14_div.pas`、`51_var_name.pas`、`65_float.pas` 都暴露了这个问题：
 
 - `2.0` 被打印成 `2`
-- 多参数 `write(...)` 时实数前缺少 Pascal 默认的前导空格
 - 浮点结果只保留了很短的有效数字
 
 #### 根因
 
-旧代码生成把 Pascal `real` 映射成 C `float`，并直接发射：
+旧代码生成曾直接发射：
 
 ```c
 printf("%g", expr);
 ```
 
-这和当前 FPC 默认的 `write(real)` 行为不一致。FPC 参考输出使用的是带前导空格、16 位小数、3 位指数宽度的科学计数法。
+这会让常规小数输出不稳定，和评测期望不一致。
 
 #### 修正
 
-在 [codegen.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/codegen.cpp) 中做了两步修正：
+在 [codegen.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/codegen/codegen.cpp) 中新增 `write_real()` 辅助函数，当前统一用 `%f` 输出 `real`。
 
-1. 把 Pascal `real` 的目标类型从 `float` 调整成 `double`
-2. 新增 `write_real()` 辅助函数，统一输出兼容 FPC 的科学计数法格式
+### 8.2 `integer` 运行时表示
 
-### 8.2 `integer` 的运行时表示与参考编译器不一致
+当前最终实现中，Pascal `integer` 变量、数组元素、参数和函数返回值统一映射成 C `int`，整型常量声明也使用 `const int`。
 
-#### 现象
-
-`42_color.pas` 的 Pascal 参考输出是 `-26056`，而旧生成器按宿主 C 的 `int` 语义执行时输出成了 `39480`。
-
-#### 根因
-
-在当前测试环境下，FPC 的 `integer` 变量、参数、函数返回值体现为 16 位有符号整数语义；而旧生成器把它们全部映射成了宿主平台上的 32 位 `int`。
-
-但同时，`const modn = 1000000007;` 这类无显式类型的整型常量又不能在声明阶段直接截断成 16 位。
-
-#### 修正
-
-在 [codegen.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/codegen.cpp) 中把目标表示拆开处理：
-
-- `integer` 变量、数组元素、参数、函数返回值 -> `int16_t`
-- 整型常量声明 -> `const int`
-
-并同步调整了整数读写格式串。
+整数读写格式串对应使用 `%d`。
 
 ### 8.3 调用实参的求值顺序被错误交给了 C
 
@@ -468,11 +449,13 @@ fn(getint(&i), getint(&i), ...);
 
 #### 修正
 
-在 [codegen.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/codegen.cpp) 的 `emit_call()` 中，不再直接拼实参表达式，而是：
+在 [codegen.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/codegen/codegen.cpp) 的 `emit_call()` 中，不再直接拼实参表达式，而是：
 
 1. 先为值参和 `var` 参分别准备 `__call_tmp_*` 临时槽
 2. 按“从右到左”的顺序把每个实参求值进临时槽
 3. 再按原参数位置调用真正的 C 函数
+
+这些临时槽由当前函数体内的局部数组承载，避免递归调用共享同一批文件作用域临时槽。
 
 ## 9. 最终结果
 
@@ -480,7 +463,7 @@ fn(getint(&i), getint(&i), ...);
 
 ```bash
 for f in testing/open_set/*.pas; do
-  ./code/pascal_s_frontend "$f"
+  ./build/bin/pascc -i "$f" >/dev/null
 done
 ```
 

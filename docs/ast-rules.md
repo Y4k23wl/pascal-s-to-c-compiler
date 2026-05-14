@@ -5,10 +5,10 @@
 
 对应实现文件：
 
-- `ast.hpp`
-- `ast.cpp`
-- `pascal_s_parser.y`
-- `pascal_s_frontend.hpp`
+- `code/frontend/ast.hpp`
+- `code/frontend/ast.cpp`
+- `code/frontend/pascal_s_parser.y`
+- `code/frontend/pascal_s_frontend.hpp`
 
 ## 1. AST 的定位
 
@@ -32,7 +32,7 @@ AST 的设计目标有三点：
 
 ## 2. 通用结构
 
-所有节点都使用 `AstNode` 表示，定义在 `ast.hpp` 中。
+所有节点都使用 `AstNode` 表示，定义在 `code/frontend/ast.hpp` 中。
 
 ```cpp
 struct AstNode {
@@ -71,7 +71,7 @@ struct AstNode {
 
 ## 3. 位置信息规则
 
-位置信息来自词法分析器 `pascal_s_lexer.l` 中维护的 `yylloc`。
+位置信息来自词法分析器 `code/frontend/pascal_s_lexer.l` 中维护的 `yylloc`。
 
 规则如下：
 
@@ -117,6 +117,7 @@ struct AstNode {
   - `AST_IF_STMT`
   - `AST_WHILE_STMT`
   - `AST_FOR_STMT`
+  - `AST_BREAK_STMT`
   - `AST_READ_STMT`
   - `AST_WRITE_STMT`
 - 表达式与引用
@@ -130,6 +131,7 @@ struct AstNode {
   - `AST_INT_LITERAL`
   - `AST_REAL_LITERAL`
   - `AST_CHAR_LITERAL`
+  - `AST_STRING_LITERAL`
 
 ## 5. 节点规则总表
 
@@ -194,6 +196,7 @@ struct AstNode {
   - 可能是 `AST_INT_LITERAL`
   - 可能是 `AST_REAL_LITERAL`
   - 可能是 `AST_CHAR_LITERAL`
+  - 可能是 `AST_STRING_LITERAL`
   - 可能是 `AST_UNARY_EXPR("-") + 数字`
   - 可能是 `AST_UNARY_EXPR("+") + 数字`
 
@@ -398,6 +401,12 @@ struct AstNode {
 - 当前语法只支持 `for id := expr to expr do stmt`
 - 暂未包含 `downto`
 
+#### `AST_BREAK_STMT`
+
+表示 `break` 语句。
+
+- 无子节点
+
 #### `AST_READ_STMT`
 
 表示 `read(...)`。
@@ -534,6 +543,12 @@ struct AstNode {
 - 当前词法器直接把字符常量文本传入 AST
 - 若后续语义分析或代码生成需要转义后的字符值，可在专门的辅助函数中统一解码
 
+#### `AST_STRING_LITERAL`
+
+表示字符串字面量。
+
+- `text`：原始字符串常量文本
+
 ## 6. 列表节点统一规则
 
 下列节点都属于“列表节点”：
@@ -558,7 +573,7 @@ struct AstNode {
 
 ## 7. 构造规则
 
-AST 的构造发生在 `pascal_s_parser.y` 的归约动作中。
+AST 的构造发生在 `code/frontend/pascal_s_parser.y` 的归约动作中。
 
 基本原则如下：
 
@@ -577,7 +592,7 @@ AST 的构造发生在 `pascal_s_parser.y` 的归约动作中。
 
 ## 8. 校验规则
 
-`ast.cpp` 中实现了 `ast_validate(FILE *out, const AstNode *node)`，用于检查 AST 结构是否符合约定。
+`code/frontend/ast.cpp` 中实现了 `ast_validate(FILE *out, const AstNode *node)`，用于检查 AST 结构是否符合约定。
 
 当前校验重点包括：
 
@@ -599,7 +614,7 @@ AST 的构造发生在 `pascal_s_parser.y` 的归约动作中。
 
 语义分析阶段不应重新解析源程序，而应直接接收 AST 根节点。
 
-当前对外接口在 `pascal_s_frontend.hpp`：
+当前对外接口在 `code/frontend/pascal_s_frontend.hpp`：
 
 - `parse_pascal_stream(FILE *input)`
 - `parse_pascal_file(const char *path)`
@@ -631,7 +646,7 @@ analyzer.analyze(root);
 - 恢复期间构造的占位节点仍应满足 AST 结构约束，避免把错误传播成空指针崩溃
 - 语句恢复优先使用空语句、空参数列表、空表达式列表这类现有节点，而不是额外引入复杂错误节点
 
-当前驱动 `pascal_s_driver.cpp` 额外支持：
+当前驱动 `code/pascal_s_driver.cpp` 额外支持：
 
 - 默认只输出语义阶段结果
 - 加 `--dump-ast` 时输出 AST
@@ -671,6 +686,8 @@ C 代码生成阶段同样不应重新解析 Pascal-S 文本，而应遍历 AST�
   - 生成 `if` / `else`
 - `AST_FOR_STMT`
   - 生成 `for`
+- `AST_BREAK_STMT`
+  - 生成 `break`
 - `AST_CALL_STMT` / `AST_CALL_EXPR`
   - 生成调用
 - `AST_BINARY_EXPR` / `AST_UNARY_EXPR`

@@ -118,7 +118,7 @@ Break;
 修复伪编译器：
 
 - 不使用 shell `echo` 或未加引用的变量输出源码。
-- 生成 C 程序时逐行写出：
+- 生成 C 程序时通过 `fputs` 输出需要观察的源码内容：
 
 ```c
 fputs("...\\n", stdout);
@@ -144,13 +144,13 @@ cmake --build code/build --config Release --target dummy_pascc
 code/build/bin/pascc_dummy
 ```
 
-需要爬取闭集时，将该可执行文件作为平台提交/运行用的 `pascc`。
+需要爬取闭集源码时，将该可执行文件作为平台提交/运行用的 `pascc`。
 
-## 5. 闭集 93 数学压力用例后续定位
+## 5. 闭集 93 递归调用实参临时槽污染
 
 ### 问题现象
 
-平台反馈 93 号用例只剩运行结果错误。期望输出中包含：
+平台反馈 93 号用例运行结果错误。期望输出中包含：
 
 ```text
 ...0.6931471.584962...
@@ -162,29 +162,37 @@ code/build/bin/pascc_dummy
 ...0.2022961.037538...
 ```
 
-该用例现有记录虽然被旧爬取链路的 `*` 展开污染并截断，但仍能看出它包含 `my_pow`、`my_sqrt`、`simpson` 等自写数学函数。错误集中在迭代、递归积分和对数类结果，不是单纯输出格式或整数宽度问题。
+该用例包含 `my_pow`、`my_sqrt`、`simpson`、`asr5` 等自写数学函数。前几个直接计算项正确，错误从 `my_ln -> asr4 -> asr5 -> simpson` 这条递归 Simpson 积分链开始出现。
 
-### 已排除方向
+本地 macOS / clang 编译生成 C 后能得到正确结果，而 Debian 9 / GCC 6.3 上同一份 C 输出错误，因此问题不是浮点输出格式，也不是单纯精度差异，而是生成 C 代码依赖了平台相关的求值行为。
 
-曾尝试将 Pascal `real` 的目标 C 表示从 `float` 改为 `double`，包括：
+### 根因
 
-- `write_real` 参数改为 `double`，但保持当前 `%f` 六位小数输出格式。
-- `real` 值参数临时槽 `__call_tmp_r` 改为 `double`。
-- `var real` 临时指针槽 `__call_tmp_pr` 改为 `double *`。
-- `read(real)` 改为 `scanf("%lf", ...)`。
-- 整数 `/` 产生 real 时的显式转换改为 `(double)`。
-- `c_type_name(TypeKind::Real)` 返回 `double`。
+调用实参修正阶段曾使用文件作用域的 `static __call_tmp_*` 数组保存实参求值结果。普通调用可以工作，但递归函数中会复用同一批静态槽。
 
-平台结果显示该方向不成立：93 仍错误，并导致此前可通过的 94、95 也失败。因此该修改已撤回，`real` 继续沿用原来的 C `float` 表示。
+93 的关键语句是：
 
-下一步需要用已修复 shell 展开的 dummy 编译器重新爬取闭集 93 的完整 Pascal 源码，再定位真实错因。
+```pascal
+asr5 := asr5(a, c, eps/2, L, flag) + asr5(c, b, eps/2, R, flag);
+```
 
-已生成 Debian 9 x86_64 版本：
+C 语言中 `+` 两侧操作数求值顺序未指定。递归调用进入 `asr5` 后又会写入同一批 `static __call_tmp_*`，导致外层另一侧调用尚未消费的实参槽被深层递归覆盖。clang 的求值策略碰巧没有暴露问题，GCC 6.3 暴露了这个未指定行为。
 
-- `code/pascc.debian9`：恢复 `real=float` 后的主编译器。
-- `code/pascc_dummy.debian9`：用于重新爬取闭集源码的 dummy 编译器。
+### 修复方式
 
-补充：如果爬取链路仍会把 `*` 交给 shell 展开，dummy 输出源码时会将 `*` 替换为 `@`。重新分析源码时需要先把 `@` 还原为 `*`。
+将 `__call_tmp_*` 从文件作用域 `static` 数组改为每个函数体内部的局部数组：
+
+- `emit_call_temp_decls()` 改为 `emit_local_call_temp_decls()`。
+- `emit_subprogram()` 针对当前子程序体统计调用临时槽容量，并在函数体内声明局部 `__call_tmp_*`。
+- `emit_main()` 同样只为主程序体生成局部临时槽。
+- 每次函数调用都有独立栈帧，递归调用不再共享上一层的临时槽。
+
+主要修改文件：
+
+- `code/codegen/codegen.hpp`
+- `code/codegen/codegen.cpp`
+
+曾尝试将 Pascal `real` 的目标 C 表示从 `float` 改为 `double`，但该方向在平台上没有修复 93，并导致其它用例回退，因此已撤回。当前 `real` 仍沿用 C `float` 表示。
 
 ## 6. 验证结果
 
@@ -204,8 +212,7 @@ cmake --build code/build --config Release
 - `read(getint)` 可以通过语义分析，并生成 `scanf(..., &__result)`。
 - 字符串常量 `'Not exist'`、`'--'` 可以声明并通过 `write` 输出。
 - `Break` 可以在循环中生成 C 的 `break;`。
-- 伪编译器输出 `x := a * b;` 时，`*` 保持为普通字符，不再展开成文件列表。
+- 伪编译器可以用于爬取闭集源码，避免源码内容被 shell 通配符展开污染。
+- 93 号用例在 Debian 9 / GCC 6.3 下不再出现递归积分结果偏差。
 
 说明：开放集相关的浮点格式、整数宽度、实参求值顺序等已有在线通过行为，本轮未作为问题处理，也未主动修改。
-
-93 号问题追加执行了 `real=double` 方向的针对性压力测试，但该方向已被平台结果否定，相关源码改动已撤回。

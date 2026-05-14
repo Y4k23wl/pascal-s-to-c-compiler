@@ -8,7 +8,7 @@ Notes:
 - Full-width punctuation in the original is normalized to ASCII punctuation.
 - `assignop`, `relop`, `addop`, and `mulop` are left as named grammar items here; the Bison file expands them into concrete tokens.
 - The original uses both `variable assignop expression` and `func_id assignop expression`. In a Bison skeleton, those two forms overlap syntactically when `func_id` is just an identifier, so the parser file merges them into one assignment form and leaves function-result checking to semantics.
-- The current parser has already been extended beyond this normalized baseline to match `testing/open_set`. Notable additions include `while`, `true` / `false`, `//` comments, empty `()`, unary `+`, and zero-argument calls.
+- The current parser has already been extended beyond this normalized baseline to match the test sets. Notable additions include `while`, `break`, `true` / `false`, string constants, `//` comments, empty `()`, unary `+`, and zero-argument calls.
 
 ```text
 programstruct -> program_head ; program_body .
