@@ -7,7 +7,11 @@
 - `open_set/`
   - Pascal 样例集及其配套 `.in` 输入文件
 - `error_recovery/`
-  - 专门用于错误恢复验证的错误样例
+  - 词法 / 语法错误样例（含恢复路径与错误熔断阈值）
+- `semantic_errors/`
+  - 语义错误样例
+- `*.expected.stderr` / `*.expected.exit`
+  - 与 `.pas` 同名的金标准 stderr 和退出码，脚本会做 diff
 - `run_output_consistency.sh`
   - 端到端对拍脚本
 - `run_error_recovery_checks.sh`
@@ -68,8 +72,9 @@ python ./testing/run_tests.py error-recovery
 该脚本会：
 
 1. 通过 `cmake` 配置并构建当前源码生成 `build/bin/pascc`
-2. 逐个运行 `testing/error_recovery/*.pas`
-3. 将每个样例的标准输出、标准错误和退出码写入结果目录
+2. 逐个运行 `testing/error_recovery/*.pas` 和 `testing/semantic_errors/*.pas`，每个样例带 10 秒超时
+3. 把实际 stderr 与同名 `.expected.stderr` 做 diff，把退出码与 `.expected.exit` 做对比
+4. 将每个样例的标准输出、标准错误、退出码和差异写入结果目录；任一样例失败则脚本退出码非 0
 
 ## 单独构建
 

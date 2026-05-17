@@ -244,8 +244,27 @@ def output_consistency(args: argparse.Namespace) -> int:
     return 0 if passed == total else 1
 
 
+RECOVERY_TIMEOUT_SECS = 10
+
+
+def _run_pascc_with_timeout(pascc: Path, pas_file: Path, stdout_path: Path, stderr_path: Path, timeout: int) -> tuple[int, bool]:
+    """Run pascc on a sample with a hard timeout. Returns (exit_code, timed_out)."""
+    with open(stdout_path, "wb") as out_h, open(stderr_path, "wb") as err_h:
+        try:
+            proc = subprocess.run(
+                [str(pascc), "-i", str(pas_file)],
+                stdout=out_h,
+                stderr=err_h,
+                check=False,
+                timeout=timeout,
+            )
+            return proc.returncode, False
+        except subprocess.TimeoutExpired:
+            return -1, True
+
+
 def error_recovery(args: argparse.Namespace) -> int:
-    test_dir = TESTING_DIR / "error_recovery"
+    sample_dirs = [TESTING_DIR / "error_recovery", TESTING_DIR / "semantic_errors"]
     result_dir = Path(args.result_dir) if args.result_dir else TESTING_DIR / "error_recovery_results"
     log_dir = result_dir / "logs"
     build_log = log_dir / "build_pascc.log"
@@ -253,38 +272,96 @@ def error_recovery(args: argparse.Namespace) -> int:
     log_dir.mkdir(parents=True, exist_ok=True)
     pascc = build_pascc(build_log, args.build_type)
 
-    pas_files = sorted(test_dir.glob("*.pas"))
+    pas_files: list[Path] = []
+    for d in sample_dirs:
+        pas_files.extend(sorted(d.glob("*.pas")))
     if not pas_files:
-        print(f"no error recovery samples found under {test_dir}", file=sys.stderr)
+        names = ", ".join(str(d) for d in sample_dirs)
+        print(f"no error samples found under {names}", file=sys.stderr)
         return 1
 
     summary_tsv = result_dir / "summary.tsv"
     summary_txt = result_dir / "summary.txt"
-    write_text(summary_tsv, "case\tstatus\texit_code\tstderr_log\n")
+    write_text(summary_tsv, "case\tcategory\tstatus\texit_code\texpected_exit\tstderr_log\n")
     write_text(
         summary_txt,
         f"Error recovery report\nroot: {ROOT_DIR}\nsamples: {len(pas_files)}\n\n",
     )
 
+    pass_count = 0
+    fail_count = 0
+
     for pas_file in pas_files:
         case_name = pas_file.stem
-        stdout_log = log_dir / f"{case_name}.stdout.log"
-        stderr_log = log_dir / f"{case_name}.stderr.log"
-        exit_code = run_command([str(pascc), "-i", str(pas_file)], stdout_path=stdout_log, stderr_path=stderr_log)
-        status = "UNEXPECTED_SUCCESS" if exit_code == 0 else "EXPECTED_FAIL"
+        category = pas_file.parent.name
+        stem = f"{category}__{case_name}"
+        stdout_log = log_dir / f"{stem}.stdout.log"
+        stderr_log = log_dir / f"{stem}.stderr.log"
+        diff_log = log_dir / f"{stem}.diff.log"
+        expected_stderr = pas_file.with_suffix(".expected.stderr")
+        expected_exit_file = pas_file.with_suffix(".expected.exit")
+
+        exit_code, timed_out = _run_pascc_with_timeout(
+            pascc, pas_file, stdout_log, stderr_log, RECOVERY_TIMEOUT_SECS
+        )
+
+        status = "PASS"
+        detail = ""
+        expected_exit_str = ""
+
+        if timed_out:
+            status = "TIMEOUT"
+            detail = f"exceeded {RECOVERY_TIMEOUT_SECS}s"
+        elif not expected_stderr.exists():
+            status = "MISSING_GOLDEN"
+            detail = f"{expected_stderr} not found"
+        else:
+            expected_bytes = expected_stderr.read_bytes()
+            actual_bytes = stderr_log.read_bytes()
+            if expected_bytes != actual_bytes:
+                exp_text = expected_bytes.decode("utf-8", errors="replace").splitlines(keepends=True)
+                act_text = actual_bytes.decode("utf-8", errors="replace").splitlines(keepends=True)
+                diff = "".join(difflib.unified_diff(
+                    exp_text, act_text,
+                    fromfile=str(expected_stderr), tofile=str(stderr_log),
+                ))
+                write_text(diff_log, diff)
+                status = "STDERR_MISMATCH"
+                detail = str(diff_log)
+
+        if expected_exit_file.exists():
+            expected_exit_str = expected_exit_file.read_text(encoding="utf-8").strip()
+            if status == "PASS" and expected_exit_str != str(exit_code):
+                status = "EXIT_MISMATCH"
+                detail = f"expected={expected_exit_str} actual={exit_code}"
+
+        if status == "PASS":
+            pass_count += 1
+        else:
+            fail_count += 1
 
         with summary_tsv.open("a", encoding="utf-8") as out_tsv:
-            out_tsv.write(f"{case_name}\t{status}\t{exit_code}\t{stderr_log}\n")
+            out_tsv.write(
+                f"{case_name}\t{category}\t{status}\t{exit_code}\t{expected_exit_str}\t{stderr_log}\n"
+            )
         with summary_txt.open("a", encoding="utf-8") as out_txt:
             out_txt.write(
-                f"[{case_name}]\n"
+                f"[{category}/{case_name}]\n"
                 f"status: {status}\n"
-                f"exit: {exit_code}\n"
-                f"stderr: {stderr_log}\n\n"
+                f"exit: {exit_code} (expected: {expected_exit_str or '?'})\n"
+                f"stderr: {stderr_log}\n"
             )
+            if detail:
+                out_txt.write(f"detail: {detail}\n")
+            out_txt.write("\n")
+
+    with summary_txt.open("a", encoding="utf-8") as out_txt:
+        out_txt.write(f"passed: {pass_count}/{len(pas_files)}\n")
+        out_txt.write(f"failed: {fail_count}/{len(pas_files)}\n")
 
     print(f"wrote error recovery logs to {result_dir}")
-    return 0
+    print(f"passed: {pass_count}/{len(pas_files)}  failed: {fail_count}/{len(pas_files)}")
+    return 0 if fail_count == 0 else 1
 
 
 def main() -> int:

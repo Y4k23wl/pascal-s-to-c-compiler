@@ -437,7 +437,6 @@ statement_list
                          @3.first_column,
                          "语法恢复",
                          "语句存在语法错误，已跳过到下一个分号或 end 后继续");
-          yyerrok;
           $$ = $1;
       }
     | statement_list error statement

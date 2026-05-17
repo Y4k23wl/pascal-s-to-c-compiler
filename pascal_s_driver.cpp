@@ -80,12 +80,23 @@ int main(int argc, char **argv) {
     output_path = replace_extension_with_c(input_path);
     root = parse_pascal_file(input_path);
 
-    if (root == NULL) {
-        if (pascal_s_had_lexical_error()) {
+    if (pascal_s_had_lexical_error()) {
+        std::fprintf(stderr,
+                     "编译终止：词法阶段共发现 %d 个错误\n",
+                     pascal_s_lexical_error_count());
+        if (pascal_s_had_syntax_error()) {
             std::fprintf(stderr,
-                         "编译终止：词法阶段共发现 %d 个错误\n",
-                         pascal_s_lexical_error_count());
+                         "编译终止：语法阶段共发现 %d 个错误\n",
+                         pascal_s_syntax_error_count());
         }
+        if (root != NULL) {
+            ast_free(root);
+            g_ast_root = NULL;
+        }
+        return 1;
+    }
+
+    if (root == NULL) {
         if (pascal_s_had_syntax_error()) {
             std::fprintf(stderr,
                          "编译终止：语法阶段共发现 %d 个错误\n",

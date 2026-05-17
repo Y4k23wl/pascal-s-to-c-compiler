@@ -1,0 +1,9 @@
+[语法错误] 行：5，列：3 - syntax error, unexpected ID, expecting END_KW or SEMICOLON
+[语法恢复] 行：5，列：3 - 语句之间可能缺少分号，已恢复并继续
+[语法错误] 行：6，列：12 - syntax error, unexpected RPAREN
+[语法恢复] 行：6，列：9 - write 参数列表存在语法错误，已恢复到右括号
+[语法错误] 行：7，列：11 - syntax error, unexpected RPAREN, expecting ID
+[语法恢复] 行：7，列：8 - read 参数列表存在语法错误，已恢复到右括号
+[语法错误] 行：8，列：10 - syntax error, unexpected RPAREN
+[语法恢复] 行：8，列：7 - 调用实参列表存在语法错误，已恢复到右括号
+编译终止：语法阶段共发现 4 个错误

@@ -1,0 +1,3 @@
+[语法错误] 行：3，列：17 - syntax error, unexpected INTEGER, expecting COMMA or COLON
+[语法恢复] 行：3，列：15 - 形参列表存在语法错误，已恢复到右括号
+编译终止：语法阶段共发现 1 个错误

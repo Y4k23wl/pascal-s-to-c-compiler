@@ -1,0 +1,41 @@
+[语法错误] 行：3，列：7 - syntax error, unexpected COMMA
+[语法恢复] 行：3，列：7 - 调用实参列表存在语法错误，已恢复到右括号
+[语法错误] 行：4，列：7 - syntax error, unexpected COMMA
+[语法恢复] 行：4，列：7 - 调用实参列表存在语法错误，已恢复到右括号
+[语法错误] 行：5，列：7 - syntax error, unexpected COMMA
+[语法恢复] 行：5，列：7 - 调用实参列表存在语法错误，已恢复到右括号
+[语法错误] 行：6，列：7 - syntax error, unexpected COMMA
+[语法恢复] 行：6，列：7 - 调用实参列表存在语法错误，已恢复到右括号
+[语法错误] 行：7，列：7 - syntax error, unexpected COMMA
+[语法恢复] 行：7，列：7 - 调用实参列表存在语法错误，已恢复到右括号
+[语法错误] 行：8，列：7 - syntax error, unexpected COMMA
+[语法恢复] 行：8，列：7 - 调用实参列表存在语法错误，已恢复到右括号
+[语法错误] 行：9，列：7 - syntax error, unexpected COMMA
+[语法恢复] 行：9，列：7 - 调用实参列表存在语法错误，已恢复到右括号
+[语法错误] 行：10，列：7 - syntax error, unexpected COMMA
+[语法恢复] 行：10，列：7 - 调用实参列表存在语法错误，已恢复到右括号
+[语法错误] 行：11，列：7 - syntax error, unexpected COMMA
+[语法恢复] 行：11，列：7 - 调用实参列表存在语法错误，已恢复到右括号
+[语法错误] 行：12，列：7 - syntax error, unexpected COMMA
+[语法恢复] 行：12，列：7 - 调用实参列表存在语法错误，已恢复到右括号
+[语法错误] 行：13，列：7 - syntax error, unexpected COMMA
+[语法恢复] 行：13，列：7 - 调用实参列表存在语法错误，已恢复到右括号
+[语法错误] 行：14，列：7 - syntax error, unexpected COMMA
+[语法恢复] 行：14，列：7 - 调用实参列表存在语法错误，已恢复到右括号
+[语法错误] 行：15，列：7 - syntax error, unexpected COMMA
+[语法恢复] 行：15，列：7 - 调用实参列表存在语法错误，已恢复到右括号
+[语法错误] 行：16，列：7 - syntax error, unexpected COMMA
+[语法恢复] 行：16，列：7 - 调用实参列表存在语法错误，已恢复到右括号
+[语法错误] 行：17，列：7 - syntax error, unexpected COMMA
+[语法恢复] 行：17，列：7 - 调用实参列表存在语法错误，已恢复到右括号
+[语法错误] 行：18，列：7 - syntax error, unexpected COMMA
+[语法恢复] 行：18，列：7 - 调用实参列表存在语法错误，已恢复到右括号
+[语法错误] 行：19，列：7 - syntax error, unexpected COMMA
+[语法恢复] 行：19，列：7 - 调用实参列表存在语法错误，已恢复到右括号
+[语法错误] 行：20，列：7 - syntax error, unexpected COMMA
+[语法恢复] 行：20，列：7 - 调用实参列表存在语法错误，已恢复到右括号
+[语法错误] 行：21，列：7 - syntax error, unexpected COMMA
+[语法恢复] 行：21，列：7 - 调用实参列表存在语法错误，已恢复到右括号
+[语法错误] 行：22，列：7 - syntax error, unexpected COMMA
+[语法错误] 行：22，列：7 - 语法错误过多，停止继续分析
+编译终止：语法阶段共发现 20 个错误

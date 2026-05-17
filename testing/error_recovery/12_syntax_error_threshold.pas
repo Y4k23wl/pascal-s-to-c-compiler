@@ -1,0 +1,26 @@
+program recover12;
+begin
+  foo(,);
+  foo(,);
+  foo(,);
+  foo(,);
+  foo(,);
+  foo(,);
+  foo(,);
+  foo(,);
+  foo(,);
+  foo(,);
+  foo(,);
+  foo(,);
+  foo(,);
+  foo(,);
+  foo(,);
+  foo(,);
+  foo(,);
+  foo(,);
+  foo(,);
+  foo(,);
+  foo(,);
+  foo(,);
+  foo(,)
+end.

@@ -567,13 +567,13 @@ static const yytype_uint16 yyrline[] =
      240,   247,   252,   259,   263,   270,   274,   278,   282,   289,
      294,   301,   309,   312,   319,   326,   331,   340,   343,   347,
      351,   363,   368,   375,   379,   386,   395,   402,   409,   413,
-     425,   430,   434,   443,   456,   459,   463,   467,   471,   475,
-     479,   483,   487,   492,   496,   505,   509,   521,   526,   533,
-     542,   545,   549,   561,   566,   571,   576,   592,   597,   604,
-     608,   616,   620,   628,   632,   640,   644,   648,   652,   657,
-     670,   675,   679,   683,   688,   692,   696,   703,   707,   711,
-     715,   719,   723,   730,   734,   738,   745,   749,   753,   757,
-     761,   768,   772
+     425,   430,   434,   442,   455,   458,   462,   466,   470,   474,
+     478,   482,   486,   491,   495,   504,   508,   520,   525,   532,
+     541,   544,   548,   560,   565,   570,   575,   591,   596,   603,
+     607,   615,   619,   627,   631,   639,   643,   647,   651,   656,
+     669,   674,   678,   682,   687,   691,   695,   702,   706,   710,
+     714,   718,   722,   729,   733,   737,   744,   748,   752,   756,
+     760,   767,   771
 };
 #endif
 
@@ -2026,14 +2026,13 @@ yyreduce:
                          (yylsp[0]).first_column,
                          "语法恢复",
                          "语句存在语法错误，已跳过到下一个分号或 end 后继续");
-          yyerrok;
           (yyval.node) = (yyvsp[-2].node);
       }
-#line 2033 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2032 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 444 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 443 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           parser_note_at((yylsp[-1]).first_line,
                          (yylsp[-1]).first_column,
@@ -2042,92 +2041,92 @@ yyreduce:
           yyerrok;
           (yyval.node) = ast_append_list((yyvsp[-2].node), (yyvsp[0].node));
       }
-#line 2046 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2045 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 456 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 455 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_make_empty_stmt(AST_LOC((yyloc)));
       }
-#line 2054 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2053 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 460 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 459 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_make_assign_stmt((yyvsp[-2].node), (yyvsp[0].node), AST_LOC((yyloc)));
       }
-#line 2062 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2061 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 464 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 463 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = (yyvsp[0].node);
       }
-#line 2070 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2069 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 468 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 467 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_make_break_stmt(AST_LOC((yylsp[0])));
       }
-#line 2078 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2077 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 472 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 471 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = (yyvsp[0].node);
       }
-#line 2086 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2085 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 476 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 475 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_make_if_stmt((yyvsp[-2].node), (yyvsp[0].node), NULL, AST_LOC((yyloc)));
       }
-#line 2094 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2093 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 480 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 479 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_make_if_stmt((yyvsp[-4].node), (yyvsp[-2].node), (yyvsp[0].node), AST_LOC((yyloc)));
       }
-#line 2102 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2101 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 484 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 483 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_make_while_stmt((yyvsp[-2].node), (yyvsp[0].node), AST_LOC((yyloc)));
       }
-#line 2110 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2109 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 488 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 487 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_make_for_stmt((yyvsp[-6].sval), (yyvsp[-4].node), (yyvsp[-2].node), (yyvsp[0].node), AST_LOC((yyloc)));
           free((yyvsp[-6].sval));
       }
-#line 2119 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2118 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 493 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 492 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_make_read_stmt((yyvsp[-1].node), AST_LOC((yyloc)));
       }
-#line 2127 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2126 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 497 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 496 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           parser_note_at((yylsp[-1]).first_line,
                          (yylsp[-1]).first_column,
@@ -2136,19 +2135,19 @@ yyreduce:
           yyerrok;
           (yyval.node) = ast_make_read_stmt(ast_new(AST_VARIABLE_LIST, AST_LOC((yyloc))), AST_LOC((yyloc)));
       }
-#line 2140 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2139 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 506 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 505 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_make_write_stmt((yyvsp[-1].node), AST_LOC((yyloc)));
       }
-#line 2148 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2147 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 510 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 509 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           parser_note_at((yylsp[-1]).first_line,
                          (yylsp[-1]).first_column,
@@ -2157,53 +2156,53 @@ yyreduce:
           yyerrok;
           (yyval.node) = ast_make_write_stmt(ast_new(AST_EXPRESSION_LIST, AST_LOC((yyloc))), AST_LOC((yyloc)));
       }
-#line 2161 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2160 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 522 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 521 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_new(AST_VARIABLE_LIST, AST_LOC((yyloc)));
           ast_append_list((yyval.node), (yyvsp[0].node));
       }
-#line 2170 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2169 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 527 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 526 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_append_list((yyvsp[-2].node), (yyvsp[0].node));
       }
-#line 2178 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2177 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 534 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 533 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_make_var_ref((yyvsp[-1].sval), (yyvsp[0].node), AST_LOC((yyloc)));
           free((yyvsp[-1].sval));
       }
-#line 2187 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2186 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 542 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 541 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = NULL;
       }
-#line 2195 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2194 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 546 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 545 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = (yyvsp[-1].node);
       }
-#line 2203 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2202 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 550 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 549 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           parser_note_at((yylsp[-1]).first_line,
                          (yylsp[-1]).first_column,
@@ -2212,38 +2211,38 @@ yyreduce:
           yyerrok;
           (yyval.node) = ast_new(AST_EXPRESSION_LIST, AST_LOC((yyloc)));
       }
-#line 2216 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2215 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 562 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 561 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_make_call(AST_CALL_STMT, (yyvsp[0].sval), NULL, AST_LOC((yyloc)));
           free((yyvsp[0].sval));
       }
-#line 2225 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2224 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 567 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 566 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_make_call(AST_CALL_STMT, (yyvsp[-2].sval), NULL, AST_LOC((yyloc)));
           free((yyvsp[-2].sval));
       }
-#line 2234 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2233 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 572 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 571 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_make_call(AST_CALL_STMT, (yyvsp[-3].sval), (yyvsp[-1].node), AST_LOC((yyloc)));
           free((yyvsp[-3].sval));
       }
-#line 2243 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2242 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 577 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 576 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           parser_note_at((yylsp[-1]).first_line,
                          (yylsp[-1]).first_column,
@@ -2256,112 +2255,112 @@ yyreduce:
                              AST_LOC((yyloc)));
           free((yyvsp[-3].sval));
       }
-#line 2260 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2259 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 77:
-#line 593 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 592 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_new(AST_EXPRESSION_LIST, AST_LOC((yyloc)));
           ast_append_list((yyval.node), (yyvsp[0].node));
       }
-#line 2269 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2268 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 78:
-#line 598 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 597 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_append_list((yyvsp[-2].node), (yyvsp[0].node));
       }
-#line 2277 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2276 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 79:
-#line 605 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 604 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = (yyvsp[0].node);
       }
-#line 2285 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2284 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 80:
-#line 609 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 608 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_make_binary_expr((yyvsp[-1].sval), (yyvsp[-2].node), (yyvsp[0].node), AST_LOC((yyloc)));
           free((yyvsp[-1].sval));
       }
-#line 2294 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2293 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 81:
-#line 617 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 616 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = (yyvsp[0].node);
       }
-#line 2302 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2301 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 82:
-#line 621 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 620 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_make_binary_expr((yyvsp[-1].sval), (yyvsp[-2].node), (yyvsp[0].node), AST_LOC((yyloc)));
           free((yyvsp[-1].sval));
       }
-#line 2311 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2310 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 83:
-#line 629 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 628 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = (yyvsp[0].node);
       }
-#line 2319 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2318 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 84:
-#line 633 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 632 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_make_binary_expr((yyvsp[-1].sval), (yyvsp[-2].node), (yyvsp[0].node), AST_LOC((yyloc)));
           free((yyvsp[-1].sval));
       }
-#line 2328 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2327 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 85:
-#line 641 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 640 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = (yyvsp[0].node);
       }
-#line 2336 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2335 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 86:
-#line 645 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 644 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = (yyvsp[0].node);
       }
-#line 2344 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2343 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 87:
-#line 649 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 648 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = (yyvsp[-1].node);
       }
-#line 2352 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2351 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 88:
-#line 653 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 652 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_make_call(AST_CALL_EXPR, (yyvsp[-3].sval), (yyvsp[-1].node), AST_LOC((yyloc)));
           free((yyvsp[-3].sval));
       }
-#line 2361 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2360 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 89:
-#line 658 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 657 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           parser_note_at((yylsp[-1]).first_line,
                          (yylsp[-1]).first_column,
@@ -2374,197 +2373,197 @@ yyreduce:
                              AST_LOC((yyloc)));
           free((yyvsp[-3].sval));
       }
-#line 2378 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2377 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 90:
-#line 671 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 670 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_make_call(AST_CALL_EXPR, (yyvsp[-2].sval), NULL, AST_LOC((yyloc)));
           free((yyvsp[-2].sval));
       }
-#line 2387 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2386 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 91:
-#line 676 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 675 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_make_bool_literal(true, AST_LOC((yylsp[0])));
       }
-#line 2395 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2394 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 92:
-#line 680 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 679 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_make_bool_literal(false, AST_LOC((yylsp[0])));
       }
-#line 2403 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2402 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 93:
-#line 684 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 683 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_new_text(AST_STRING_LITERAL, AST_LOC((yylsp[0])), (yyvsp[0].sval));
           free((yyvsp[0].sval));
       }
-#line 2412 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2411 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 94:
-#line 689 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 688 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_make_unary_expr("not", (yyvsp[0].node), AST_LOC((yyloc)));
       }
-#line 2420 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2419 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 95:
-#line 693 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 692 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_make_unary_expr("+", (yyvsp[0].node), AST_LOC((yyloc)));
       }
-#line 2428 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2427 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 96:
-#line 697 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 696 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_make_unary_expr("-", (yyvsp[0].node), AST_LOC((yyloc)));
       }
-#line 2436 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2435 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 97:
-#line 704 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 703 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.sval) = dup_text("=");
       }
-#line 2444 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2443 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 98:
-#line 708 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 707 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.sval) = dup_text("<>");
       }
-#line 2452 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2451 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 99:
-#line 712 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 711 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.sval) = dup_text("<");
       }
-#line 2460 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2459 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 100:
-#line 716 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 715 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.sval) = dup_text("<=");
       }
-#line 2468 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2467 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 101:
-#line 720 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 719 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.sval) = dup_text(">");
       }
-#line 2476 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2475 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 102:
-#line 724 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 723 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.sval) = dup_text(">=");
       }
-#line 2484 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2483 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 103:
-#line 731 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 730 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.sval) = dup_text("+");
       }
-#line 2492 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2491 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 104:
-#line 735 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 734 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.sval) = dup_text("-");
       }
-#line 2500 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2499 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 105:
-#line 739 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 738 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.sval) = dup_text("or");
       }
-#line 2508 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2507 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 106:
-#line 746 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 745 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.sval) = dup_text("*");
       }
-#line 2516 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2515 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 107:
-#line 750 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 749 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.sval) = dup_text("/");
       }
-#line 2524 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2523 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 108:
-#line 754 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 753 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.sval) = dup_text("div");
       }
-#line 2532 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2531 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 109:
-#line 758 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 757 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.sval) = dup_text("mod");
       }
-#line 2540 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2539 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 110:
-#line 762 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 761 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.sval) = dup_text("and");
       }
-#line 2548 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2547 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 111:
-#line 769 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 768 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_new_int(AST_INT_LITERAL, AST_LOC((yylsp[0])), (yyvsp[0].ival));
       }
-#line 2556 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2555 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 112:
-#line 773 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
+#line 772 "/work/frontend/pascal_s_parser.y" /* yacc.c:1646  */
     {
           (yyval.node) = ast_new_real(AST_REAL_LITERAL, AST_LOC((yylsp[0])), (yyvsp[0].fval));
       }
-#line 2564 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2563 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
     break;
 
 
-#line 2568 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
+#line 2567 "/work/build_docker_debian9/frontend/pascal_s_parser.tab.cpp" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2799,7 +2798,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 778 "/work/frontend/pascal_s_parser.y" /* yacc.c:1906  */
+#line 777 "/work/frontend/pascal_s_parser.y" /* yacc.c:1906  */
 
 
 void yyerror(const char *msg) {
