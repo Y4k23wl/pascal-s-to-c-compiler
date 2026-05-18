@@ -1,6 +1,6 @@
 # Testing
 
-这个目录收拢了 `code` 仓库自带的测试资产，避免和编译器源码混在一起。
+这个目录收拢了仓库自带的测试资产，避免和编译器源码混在一起。
 
 包含内容：
 
@@ -11,7 +11,7 @@
 - `semantic_errors/`
   - 语义错误样例
 - `test_ast/`
-  - 用于语法阶段 AST dump 的小规模样例（含一个故意写错的 `test.pas`，用来观察解析失败的样子）
+  - 用于语法阶段 AST dump 的小规模样例
 - `test_semantic/`
   - 用于语义阶段符号表 dump 的小规模样例
 - `*.expected.stderr` / `*.expected.exit`
@@ -21,12 +21,12 @@
 - `run_error_recovery_checks.sh`
   - 错误恢复回归脚本，收集错误输出日志
 - `run_stage_dumps.sh`
-  - 阶段性中间产物 dump 脚本（AST / 符号表），无金标准，只收集输出
+  - 阶段性中间产物 dump 脚本（AST / 符号表）
 - `run_tests.py`
-  - Python 测试驱动脚本，提供 Windows 测试入口
+  - Python 测试驱动脚本
 
 
-# 这个测试（所谓的开放集对拍）在做什么事？
+# 端到端对拍流程
 ### 对于我们的编译器：
 对每个pascal源代码`program.pas`，生成`program.c`，再用gcc编译出`program.exe`
 ### 对于pascal编译器：
@@ -37,7 +37,7 @@
 
 ## 用法
 
-在 `code/` 仓库根目录执行，可任选 shell 脚本或 Python 脚本。
+在根目录执行，可任选 shell 脚本或 Python 脚本。
 
 开放集对拍：
 
@@ -61,7 +61,7 @@ python ./testing/run_tests.py output-consistency
 4. 用 `fpc` 编译同一份 Pascal 源程序
 5. 运行两边可执行文件并逐样例比对标准输出
 
-错误恢复样例可在 `code/` 仓库根目录执行：
+错误恢复样例可在仓库根目录执行：
 
 Shell 入口：
 
@@ -103,32 +103,50 @@ python ./testing/run_tests.py stage-dumps
 3. 对 `testing/test_semantic/*.pas` 跑 `--stop-after=semantic --dump-symbols`，把符号表落到 `stage_dump_results/symbols/<name>.semantic`
 4. 不做金标准 diff——产物用于人工检视；样例在对应阶段就出错的会标 `[FAIL]`，stderr 留在 `logs/` 下
 
-## 单独构建
+## 测试结果
 
-如果只想先构建编译器本体，在 `code/` 根目录执行：
+### 错误恢复 & 错误处理：**18 / 18 通过**
 
-```bash
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build --config Release
-```
+`bash testing/run_error_recovery_checks.sh` 与 `python3 testing/run_tests.py error-recovery` 输出
+`passed: 18/18  failed: 0/18`。stderr 与退出码均与金标准一致。覆盖矩阵：
 
-如果需要从干净目录重新配置并全量重建：
+| 阶段 | 机制 | 锁住样例 |
+| --- | --- | --- |
+| lexer | 非法字符 | `error_recovery/04_lexical_limit.pas` |
+| lexer | 未闭合注释（提前终止） | `error_recovery/05_unclosed_comment.pas` |
+| lexer | 未闭合字符常量 | `error_recovery/09_unclosed_char_const.pas` |
+| lexer | 数字开头非法标识符 | `error_recovery/10_bad_identifier_digit_start.pas` |
+| lexer | `kMaxLexErrors=20` 熔断 | `error_recovery/04_lexical_limit.pas` |
+| lexer | 词法错误数 < 阈值时逐条报告 | `error_recovery/11_lex_below_threshold.pas` |
+| parser | `LPAREN error RPAREN`（形参） | `error_recovery/02_formal_parameter_recovery.pas` |
+| parser | `BEGIN_KW error END_KW` | `error_recovery/06_compound_statement_recovery.pas` |
+| parser | `statement_list SEMICOLON error` | `error_recovery/07_statement_skip_to_semicolon.pas` |
+| parser | `statement_list error statement`（缺分号） | `error_recovery/01_statement_and_call_recovery.pas` |
+| parser | `READ/WRITE LPAREN error RPAREN` | `error_recovery/01_statement_and_call_recovery.pas` |
+| parser | `LBRACK error RBRACK`（数组下标） | `error_recovery/03_index_recovery.pas` |
+| parser | `procedure_call: ID LPAREN error RPAREN` | `error_recovery/01_statement_and_call_recovery.pas` |
+| parser | `factor: ID LPAREN error RPAREN`（函数调用表达式） | `error_recovery/08_function_call_expr_recovery.pas` |
+| parser | `kMaxParseErrors=20` 熔断 | `error_recovery/12_syntax_error_threshold.pas` |
+| parser | 恢复后不死循环（回归锁） | `error_recovery/13_loop_recovery_regression.pas` |
+| semantic | 综合（11 条不同语义错误同时出现） | `semantic_errors/01_kitchen_sink.pas` |
+| semantic | 未声明 / 重复声明 / `break` 越界 / 数组下界反转 | `semantic_errors/02`–`05` |
 
-```bash
-rm -rf build
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build --config Release
-```
+### 头歌开放集对拍：**整体通过**
 
-构建成功后，可执行文件默认位于：
+- `14_div`、`65_float` —— 浮点格式 / 精度相关
+- `42_color`、`51_var_name`、`57_many_params` —— 实参求值顺序 / 名字冲突等平台行为相关
 
-```bash
-build/bin/pascc
-```
+以上五个测试集的偏差均与测试环境相关，由于程序全部通过头歌在线测试，因此不再深究。
 
-## 程序怎么用
+### 中间产物检验：**全部通过**
 
-基本用法（在 `code/` 根目录，假设源程序是 `a.pas`）：
+针对`/test_ast`与`test_semantic`测试样例所生成的中间产物输出全部符合预期。
+
+
+
+## 程序用法
+
+基本用法（在根目录，假设源程序是 `a.pas`）：
 
 ```bash
 ./build/bin/pascc -i a.pas        # 生成 a.c

@@ -10,13 +10,13 @@
 
 对应代码文件：
 
-- `code/frontend/pascal_s_lexer.l`
-- `code/frontend/pascal_s_parser.y`
-- `code/frontend/ast.hpp`
-- `code/frontend/ast.cpp`
-- `code/semantic/semantic.hpp`
-- `code/semantic/semantic.cpp`
-- `code/pascal_s_driver.cpp`
+- `/frontend/pascal_s_lexer.l`
+- `/frontend/pascal_s_parser.y`
+- `/frontend/ast.hpp`
+- `/frontend/ast.cpp`
+- `/semantic/semantic.hpp`
+- `/semantic/semantic.cpp`
+- `/pascal_s_driver.cpp`
 
 ## 1. 回归方式
 

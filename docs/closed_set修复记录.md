@@ -31,7 +31,7 @@ read 参数必须是可赋值左值
 
 主要修改文件：
 
-- `code/semantic/semantic.cpp`
+- `semantic/semantic.cpp`
 
 ## 2. 不支持 Pascal 字符串常量
 
@@ -59,14 +59,14 @@ const split = '--';
 
 主要修改文件：
 
-- `code/frontend/pascal_s_lexer.l`
-- `code/frontend/pascal_s_parser.y`
-- `code/frontend/ast.hpp`
-- `code/frontend/ast.cpp`
-- `code/semantic/semantic.hpp`
-- `code/semantic/semantic.cpp`
-- `code/codegen/codegen.hpp`
-- `code/codegen/codegen.cpp`
+- `frontend/pascal_s_lexer.l`
+- `frontend/pascal_s_parser.y`
+- `frontend/ast.hpp`
+- `frontend/ast.cpp`
+- `semantic/semantic.hpp`
+- `semantic/semantic.cpp`
+- `codegen/codegen.hpp`
+- `codegen/codegen.cpp`
 
 说明：本轮只为闭集需要支持字符串常量和 `write(string)`，没有扩大到 `read(string)` 或字符串参与一般运算，避免影响开放集已有行为。
 
@@ -94,12 +94,12 @@ Break;
 
 主要修改文件：
 
-- `code/frontend/pascal_s_lexer.l`
-- `code/frontend/pascal_s_parser.y`
-- `code/frontend/ast.hpp`
-- `code/frontend/ast.cpp`
-- `code/semantic/semantic.cpp`
-- `code/codegen/codegen.cpp`
+- `frontend/pascal_s_lexer.l`
+- `frontend/pascal_s_parser.y`
+- `frontend/ast.hpp`
+- `frontend/ast.cpp`
+- `semantic/semantic.cpp`
+- `codegen/codegen.cpp`
 
 ## 4. 闭集源码爬取中 `*` 被展开成文件列表
 
@@ -129,8 +129,8 @@ fputs("...\\n", stdout);
 
 主要修改文件：
 
-- `code/testing/dummy.cpp`
-- `code/CMakeLists.txt`
+- `testing/dummy.cpp`
+- `CMakeLists.txt`
 
 使用方式：
 
@@ -189,8 +189,8 @@ C 语言中 `+` 两侧操作数求值顺序未指定。递归调用进入 `asr5`
 
 主要修改文件：
 
-- `code/codegen/codegen.hpp`
-- `code/codegen/codegen.cpp`
+- `codegen/codegen.hpp`
+- `codegen/codegen.cpp`
 
 曾尝试将 Pascal `real` 的目标 C 表示从 `float` 改为 `double`，但该方向在平台上没有修复 93，并导致其它用例回退，因此已撤回。当前 `real` 仍沿用 C `float` 表示。
 
@@ -199,13 +199,13 @@ C 语言中 `+` 两侧操作数求值顺序未指定。递归调用进入 `asr5`
 本轮执行了以下验证：
 
 ```bash
-cmake --build code/build --config Release
+cmake --build /build --config Release
 ```
 
 构建通过，生成：
 
-- `code/build/bin/pascc`
-- `code/build/bin/pascc_dummy`
+- `/build/bin/pascc`
+- `/build/bin/pascc_dummy`
 
 针对性验证样例覆盖：
 

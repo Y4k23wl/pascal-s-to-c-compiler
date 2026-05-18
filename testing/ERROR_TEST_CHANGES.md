@@ -1,6 +1,6 @@
 # 错误处理 / 错误恢复测试 改动记录
 
-本文记录针对 `code/testing/` 下错误处理与错误恢复测试的扩充与重构。
+本文记录针对 `/testing/` 下错误处理与错误恢复测试的扩充与重构。
 
 ## 背景
 
@@ -94,13 +94,13 @@
 
 测试过程中暴露了两个真实的编译器 bug，已一并修复并被测试锁住：
 
-1. **纯词法错误不致命**（[pascal_s_driver.cpp](code/pascal_s_driver.cpp)）。
+1. **纯词法错误不致命**（[pascal_s_driver.cpp](/pascal_s_driver.cpp)）。
    原代码只在 AST 为 NULL 时检查词法错误，结果像 `123abc` 这种非法标识符被词法器
    丢弃后 parser 仍能完成解析，root 非空，于是直接走进 semantic / codegen，
    exit=0。修复：把词法错误检查提到 `root == NULL` 分支之外，发现词法错误就打
    "编译终止：词法阶段共发现 N 个错误" 并以 1 退出。被样例 10、11 锁住
    （它们的 `expected.exit` 已改为 1，stderr 含汇总条）。
-2. **`statement_list` 错误恢复死循环**（[pascal_s_parser.y:434](code/frontend/pascal_s_parser.y:434)）。
+2. **`statement_list` 错误恢复死循环**（[pascal_s_parser.y:434](/frontend/pascal_s_parser.y:434)）。
    `statement_list SEMICOLON error` 规则的 action 里调了 `yyerrok`，把 Bison
    的错误状态清掉，导致 Bison 自带的"出错后静默丢弃 token 直到 3 个成功 shift"
    抑制机制失效。错误 token 不能被立刻消费时，规则反复 reduce、错误反复重报，

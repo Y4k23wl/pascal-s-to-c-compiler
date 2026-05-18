@@ -5,10 +5,10 @@
 
 对应实现文件：
 
-- `code/frontend/ast.hpp`
-- `code/frontend/ast.cpp`
-- `code/frontend/pascal_s_parser.y`
-- `code/frontend/pascal_s_frontend.hpp`
+- `frontend/ast.hpp`
+- `frontend/ast.cpp`
+- `frontend/pascal_s_parser.y`
+- `frontend/pascal_s_frontend.hpp`
 
 ## 1. AST 的定位
 
