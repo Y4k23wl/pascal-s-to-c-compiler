@@ -1,0 +1,522 @@
+# AST 规则
+
+本文档描述当前工程中 Pascal-S 前端构造的 AST 规则。  
+
+## 1. AST 的定位
+
+当前编译器前端的工作链路如下：
+
+```text
+Pascal-S 源代码
+  -> 词法分析（Flex）
+  -> 语法分析 + AST 构造（Bison）
+  -> AST
+  -> 语义分析 / 符号表 / C 代码生成
+```
+
+AST 不是调试附属物，而是后续编译阶段的正式输入。
+
+AST 的设计目标有三点：
+
+- 保留 Pascal-S 的核心语义结构，而不是保留全部语法细节。
+- 为后续语义分析提供稳定、统一的节点结构。
+- 为后续 C 代码生成提供可直接遍历的树形表示。
+
+## 2. 通用结构
+
+所有节点都使用 `AstNode` 表示，定义在 `frontend/ast.hpp` 中。
+
+```cpp
+struct AstNode {
+    AstKind kind;
+    AstLocation loc;
+    std::string text;
+    long long int_value;
+    long long second_int_value;
+    double real_value;
+    bool flag;
+    std::vector<AstNode *> children;
+};
+```
+
+字段含义：
+
+- `kind`：节点类别，决定该节点表示什么结构。
+- `loc`：源代码位置，记录起止行列，用于语义错误和代码生成时定位。
+- `text`：文本属性，主要用于标识符名、类型名、运算符名、过程名、函数名。
+- `int_value`：整数字面量值，也用于数组区间下界。
+- `second_int_value`：当前主要用于数组区间上界。
+- `real_value`：实数字面量值。
+- `flag`：当前主要用于参数节点，表示该参数组是否为 `var` 引用参数。
+- `children`：子节点列表。子节点顺序是 AST 规则的重要组成部分，后续阶段必须按约定读取。
+
+## 3. 节点分类
+
+当前实现的节点类型按语义作用分为六类：
+
+### 3.1 程序与块
+
+- `AST_PROGRAM`
+- `AST_PROGRAM_HEAD`
+- `AST_BLOCK`
+
+### 3.2 标识符与声明
+
+- `AST_IDENTIFIER`
+- `AST_IDENTIFIER_LIST`
+- `AST_CONST_DECL`
+- `AST_CONST_DECL_LIST`
+- `AST_VAR_DECL`
+- `AST_VAR_DECL_LIST`
+
+### 3.3 类型
+
+- `AST_BASIC_TYPE`
+- `AST_ARRAY_TYPE`
+- `AST_PERIOD`
+- `AST_PERIOD_LIST`
+
+### 3.4 子程序
+
+- `AST_SUBPROGRAM`
+- `AST_SUBPROGRAM_LIST`
+- `AST_PROCEDURE_HEAD`
+- `AST_FUNCTION_HEAD`
+- `AST_PARAM_GROUP`
+- `AST_PARAM_LIST`
+
+### 3.5 语句
+
+- `AST_COMPOUND_STMT`
+- `AST_STATEMENT_LIST`
+- `AST_EMPTY_STMT`
+- `AST_ASSIGN_STMT`
+- `AST_CALL_STMT`
+- `AST_IF_STMT`
+- `AST_WHILE_STMT`
+- `AST_FOR_STMT`
+- `AST_BREAK_STMT`
+- `AST_READ_STMT`
+- `AST_WRITE_STMT`
+
+### 3.6 表达式与引用
+
+- `AST_VAR_REF`
+- `AST_VARIABLE_LIST`
+- `AST_EXPRESSION_LIST`
+- `AST_CALL_EXPR`
+- `AST_BINARY_EXPR`
+- `AST_UNARY_EXPR`
+- `AST_BOOL_LITERAL`
+- `AST_INT_LITERAL`
+- `AST_REAL_LITERAL`
+- `AST_CHAR_LITERAL`
+- `AST_STRING_LITERAL`
+
+## 4. 节点规则总表
+
+本节定义每种节点的语义和子节点布局。
+
+### 4.1 程序与块
+
+#### `AST_PROGRAM`
+
+表示整个 Pascal-S 程序。
+
+- `children[0]`：`AST_PROGRAM_HEAD`
+- `children[1]`：`AST_BLOCK`
+
+#### `AST_PROGRAM_HEAD`
+
+表示程序头。
+
+- `text`：程序名
+- `children.size()`：`0` 或 `1`
+- `children[0]`：若存在，则为 `AST_IDENTIFIER_LIST`，对应 `program p(input, output)` 这种参数表
+
+#### `AST_BLOCK`
+
+统一表示程序体或子程序体。
+
+- `children[0]`：`AST_CONST_DECL_LIST`
+- `children[1]`：`AST_VAR_DECL_LIST`
+- `children[2]`：`AST_SUBPROGRAM_LIST`
+- `children[3]`：`AST_COMPOUND_STMT`
+
+说明：
+
+- 主程序体和子程序体都用同一结构。
+- 后续语义分析进入一个新作用域时，可直接把 `AST_BLOCK` 看作作用域单元。
+
+### 4.2 标识符与声明
+
+#### `AST_IDENTIFIER`
+
+表示单个标识符。
+
+- `text`：标识符名
+- 无子节点
+
+#### `AST_IDENTIFIER_LIST`
+
+表示标识符列表。
+
+- `children[i]`：每个元素都是 `AST_IDENTIFIER`
+
+#### `AST_CONST_DECL`
+
+表示单个常量声明。
+
+- `text`：常量名
+- `children[0]`：常量值节点，可能是：
+  - `AST_BOOL_LITERAL`
+  - `AST_INT_LITERAL`
+  - `AST_REAL_LITERAL`
+  - `AST_CHAR_LITERAL`
+  - `AST_STRING_LITERAL`
+  - `AST_UNARY_EXPR("-") + 数字`
+  - `AST_UNARY_EXPR("+") + 数字`
+
+#### `AST_CONST_DECL_LIST`
+
+表示常量声明列表。
+
+- `children[i]`：每个元素都是 `AST_CONST_DECL`
+
+#### `AST_VAR_DECL`
+
+表示单组变量声明。
+
+- `children[0]`：`AST_IDENTIFIER_LIST`
+- `children[1]`：类型节点，可能是 `AST_BASIC_TYPE` 或 `AST_ARRAY_TYPE`
+
+#### `AST_VAR_DECL_LIST`
+
+表示变量声明列表。
+
+- `children[i]`：每个元素都是 `AST_VAR_DECL`
+
+### 4.3 类型
+
+#### `AST_BASIC_TYPE`
+
+表示基本类型。
+
+- `text`：`"integer"`、`"real"`、`"boolean"`、`"char"`
+
+#### `AST_ARRAY_TYPE`
+
+表示数组类型。
+
+- `children[0]`：`AST_PERIOD_LIST`
+- `children[1]`：`AST_BASIC_TYPE`
+
+说明：
+
+- 当前文法只支持数组元素类型为基本类型。
+- 多维数组通过 `AST_PERIOD_LIST` 中多个区间实现。
+
+#### `AST_PERIOD`
+
+表示一个数组下标区间。
+
+- `int_value`：下界
+- `second_int_value`：上界
+- 无子节点
+
+例如 `1..10`：
+
+- `int_value = 1`
+- `second_int_value = 10`
+
+#### `AST_PERIOD_LIST`
+
+表示数组维度区间列表。
+
+- `children[i]`：每个元素都是 `AST_PERIOD`
+
+例如 `array[1..10, 0..5] of integer` 会形成：
+
+```text
+AST_ARRAY_TYPE
+  AST_PERIOD_LIST
+    AST_PERIOD(1, 10)
+    AST_PERIOD(0, 5)
+  AST_BASIC_TYPE("integer")
+```
+
+### 4.4 子程序
+
+#### `AST_SUBPROGRAM`
+
+表示一个过程或函数定义。
+
+- `children[0]`：头部，可能是 `AST_PROCEDURE_HEAD` 或 `AST_FUNCTION_HEAD`
+- `children[1]`：`AST_BLOCK`
+
+#### `AST_SUBPROGRAM_LIST`
+
+表示子程序列表。
+
+- `children[i]`：每个元素都是 `AST_SUBPROGRAM`
+
+#### `AST_PROCEDURE_HEAD`
+
+表示过程头。
+
+- `text`：过程名
+- `children[0]`：`AST_PARAM_LIST`
+
+#### `AST_FUNCTION_HEAD`
+
+表示函数头。
+
+- `text`：函数名
+- `children[0]`：`AST_PARAM_LIST`
+- `children[1]`：返回类型 `AST_BASIC_TYPE`
+
+#### `AST_PARAM_GROUP`
+
+表示同一组参数声明，如 `a, b : integer` 或 `var x : integer`。
+
+- `flag`
+  - `true`：`var` 参数
+  - `false`：值参数
+- `children[0]`：`AST_IDENTIFIER_LIST`
+- `children[1]`：`AST_BASIC_TYPE`
+
+#### `AST_PARAM_LIST`
+
+表示参数组列表。
+
+- `children[i]`：每个元素都是 `AST_PARAM_GROUP`
+
+### 4.5 语句
+
+#### `AST_COMPOUND_STMT`
+
+表示 `begin ... end` 复合语句。
+
+- `children[0]`：`AST_STATEMENT_LIST`
+
+#### `AST_STATEMENT_LIST`
+
+表示语句序列。
+
+- `children[i]`：各语句节点
+
+说明：
+
+- 空语句会显式表示为 `AST_EMPTY_STMT`。
+- 因此语句表中可能出现空语句节点。
+
+#### `AST_EMPTY_STMT`
+
+表示空语句。
+
+- 无子节点
+
+#### `AST_ASSIGN_STMT`
+
+表示赋值语句。
+
+- `children[0]`：左值 `AST_VAR_REF`
+- `children[1]`：右值表达式
+
+说明：
+
+- 当前文法已经把“函数体内对函数名赋值”并入普通赋值。
+- 是否允许给函数名赋值，要在语义分析中判断当前作用域和函数定义。
+
+#### `AST_CALL_STMT`
+
+表示语句位置的子程序调用。
+
+- `text`：被调用名字
+- `children.size()`：`0` 或 `1`
+- `children[0]`：若存在，则为 `AST_EXPRESSION_LIST`
+
+说明：
+
+- 当前实现允许过程调用。
+- 也允许函数调用结果被忽略。
+- 零参调用既可以写成 `f`，也可以写成 `f()`。
+
+#### `AST_IF_STMT`
+
+表示条件语句。
+
+- `children[0]`：条件表达式
+- `children[1]`：`then` 分支语句
+- `children[2]`：若存在，则为 `else` 分支语句
+
+#### `AST_WHILE_STMT`
+
+表示 `while ... do ...`。
+
+- `children[0]`：条件表达式
+- `children[1]`：循环体语句
+
+#### `AST_FOR_STMT`
+
+表示 `for` 循环。
+
+- `text`：循环变量名
+- `children[0]`：起始表达式
+- `children[1]`：终止表达式
+- `children[2]`：循环体语句
+
+说明：
+
+- 当前语法只支持 `for id := expr to expr do stmt`。
+- 暂未包含 `downto`。
+
+#### `AST_BREAK_STMT`
+
+表示 `break` 语句。
+
+- 无子节点
+
+#### `AST_READ_STMT`
+
+表示 `read(...)`。
+
+- `children[0]`：`AST_VARIABLE_LIST`
+
+#### `AST_WRITE_STMT`
+
+表示 `write(...)`。
+
+- `children[0]`：`AST_EXPRESSION_LIST`
+
+### 4.6 表达式与引用
+
+#### `AST_VAR_REF`
+
+表示变量引用，也用于数组元素访问。
+
+- `text`：变量名
+- `children.size()`：`0` 或 `1`
+- `children[0]`：若存在，则为下标表达式列表 `AST_EXPRESSION_LIST`
+
+例如：
+
+- `x` -> `AST_VAR_REF(text="x")`
+- `a[i, j]` -> `AST_VAR_REF(text="a") + AST_EXPRESSION_LIST(i, j)`
+
+#### `AST_VARIABLE_LIST`
+
+表示变量列表，仅用于 `read(...)`。
+
+- `children[i]`：每个元素都是 `AST_VAR_REF`
+
+#### `AST_EXPRESSION_LIST`
+
+表示表达式列表。
+
+- `children[i]`：每个元素都是表达式节点
+
+用途包括：
+
+- 过程调用实参
+- 函数调用实参
+- 数组下标列表
+- `write(...)` 参数列表
+
+#### `AST_CALL_EXPR`
+
+表示函数调用表达式。
+
+- `text`：函数名
+- `children.size()`：`0` 或 `1`
+- `children[0]`：若存在，则为 `AST_EXPRESSION_LIST`
+
+说明：
+
+- 零参函数写成 `f()` 时构造 `AST_CALL_EXPR`。
+- 若零参函数直接写成 `f`，语法阶段会先构造 `AST_VAR_REF("f")`，后续由语义分析识别成零参函数值引用。
+
+#### `AST_BINARY_EXPR`
+
+表示二元运算表达式。
+
+- `text`：运算符
+- `children[0]`：左操作数
+- `children[1]`：右操作数
+
+当前可能出现的 `text` 包括：
+
+- 关系运算：`"="`、`"<>"`、`"<"`、`"<="`、`">"`、`">="`
+- 加法层：`"+"`、`"-"`、`"or"`
+- 乘法层：`"*"`、`"/"`、`"div"`、`"mod"`、`"and"`
+
+#### `AST_UNARY_EXPR`
+
+表示一元运算表达式。
+
+- `text`：运算符
+- `children[0]`：操作数
+
+当前可能的 `text`：
+
+- `"+"`
+- `"-"`
+- `"not"`
+
+#### `AST_BOOL_LITERAL`
+
+表示布尔字面量。
+
+- `flag`
+  - `true` 表示 `true`
+  - `false` 表示 `false`
+- 无子节点
+
+#### `AST_INT_LITERAL`
+
+表示整数字面量。
+
+- `int_value`：整数值
+
+#### `AST_REAL_LITERAL`
+
+表示实数字面量。
+
+- `real_value`：实数值
+
+#### `AST_CHAR_LITERAL`
+
+表示字符字面量。
+
+- `text`：原始字符常量文本
+
+说明：
+
+- 当前词法器直接把字符常量文本传入 AST。
+- 若后续语义分析或代码生成需要转义后的字符值，可在专门的辅助函数中统一解码。
+
+#### `AST_STRING_LITERAL`
+
+表示字符串字面量。
+
+- `text`：原始字符串常量文本
+
+## 5. 校验规则
+
+`code/frontend/ast.cpp` 中实现了 `ast_validate(FILE *out, const AstNode *node)`，用于检查 AST 结构是否符合约定。
+
+当前校验重点包括：
+
+- 程序节点必须恰好有 2 个孩子。
+- 块节点必须恰好有 4 个孩子。
+- 赋值、变量声明、数组类型、参数组、二元表达式等节点必须有固定数量的孩子。
+- 过程头、函数头、调用、变量引用等节点必须满足名称字段存在。
+- `if` 节点必须有 2 或 3 个孩子。
+- `for` 节点必须有 3 个孩子且循环变量名存在。
+
+这个校验器的作用不是替代语义分析，而是保证“树的形状正确”。
+
+也就是说：
+
+- `ast_validate` 负责检查 AST 是否符合结构约定。
+- 语义分析负责检查类型、作用域、声明使用关系、参数匹配等语义约束。
