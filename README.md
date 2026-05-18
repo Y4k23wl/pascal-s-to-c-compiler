@@ -1,11 +1,12 @@
-# 你的代码在哪里？
+# 项目结构
 
-frontend文件夹下包含词法分析与语法分析模块  
-semantic文件夹下包含语义分析模块  
-codegen文件夹下包含目标代码生成模块  
-testing文件夹下包含自动化测试内容
+`frontend/` 包含词法分析与语法分析模块  
+`semantic/` 包含语义分析模块  
+`codegen/` 包含目标代码生成模块  
+`testing/` 包含自动化测试内容
+`docs/` 包含项目文档
 
-# 如何编译出程序？
+# 程序编译
 
 在根目录下配置并构建：
 
@@ -38,7 +39,7 @@ cmake --build build --config Release
 
 
 
-# 程序怎么用？
+# 程序用法
 假设你已经执行构建命令生成了 `build/bin/pascc`，并且这时你在同目录下有 `program.pas`  
 则执行 `./build/bin/pascc -i program.pas` 即可在目录下得到 `program.c`   
 (Windows下可能是 `build/bin/pascc.exe -i program.pas`)

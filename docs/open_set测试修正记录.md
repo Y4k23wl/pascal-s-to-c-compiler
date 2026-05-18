@@ -52,7 +52,7 @@ done
 
 #### 修正
 
-在 [pascal_s_lexer.l](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_lexer.l) 中新增：
+在 [pascal_s_lexer.l]中新增：
 
 ```lex
 "//"[^\n]*                  { advance_position(yytext); }
@@ -88,7 +88,7 @@ ID_START [A-Za-z_]
 ID_CHAR  [A-Za-z0-9_]
 ```
 
-修正位置仍在 [pascal_s_lexer.l](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_lexer.l)。
+修正位置仍在 [pascal_s_lexer.l]。
 
 ### 2.3 标识符被截断到 8 位
 
@@ -103,7 +103,7 @@ ID_CHAR  [A-Za-z0-9_]
 
 删除 `MAX_ID_LEN` 截断逻辑，让 `normalize_id()` 保留完整名字，只做小写归一化。
 
-修改位置： [pascal_s_lexer.l](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_lexer.l)
+修改位置： [pascal_s_lexer.l]
 
 ## 3. 语法层问题与修正
 
@@ -122,7 +122,7 @@ while cond do
 
 #### 修正
 
-在 [pascal_s_parser.y](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y) 中：
+在 [pascal_s_parser.y] 中：
 
 1. 新增 `WHILE` token
 2. 为 `statement` 增加：
@@ -151,14 +151,14 @@ flag := true;
 
 #### 修正
 
-在 [pascal_s_lexer.l](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_lexer.l) 中新增：
+在 [pascal_s_lexer.l] 中新增：
 
 ```lex
 "true"  { RETURN_SIMPLE_TOKEN(TRUE); }
 "false" { RETURN_SIMPLE_TOKEN(FALSE); }
 ```
 
-在 [pascal_s_parser.y](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y) 中把它们接到：
+在 [pascal_s_parser.y] 中把它们接到：
 
 - `const_value`
 - `factor`
@@ -179,7 +179,7 @@ flag := true;
 
 #### 修正
 
-在 [pascal_s_parser.y](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y) 中补了：
+在 [pascal_s_parser.y] 中补了：
 
 - `formal_parameter -> ( )`
 - `procedure_call -> ID LPAREN RPAREN`
@@ -201,7 +201,7 @@ a := a - - 4 + +b;
 
 #### 修正
 
-在 [pascal_s_parser.y](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y) 的 `factor` 中补了：
+在 [pascal_s_parser.y] 的 `factor` 中补了：
 
 ```bison
 | PLUS factor %prec UMINUS
@@ -214,7 +214,7 @@ a := a - - 4 + +b;
 
 ### 4.1 缺少 `AST_WHILE_STMT`
 
-为了支持 `while`，在 [ast.hpp](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/ast.hpp) 和 [ast.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/ast.cpp) 中新增：
+为了支持 `while`，在 [ast.hpp] 和 [ast.cpp] 中新增：
 
 - `AST_WHILE_STMT`
 - `ast_make_while_stmt(...)`
@@ -237,8 +237,8 @@ a := a - - 4 + +b;
 
 这部分修改在：
 
-- [ast.hpp](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/ast.hpp)
-- [ast.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/frontend/ast.cpp)
+- [ast.hpp]
+- [ast.cpp]
 
 ## 5. 语义层问题与修正
 
@@ -260,7 +260,7 @@ a := defn;
 
 #### 修正
 
-在 [semantic.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/semantic/semantic.cpp) 的 `analyze_var_ref()` 中改成：
+在 [semantic.cpp] 的 `analyze_var_ref()` 中改成：
 
 1. 若命中的是函数符号
 2. 且没有下标
@@ -289,7 +289,7 @@ exgcd(a, b, x[0], y[0]);
 
 #### 修正
 
-在 [semantic.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/semantic/semantic.cpp) 的 `analyze_call_stmt()` 中放宽规则：
+在 [semantic.cpp] 的 `analyze_call_stmt()` 中放宽规则：
 
 - `Procedure` 合法
 - `Function` 也合法，只是返回值被忽略
@@ -310,7 +310,7 @@ write(not a);
 
 #### 修正
 
-在 [semantic.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/semantic/semantic.cpp) 的一元表达式处理中，把 `not` 放宽为：
+在 [semantic.cpp] 的一元表达式处理中，把 `not` 放宽为：
 
 - 接受 `boolean`
 - 也接受 `integer`
@@ -320,7 +320,7 @@ write(not a);
 
 ### 5.4 新增 `while` 语义检查
 
-为了配合新的 `AST_WHILE_STMT`，在 [semantic.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/semantic/semantic.cpp) 中新增 `analyze_while_stmt()`：
+为了配合新的 `AST_WHILE_STMT`，在 [semantic.cpp] 中新增 `analyze_while_stmt()`：
 
 - 先分析条件
 - 要求条件类型是 `boolean`
@@ -338,7 +338,7 @@ write(not a);
 
 #### 修正
 
-在 [pascal_s_driver.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/pascal_s_driver.cpp) 中改成：
+在 [pascal_s_driver.cpp] 中改成：
 
 - 默认只输出 `semantic analysis: ok`
 - 失败时打印词法 / 语法 / 语义错误
@@ -371,7 +371,7 @@ ans := a[...] + a[...] + a[...] + ...
 
 ### 7.3 修正
 
-在 [semantic.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/semantic/semantic.cpp) 中把深表达式分析改成显式栈：
+在 [semantic.cpp] 中把深表达式分析改成显式栈：
 
 1. `analyze_expr()` 对 `AST_UNARY_EXPR` / `AST_BINARY_EXPR` 走 `analyze_expr_iterative()`
 2. `analyze_expr_iterative()` 使用 `std::vector<std::pair<const AstNode *, bool> >` 做后序遍历
@@ -392,7 +392,7 @@ ans := a[...] + a[...] + a[...] + ...
 4. 若存在同名 `.in` 文件，则两边都喂同一份标准输入
 5. 精确比对两个程序的标准输出
 
-对应自动化脚本是 [testing/run_output_consistency.sh](/Users/yuanweitu/Desktop/college/编译课设/testing/run_output_consistency.sh)。
+对应自动化脚本是 [testing/run_output_consistency.sh]。
 
 ### 8.1 `write(real)` 格式与精度不一致
 
@@ -415,7 +415,7 @@ printf("%g", expr);
 
 #### 修正
 
-在 [codegen.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/codegen/codegen.cpp) 中新增 `write_real()` 辅助函数，当前统一用 `%f` 输出 `real`。
+在 [codegen.cpp] 中新增 `write_real()` 辅助函数，当前统一用 `%f` 输出 `real`。
 
 ### 8.2 `integer` 运行时表示
 
@@ -449,7 +449,7 @@ fn(getint(&i), getint(&i), ...);
 
 #### 修正
 
-在 [codegen.cpp](/Users/yuanweitu/Desktop/college/编译课设/code/codegen/codegen.cpp) 的 `emit_call()` 中，不再直接拼实参表达式，而是：
+在 [codegen.cpp] 的 `emit_call()` 中，不再直接拼实参表达式，而是：
 
 1. 先为值参和 `var` 参分别准备 `__call_tmp_*` 临时槽
 2. 按“从右到左”的顺序把每个实参求值进临时槽
