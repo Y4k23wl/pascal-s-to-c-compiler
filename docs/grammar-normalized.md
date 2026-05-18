@@ -1,14 +1,16 @@
-# Pascal-S Grammar (Normalized from grammar.rtf)
+# Pascal-S 当前实现文法
 
-Notes:
+说明：
 
-- `e` means epsilon (empty production).
-- Line breaks in the original RTF are treated as line wrapping, not alternation.
-- All `®` are normalized to `->`.
-- Full-width punctuation in the original is normalized to ASCII punctuation.
-- `assignop`, `relop`, `addop`, and `mulop` are left as named grammar items here; the Bison file expands them into concrete tokens.
-- The original uses both `variable assignop expression` and `func_id assignop expression`. In a Bison skeleton, those two forms overlap syntactically when `func_id` is just an identifier, so the parser file merges them into one assignment form and leaves function-result checking to semantics.
-- The current parser has already been extended beyond this normalized baseline to match the test sets. Notable additions include `while`, `break`, `true` / `false`, string constants, `//` comments, empty `()`, unary `+`, and zero-argument calls.
+- 本文件记录当前编译器实现实际接受的 Pascal-S 文法。它以课程给出的原始 Pascal-S 文法为基础，并根据本地测试集和在线测试集的实际输入做了扩展。
+- `e` 表示空产生式。
+- `assignop`、`relop`、`addop`、`mulop` 在本文中保留为具名运算符类别；在 `pascal_s_parser.y` 中会展开为具体 token。
+- `num` 表示整数或实数数字字面量。
+- `char_const` 表示 Pascal 单字符常量。
+- `string_const` 表示 Pascal 单引号字符串常量；实现支持字符串内部用两个连续单引号表示一个单引号字符。
+- 标识符大小写不敏感，允许包含下划线，且不会被截断。
+- 词法分析同时支持 `{ ... }` 块注释和 `// ...` 行注释。
+- 错误恢复产生式没有写入本文法。它们属于 `pascal_s_parser.y` 中的实现细节。
 
 ```text
 programstruct -> program_head ; program_body .
@@ -33,7 +35,10 @@ const_declaration -> id = const_value
 const_value -> + num
              | - num
              | num
-             | ' letter '
+             | char_const
+             | string_const
+             | true
+             | false
 
 var_declarations -> e
                   | var var_declaration ;
@@ -85,8 +90,8 @@ statement_list -> statement
 
 statement -> e
            | variable assignop expression
-           | func_id assignop expression
            | procedure_call
+           | break
            | compound_statement
            | if expression then statement else_part
            | while expression do statement
@@ -128,7 +133,31 @@ factor -> num
         | id ( expression_list )
         | true
         | false
+        | string_const
         | not factor
         | uplus factor
         | uminus factor
+```
+
+具名运算符：
+
+```text
+assignop -> :=
+
+relop -> =
+       | <>
+       | <
+       | <=
+       | >
+       | >=
+
+addop -> +
+       | -
+       | or
+
+mulop -> *
+       | /
+       | div
+       | mod
+       | and
 ```
