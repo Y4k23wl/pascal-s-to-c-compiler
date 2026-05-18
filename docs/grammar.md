@@ -1,4 +1,4 @@
-# Pascal-S 当前实现文法
+# Pascal-S 实现文法
 
 说明：
 
