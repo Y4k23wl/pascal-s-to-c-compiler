@@ -42,3 +42,36 @@ cmake --build build --config Release
 假设你已经执行构建命令生成了 `build/bin/pascc`，并且这时你在同目录下有 `program.pas`  
 则执行 `./build/bin/pascc -i program.pas` 即可在目录下得到 `program.c`   
 (Windows下可能是 `build/bin/pascc.exe -i program.pas`)
+
+## 阶段性中间产物 dump
+
+驱动支持单独 dump 语法分析和语义分析的中间产物，方便分阶段查看 / 测试。所有 dump 都写到 **stderr**，不会污染落盘的 `.c` 文件。
+
+可用命令行选项：
+
+| 选项 | 作用 |
+|---|---|
+| `--dump-ast` | 在语法分析（含 `ast_validate`）之后，把 AST 打印出来 |
+| `--dump-symbols` | 在语义分析成功之后，把全部作用域和符号表打印出来 |
+| `--stop-after=parse` | 语法分析完成后立即退出，不跑语义、不生成 `.c` |
+| `--stop-after=semantic` | 语义分析完成后立即退出，不生成 `.c` |
+
+常见用法（假设源程序是 `a.pas`）：
+
+```bash
+# 只看 AST（语法成功即可，语义有错也能拿到）
+./build/bin/pascc -i a.pas --stop-after=parse --dump-ast 2> a.ast
+
+# 只看符号表（需要语法 + 语义都通过）
+./build/bin/pascc -i a.pas --stop-after=semantic --dump-symbols 2> a.sym
+
+# 两个都打，并保留完整编译到 .c
+./build/bin/pascc -i a.pas --dump-ast --dump-symbols 2> a.dump
+
+# 想同时在终端看 + 存文件
+./build/bin/pascc -i a.pas --stop-after=parse --dump-ast 2>&1 | tee a.ast
+```
+
+不加 `2>` 时 dump 内容会直接打到终端，跟编译器自身的提示混排——分析时建议重定向到文件。
+
+AST dump 里每个节点末尾形如 `[起始行:起始列-结束行:结束列]` 的方括号是该节点对应的源代码位置区间，由词法/语法阶段填入，后续语义错误的行列号也来自这里。

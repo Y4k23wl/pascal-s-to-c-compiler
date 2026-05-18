@@ -100,3 +100,4 @@ public:
 };
 
 void print_semantic_errors(FILE *out, const std::vector<SemanticError> &errors);
+void dump_symbols(FILE *out, const SemanticResult &result);

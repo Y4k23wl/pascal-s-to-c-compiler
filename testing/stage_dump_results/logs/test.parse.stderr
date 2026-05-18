@@ -1,0 +1,3 @@
+[语法错误] 行：21，列：3 - syntax error, unexpected READ, expecting END_KW or SEMICOLON
+[语法恢复] 行：21，列：3 - 语句之间可能缺少分号，已恢复并继续
+编译终止：语法阶段共发现 1 个错误

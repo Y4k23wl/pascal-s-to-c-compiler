@@ -364,6 +364,60 @@ def error_recovery(args: argparse.Namespace) -> int:
     return 0 if fail_count == 0 else 1
 
 
+def stage_dumps(args: argparse.Namespace) -> int:
+    ast_dir = TESTING_DIR / "test_ast"
+    sem_dir = TESTING_DIR / "test_semantic"
+    result_dir = Path(args.result_dir) if args.result_dir else TESTING_DIR / "stage_dump_results"
+    ast_out_dir = result_dir / "ast"
+    sym_out_dir = result_dir / "symbols"
+    log_dir = result_dir / "logs"
+    build_log = log_dir / "build_pascc.log"
+
+    ast_out_dir.mkdir(parents=True, exist_ok=True)
+    sym_out_dir.mkdir(parents=True, exist_ok=True)
+    log_dir.mkdir(parents=True, exist_ok=True)
+
+    pascc = build_pascc(build_log, args.build_type)
+
+    plan: list[tuple[Path, str, str, Path]] = []
+    for pas in sorted(ast_dir.glob("*.pas")):
+        plan.append((pas, "parse", "--dump-ast", ast_out_dir))
+    for pas in sorted(sem_dir.glob("*.pas")):
+        plan.append((pas, "semantic", "--dump-symbols", sym_out_dir))
+
+    if not plan:
+        print(f"no Pascal samples found under {ast_dir} or {sem_dir}", file=sys.stderr)
+        return 1
+
+    total = 0
+    no_output = 0
+    for pas_file, stage, flag, out_dir in plan:
+        total += 1
+        name = pas_file.stem
+        out_file = out_dir / f"{name}.{stage}"
+        err_file = log_dir / f"{name}.{stage}.stderr"
+
+        rc = run_command(
+            [str(pascc), "-i", str(pas_file), f"--stop-after={stage}", flag],
+            stdout_path=None,
+            stderr_path=err_file,
+        )
+
+        if rc == 0:
+            shutil.move(str(err_file), str(out_file))
+            print(f"[ok]   {stage:<8} {name}")
+        else:
+            no_output += 1
+            print(f"[FAIL] {stage:<8} {name}  (see {err_file})")
+
+    print()
+    print(f"total={total} no_output={no_output}")
+    print(f"ast dumps in:    {ast_out_dir}")
+    print(f"symbol dumps in: {sym_out_dir}")
+    print("（[FAIL] 表示该样例在对应阶段就出错了——比如 test_ast/test.pas 是故意的语法错误样例）")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Cross-platform test driver for pascc.")
     parser.add_argument("--build-type", default="Release", help="CMake build type, default: Release")
@@ -379,6 +433,10 @@ def main() -> int:
     recovery_parser = subparsers.add_parser("error-recovery", help="Run error recovery checks")
     recovery_parser.add_argument("--result-dir", help="Override result directory")
     recovery_parser.set_defaults(func=error_recovery)
+
+    stage_parser = subparsers.add_parser("stage-dumps", help="Dump AST and symbol table for stage-by-stage inspection")
+    stage_parser.add_argument("--result-dir", help="Override result directory")
+    stage_parser.set_defaults(func=stage_dumps)
 
     args = parser.parse_args()
     try:

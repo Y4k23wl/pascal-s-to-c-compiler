@@ -1,0 +1,7 @@
+Scope #0 depth=0 owner=Program "decls"
+  var flag : boolean
+  var i : integer
+  var j : integer
+  const max : integer
+  const pi : real
+  var x : real

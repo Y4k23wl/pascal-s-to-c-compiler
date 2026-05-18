@@ -1,5 +1,6 @@
 #include "semantic.hpp"
 
+#include <algorithm>
 #include <cctype>
 #include <cstdio>
 #include <utility>
@@ -1199,5 +1200,89 @@ void print_semantic_errors(FILE *out, const std::vector<SemanticError> &errors) 
                      error.loc.first_line,
                      error.loc.first_column,
                      error.message.c_str());
+    }
+}
+
+namespace {
+
+const char *symbol_kind_name(SymbolKind kind) {
+    switch (kind) {
+        case SymbolKind::Const: return "const";
+        case SymbolKind::Var: return "var";
+        case SymbolKind::Param: return "param";
+        case SymbolKind::Procedure: return "procedure";
+        case SymbolKind::Function: return "function";
+    }
+    return "unknown";
+}
+
+std::string scope_owner_label(const AstNode *owner) {
+    if (owner == NULL) {
+        return "<null>";
+    }
+    std::ostringstream out;
+    out << ast_kind_name(owner->kind);
+    if (owner->kind == AST_PROGRAM) {
+        const AstNode *head = owner->children.empty() ? NULL : owner->children[0];
+        if (head != NULL && !head->text.empty()) {
+            out << " \"" << head->text << "\"";
+        }
+    } else if (owner->kind == AST_SUBPROGRAM) {
+        const AstNode *head = owner->children.empty() ? NULL : owner->children[0];
+        if (head != NULL && !head->text.empty()) {
+            out << " \"" << head->text << "\"";
+        }
+    }
+    return out.str();
+}
+
+}  // namespace
+
+void dump_symbols(FILE *out, const SemanticResult &result) {
+    for (size_t i = 0; i < result.scope_storage.size(); ++i) {
+        const Scope *scope = result.scope_storage[i].get();
+        std::fprintf(out,
+                     "Scope #%zu depth=%d owner=%s\n",
+                     i,
+                     scope->depth,
+                     scope_owner_label(scope->owner).c_str());
+
+        std::vector<const Symbol *> symbols;
+        symbols.reserve(scope->symbols.size());
+        for (std::unordered_map<std::string, Symbol *>::const_iterator it = scope->symbols.begin();
+             it != scope->symbols.end();
+             ++it) {
+            symbols.push_back(it->second);
+        }
+        std::sort(symbols.begin(), symbols.end(),
+                  [](const Symbol *a, const Symbol *b) { return a->name < b->name; });
+
+        for (size_t j = 0; j < symbols.size(); ++j) {
+            const Symbol *symbol = symbols[j];
+            std::fprintf(out,
+                         "  %s %s : %s",
+                         symbol_kind_name(symbol->kind),
+                         symbol->name.c_str(),
+                         type_to_string(symbol->type).c_str());
+            if (symbol->kind == SymbolKind::Procedure ||
+                symbol->kind == SymbolKind::Function) {
+                std::fprintf(out, " params=(");
+                for (size_t k = 0; k < symbol->params.size(); ++k) {
+                    const ParamInfo &param = symbol->params[k];
+                    if (k != 0) {
+                        std::fprintf(out, ", ");
+                    }
+                    std::fprintf(out,
+                                 "%s%s:%s",
+                                 param.by_ref ? "var " : "",
+                                 param.name.c_str(),
+                                 type_to_string(param.type).c_str());
+                }
+                std::fprintf(out, ")");
+            } else if (symbol->kind == SymbolKind::Param && symbol->by_ref) {
+                std::fprintf(out, " by_ref");
+            }
+            std::fprintf(out, "\n");
+        }
     }
 }

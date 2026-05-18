@@ -1,0 +1,4 @@
+Scope #0 depth=0 owner=Program "arr"
+  var a : array[1..5] of integer
+  var i : integer
+  var m : array[0..2, 0..3] of real

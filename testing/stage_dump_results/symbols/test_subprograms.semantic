@@ -1,0 +1,9 @@
+Scope #0 depth=0 owner=Program "subs"
+  procedure inc : void params=(var v:integer, delta:integer)
+  var n : integer
+  function square : integer params=(x:integer)
+Scope #1 depth=1 owner=Subprogram "inc"
+  param delta : integer
+  param v : integer by_ref
+Scope #2 depth=1 owner=Subprogram "square"
+  param x : integer

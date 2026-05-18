@@ -9,7 +9,10 @@
 namespace {
 
 void print_usage(const char *argv0) {
-    std::fprintf(stderr, "usage: %s -i source.pas [--dump-ast]\n", argv0);
+    std::fprintf(stderr,
+                 "usage: %s -i source.pas [--dump-ast] [--dump-symbols] "
+                 "[--stop-after=parse|semantic]\n",
+                 argv0);
 }
 
 std::string replace_extension_with_c(const char *input_path) {
@@ -51,12 +54,26 @@ bool write_text_file(const std::string &path, const std::string &content) {
 int main(int argc, char **argv) {
     AstNode *root;
     bool dump_ast = false;
+    bool dump_symbols_flag = false;
+    enum { STOP_NONE, STOP_PARSE, STOP_SEMANTIC } stop_after = STOP_NONE;
     const char *input_path = NULL;
     std::string output_path;
 
     for (int i = 1; i < argc; ++i) {
         if (std::strcmp(argv[i], "--dump-ast") == 0) {
             dump_ast = true;
+            continue;
+        }
+        if (std::strcmp(argv[i], "--dump-symbols") == 0) {
+            dump_symbols_flag = true;
+            continue;
+        }
+        if (std::strcmp(argv[i], "--stop-after=parse") == 0) {
+            stop_after = STOP_PARSE;
+            continue;
+        }
+        if (std::strcmp(argv[i], "--stop-after=semantic") == 0) {
+            stop_after = STOP_SEMANTIC;
             continue;
         }
         if (std::strcmp(argv[i], "-i") == 0) {
@@ -111,6 +128,16 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    if (dump_ast) {
+        ast_dump(stderr, root, 0);
+    }
+
+    if (stop_after == STOP_PARSE) {
+        ast_free(root);
+        g_ast_root = NULL;
+        return 0;
+    }
+
     SemanticAnalyzer analyzer;
     SemanticResult sem = analyzer.analyze(root);
     if (!sem.ok) {
@@ -123,8 +150,14 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    if (dump_ast) {
-        ast_dump(stderr, root, 0);
+    if (dump_symbols_flag) {
+        dump_symbols(stderr, sem);
+    }
+
+    if (stop_after == STOP_SEMANTIC) {
+        ast_free(root);
+        g_ast_root = NULL;
+        return 0;
     }
 
     CodeGenerator generator;
