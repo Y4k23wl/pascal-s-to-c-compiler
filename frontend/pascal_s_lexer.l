@@ -1,4 +1,4 @@
-%option noyywrap nodefault yylineno caseless
+%option noyywrap nodefault yylineno caseless never-interactive
 
 %top{
 /* MSVC 上没有 <unistd.h>。仅在 MSVC 下定义 YY_NO_UNISTD_H，
