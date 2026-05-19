@@ -33,10 +33,17 @@ cmake --build build --config Release
 
 构建依赖：
 
-- `cmake`
-- `c++`
-- `flex`
-- `bison`  
+- `cmake` ≥ 3.16
+- 支持 C++17 的 C++ 编译器（GCC / Clang / MSVC 均可）
+- `flex` ≥ 2.5.30，**推荐使用 2.6.x**
+- `bison` ≥ 2.4
+
+## Windows 构建注意事项
+
+在 Windows 上使用 MSVC 构建时，请确认以下几点，否则可能编译失败：
+
+1. **不要用 codepage 936 (GBK) 构建**。项目源文件统一是 UTF-8，CMake 已经在 `if(MSVC)` 分支里加了 `/utf-8` 选项让 MSVC 按 UTF-8 解析，无需额外配置。
+2. **想让控制台正确显示中文错误提示**，pascc 在 `main()` 入口已自动调用 `SetConsoleOutputCP(CP_UTF8)`。如果终端字体不支持中文，请改用 Windows Terminal 或 PowerShell 7。
 
 
 

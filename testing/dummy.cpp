@@ -3,6 +3,13 @@
 #include <string>
 #include <cctype>
 
+#ifdef _WIN32
+
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <windows.h>
+#endif
+
 std::string to_lower_ascii(const std::string& input) {
     std::string res;
     res.reserve(input.size());
@@ -48,6 +55,12 @@ std::string default_output_path(const std::string& input_path) {
 }
 
 int main(int argc, char* argv[]) {
+#ifdef _WIN32
+    /* 把当前控制台的输出代码页切到 UTF-8。dummy_pascc 目前只输出英文，
+       但加上此调用是无害的，且能在未来加入中文提示时直接显示正确。 */
+    SetConsoleOutputCP(CP_UTF8);
+#endif
+
     std::string input_path;
     std::string output_path;
 

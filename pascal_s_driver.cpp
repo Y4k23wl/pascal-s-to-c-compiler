@@ -6,6 +6,15 @@
 #include "frontend/pascal_s_frontend.hpp"
 #include "semantic/semantic.hpp"
 
+#ifdef _WIN32
+/* 仅在 Windows 上引入 <windows.h>，用于把控制台输出代码页设为 UTF-8，
+   让源码中的中文字符串字面量（编译后是 UTF-8 字节）能在 Windows 控制台
+   上正确显示。 */
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <windows.h>
+#endif
+
 namespace {
 
 void print_usage(const char *argv0) {
@@ -52,6 +61,12 @@ bool write_text_file(const std::string &path, const std::string &content) {
 }  // namespace
 
 int main(int argc, char **argv) {
+#ifdef _WIN32
+    /* 把当前控制台的输出代码页切到 UTF-8，使得后续 fprintf(stderr, ...)
+       中的中文 UTF-8 字节能被 Windows cmd / PowerShell 正确呈现。*/
+    SetConsoleOutputCP(CP_UTF8);
+#endif
+
     AstNode *root;
     bool dump_ast = false;
     bool dump_symbols_flag = false;

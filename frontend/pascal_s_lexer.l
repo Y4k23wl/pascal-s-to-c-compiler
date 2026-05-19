@@ -1,5 +1,13 @@
 %option noyywrap nodefault yylineno caseless
 
+%top{
+/* MSVC 上没有 <unistd.h>。仅在 MSVC 下定义 YY_NO_UNISTD_H，
+   让 flex 生成的扫描器跳过 #include <unistd.h>。 */
+#ifdef _MSC_VER
+#define YY_NO_UNISTD_H
+#endif
+}
+
 %{
 #include <stdio.h>
 #include <stdlib.h>

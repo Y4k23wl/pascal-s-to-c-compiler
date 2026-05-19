@@ -53,7 +53,11 @@ target_include_directories(
 )
 
 if(MSVC)
-  target_compile_options(pascc PRIVATE /W4)
+  # /utf-8 让 MSVC 把源码与执行字符集都按 UTF-8 解析，
+  # 避免在中文 Windows (codepage 936) 上把 UTF-8 源文件中的中文
+  # 字符串字面量错读成 GBK 而触发 C2001 / C4819 等编译错误。
+  target_compile_options(pascc PRIVATE /W4 /utf-8)
+  target_compile_options(dummy_pascc PRIVATE /utf-8)
 else()
   target_compile_options(pascc PRIVATE -Wall -Wextra -pedantic)
 endif()
