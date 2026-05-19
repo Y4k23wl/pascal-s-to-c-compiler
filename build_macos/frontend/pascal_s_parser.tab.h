@@ -162,7 +162,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 61 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 61 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
 {
     char *sval;
     int ival;
@@ -170,7 +170,7 @@ typedef union YYSTYPE
     struct AstNode *node;
 }
 /* Line 1529 of yacc.c.  */
-#line 174 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/build/frontend/pascal_s_parser.tab.h"
+#line 174 "/Users/yuanweitu/Desktop/college/编译课设/code/build/frontend/pascal_s_parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

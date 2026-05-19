@@ -188,7 +188,7 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 1 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 1 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -266,7 +266,7 @@ static void parser_note_at(int line, int col, const char *stage, const char *msg
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 61 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 61 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
 {
     char *sval;
     int ival;
@@ -274,7 +274,7 @@ typedef union YYSTYPE
     struct AstNode *node;
 }
 /* Line 193 of yacc.c.  */
-#line 278 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/build/frontend/pascal_s_parser.tab.cpp"
+#line 278 "/Users/yuanweitu/Desktop/college/编译课设/code/build/frontend/pascal_s_parser.tab.cpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -299,7 +299,7 @@ typedef struct YYLTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 303 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/build/frontend/pascal_s_parser.tab.cpp"
+#line 303 "/Users/yuanweitu/Desktop/college/编译课设/code/build/frontend/pascal_s_parser.tab.cpp"
 
 #ifdef short
 # undef short
@@ -1725,7 +1725,7 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 138 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 138 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_program((yyvsp[(1) - (4)].node), (yyvsp[(3) - (4)].node), AST_LOC((yyloc)));
           g_ast_root = (yyval.node);
@@ -1733,7 +1733,7 @@ yyreduce:
     break;
 
   case 3:
-#line 146 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 146 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_program_head((yyvsp[(2) - (5)].sval), (yyvsp[(4) - (5)].node), AST_LOC((yyloc)));
           free((yyvsp[(2) - (5)].sval));
@@ -1741,7 +1741,7 @@ yyreduce:
     break;
 
   case 4:
-#line 151 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 151 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_program_head((yyvsp[(2) - (2)].sval), NULL, AST_LOC((yyloc)));
           free((yyvsp[(2) - (2)].sval));
@@ -1749,14 +1749,14 @@ yyreduce:
     break;
 
   case 5:
-#line 159 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 159 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_block((yyvsp[(1) - (4)].node), (yyvsp[(2) - (4)].node), (yyvsp[(3) - (4)].node), (yyvsp[(4) - (4)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 6:
-#line 166 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 166 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_identifier_list(ast_make_identifier((yyvsp[(1) - (1)].sval), AST_LOC((yylsp[(1) - (1)]))), AST_LOC((yyloc)));
           free((yyvsp[(1) - (1)].sval));
@@ -1764,7 +1764,7 @@ yyreduce:
     break;
 
   case 7:
-#line 171 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 171 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_append_list((yyvsp[(1) - (3)].node), ast_make_identifier((yyvsp[(3) - (3)].sval), AST_LOC((yylsp[(3) - (3)]))));
           free((yyvsp[(3) - (3)].sval));
@@ -1772,21 +1772,21 @@ yyreduce:
     break;
 
   case 8:
-#line 179 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 179 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_CONST_DECL_LIST, AST_LOC((yyloc)));
       ;}
     break;
 
   case 9:
-#line 183 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 183 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(2) - (3)].node);
       ;}
     break;
 
   case 10:
-#line 190 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 190 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_CONST_DECL_LIST, AST_LOC((yyloc)));
           ast_append_list((yyval.node), ast_make_const_decl((yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].node), AST_LOC((yyloc))));
@@ -1795,7 +1795,7 @@ yyreduce:
     break;
 
   case 11:
-#line 196 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 196 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_append_list((yyvsp[(1) - (5)].node), ast_make_const_decl((yyvsp[(3) - (5)].sval), (yyvsp[(5) - (5)].node), AST_LOC((yylsp[(3) - (5)]))));
           free((yyvsp[(3) - (5)].sval));
@@ -1803,28 +1803,28 @@ yyreduce:
     break;
 
   case 12:
-#line 204 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 204 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(2) - (2)].node);
       ;}
     break;
 
   case 13:
-#line 208 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 208 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_unary_expr("-", (yyvsp[(2) - (2)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 14:
-#line 212 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 212 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(1) - (1)].node);
       ;}
     break;
 
   case 15:
-#line 216 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 216 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new_text(AST_CHAR_LITERAL, AST_LOC((yylsp[(1) - (1)])), (yyvsp[(1) - (1)].sval));
           free((yyvsp[(1) - (1)].sval));
@@ -1832,7 +1832,7 @@ yyreduce:
     break;
 
   case 16:
-#line 221 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 221 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new_text(AST_STRING_LITERAL, AST_LOC((yylsp[(1) - (1)])), (yyvsp[(1) - (1)].sval));
           free((yyvsp[(1) - (1)].sval));
@@ -1840,35 +1840,35 @@ yyreduce:
     break;
 
   case 17:
-#line 226 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 226 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_bool_literal(true, AST_LOC((yylsp[(1) - (1)])));
       ;}
     break;
 
   case 18:
-#line 230 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 230 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_bool_literal(false, AST_LOC((yylsp[(1) - (1)])));
       ;}
     break;
 
   case 19:
-#line 237 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 237 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_VAR_DECL_LIST, AST_LOC((yyloc)));
       ;}
     break;
 
   case 20:
-#line 241 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 241 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(2) - (3)].node);
       ;}
     break;
 
   case 21:
-#line 248 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 248 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_VAR_DECL_LIST, AST_LOC((yyloc)));
           ast_append_list((yyval.node), ast_make_var_decl((yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), AST_LOC((yyloc))));
@@ -1876,56 +1876,56 @@ yyreduce:
     break;
 
   case 22:
-#line 253 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 253 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_append_list((yyvsp[(1) - (5)].node), ast_make_var_decl((yyvsp[(3) - (5)].node), (yyvsp[(5) - (5)].node), AST_LOC((yylsp[(3) - (5)]))));
       ;}
     break;
 
   case 23:
-#line 260 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 260 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(1) - (1)].node);
       ;}
     break;
 
   case 24:
-#line 264 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 264 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_array_type((yyvsp[(3) - (6)].node), (yyvsp[(6) - (6)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 25:
-#line 271 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 271 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_basic_type("integer", AST_LOC((yylsp[(1) - (1)])));
       ;}
     break;
 
   case 26:
-#line 275 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 275 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_basic_type("real", AST_LOC((yylsp[(1) - (1)])));
       ;}
     break;
 
   case 27:
-#line 279 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 279 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_basic_type("boolean", AST_LOC((yylsp[(1) - (1)])));
       ;}
     break;
 
   case 28:
-#line 283 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 283 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_basic_type("char", AST_LOC((yylsp[(1) - (1)])));
       ;}
     break;
 
   case 29:
-#line 290 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 290 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_PERIOD_LIST, AST_LOC((yyloc)));
           ast_append_list((yyval.node), ast_make_period((yyvsp[(1) - (3)].ival), (yyvsp[(3) - (3)].ival), AST_LOC((yyloc))));
@@ -1933,42 +1933,42 @@ yyreduce:
     break;
 
   case 30:
-#line 295 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 295 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_append_list((yyvsp[(1) - (5)].node), ast_make_period((yyvsp[(3) - (5)].ival), (yyvsp[(5) - (5)].ival), AST_LOC((yylsp[(3) - (5)]))));
       ;}
     break;
 
   case 31:
-#line 302 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 302 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.ival) = (yyvsp[(1) - (1)].ival);
       ;}
     break;
 
   case 32:
-#line 309 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 309 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_SUBPROGRAM_LIST, AST_LOC((yyloc)));
       ;}
     break;
 
   case 33:
-#line 313 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 313 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_append_list((yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node));
       ;}
     break;
 
   case 34:
-#line 320 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 320 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_subprogram((yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 35:
-#line 327 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 327 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_subprogram_head(false, (yyvsp[(2) - (3)].sval), (yyvsp[(3) - (3)].node), NULL, AST_LOC((yyloc)));
           free((yyvsp[(2) - (3)].sval));
@@ -1976,7 +1976,7 @@ yyreduce:
     break;
 
   case 36:
-#line 332 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 332 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_subprogram_head(true, (yyvsp[(2) - (5)].sval), (yyvsp[(3) - (5)].node), (yyvsp[(5) - (5)].node), AST_LOC((yyloc)));
           free((yyvsp[(2) - (5)].sval));
@@ -1984,28 +1984,28 @@ yyreduce:
     break;
 
   case 37:
-#line 340 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 340 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_PARAM_LIST, AST_LOC((yyloc)));
       ;}
     break;
 
   case 38:
-#line 344 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 344 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_PARAM_LIST, AST_LOC((yyloc)));
       ;}
     break;
 
   case 39:
-#line 348 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 348 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(2) - (3)].node);
       ;}
     break;
 
   case 40:
-#line 352 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 352 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           parser_note_at((yylsp[(2) - (3)]).first_line,
                          (yylsp[(2) - (3)]).first_column,
@@ -2017,7 +2017,7 @@ yyreduce:
     break;
 
   case 41:
-#line 364 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 364 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_PARAM_LIST, AST_LOC((yyloc)));
           ast_append_list((yyval.node), (yyvsp[(1) - (1)].node));
@@ -2025,28 +2025,28 @@ yyreduce:
     break;
 
   case 42:
-#line 369 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 369 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_append_list((yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node));
       ;}
     break;
 
   case 43:
-#line 376 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 376 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(1) - (1)].node);
       ;}
     break;
 
   case 44:
-#line 380 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 380 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(1) - (1)].node);
       ;}
     break;
 
   case 45:
-#line 387 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 387 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyvsp[(2) - (2)].node)->flag = true;
           (yyvsp[(2) - (2)].node)->loc = AST_LOC((yyloc));
@@ -2055,28 +2055,28 @@ yyreduce:
     break;
 
   case 46:
-#line 396 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 396 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_param_group(false, (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 47:
-#line 403 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 403 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_block((yyvsp[(1) - (3)].node), (yyvsp[(2) - (3)].node), ast_new(AST_SUBPROGRAM_LIST, AST_LOC((yyloc))), (yyvsp[(3) - (3)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 48:
-#line 410 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 410 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_compound_stmt((yyvsp[(2) - (3)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 49:
-#line 414 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 414 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           parser_note_at((yylsp[(2) - (3)]).first_line,
                          (yylsp[(2) - (3)]).first_column,
@@ -2088,7 +2088,7 @@ yyreduce:
     break;
 
   case 50:
-#line 426 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 426 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_STATEMENT_LIST, AST_LOC((yyloc)));
           ast_append_list((yyval.node), (yyvsp[(1) - (1)].node));
@@ -2096,14 +2096,14 @@ yyreduce:
     break;
 
   case 51:
-#line 431 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 431 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_append_list((yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node));
       ;}
     break;
 
   case 52:
-#line 435 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 435 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           parser_note_at((yylsp[(3) - (3)]).first_line,
                          (yylsp[(3) - (3)]).first_column,
@@ -2114,7 +2114,7 @@ yyreduce:
     break;
 
   case 53:
-#line 443 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 443 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           parser_note_at((yylsp[(2) - (3)]).first_line,
                          (yylsp[(2) - (3)]).first_column,
@@ -2126,63 +2126,63 @@ yyreduce:
     break;
 
   case 54:
-#line 455 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 455 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_empty_stmt(AST_LOC((yyloc)));
       ;}
     break;
 
   case 55:
-#line 459 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 459 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_assign_stmt((yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 56:
-#line 463 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 463 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(1) - (1)].node);
       ;}
     break;
 
   case 57:
-#line 467 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 467 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_break_stmt(AST_LOC((yylsp[(1) - (1)])));
       ;}
     break;
 
   case 58:
-#line 471 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 471 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(1) - (1)].node);
       ;}
     break;
 
   case 59:
-#line 475 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 475 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_if_stmt((yyvsp[(2) - (4)].node), (yyvsp[(4) - (4)].node), NULL, AST_LOC((yyloc)));
       ;}
     break;
 
   case 60:
-#line 479 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 479 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_if_stmt((yyvsp[(2) - (6)].node), (yyvsp[(4) - (6)].node), (yyvsp[(6) - (6)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 61:
-#line 483 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 483 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_while_stmt((yyvsp[(2) - (4)].node), (yyvsp[(4) - (4)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 62:
-#line 487 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 487 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_for_stmt((yyvsp[(2) - (8)].sval), (yyvsp[(4) - (8)].node), (yyvsp[(6) - (8)].node), (yyvsp[(8) - (8)].node), AST_LOC((yyloc)));
           free((yyvsp[(2) - (8)].sval));
@@ -2190,14 +2190,14 @@ yyreduce:
     break;
 
   case 63:
-#line 492 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 492 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_read_stmt((yyvsp[(3) - (4)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 64:
-#line 496 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 496 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           parser_note_at((yylsp[(3) - (4)]).first_line,
                          (yylsp[(3) - (4)]).first_column,
@@ -2209,14 +2209,14 @@ yyreduce:
     break;
 
   case 65:
-#line 505 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 505 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_write_stmt((yyvsp[(3) - (4)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 66:
-#line 509 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 509 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           parser_note_at((yylsp[(3) - (4)]).first_line,
                          (yylsp[(3) - (4)]).first_column,
@@ -2228,7 +2228,7 @@ yyreduce:
     break;
 
   case 67:
-#line 521 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 521 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_VARIABLE_LIST, AST_LOC((yyloc)));
           ast_append_list((yyval.node), (yyvsp[(1) - (1)].node));
@@ -2236,14 +2236,14 @@ yyreduce:
     break;
 
   case 68:
-#line 526 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 526 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_append_list((yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node));
       ;}
     break;
 
   case 69:
-#line 533 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 533 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_var_ref((yyvsp[(1) - (2)].sval), (yyvsp[(2) - (2)].node), AST_LOC((yyloc)));
           free((yyvsp[(1) - (2)].sval));
@@ -2251,21 +2251,21 @@ yyreduce:
     break;
 
   case 70:
-#line 541 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 541 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = NULL;
       ;}
     break;
 
   case 71:
-#line 545 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 545 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(2) - (3)].node);
       ;}
     break;
 
   case 72:
-#line 549 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 549 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           parser_note_at((yylsp[(2) - (3)]).first_line,
                          (yylsp[(2) - (3)]).first_column,
@@ -2277,7 +2277,7 @@ yyreduce:
     break;
 
   case 73:
-#line 561 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 561 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_call(AST_CALL_STMT, (yyvsp[(1) - (1)].sval), NULL, AST_LOC((yyloc)));
           free((yyvsp[(1) - (1)].sval));
@@ -2285,7 +2285,7 @@ yyreduce:
     break;
 
   case 74:
-#line 566 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 566 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_call(AST_CALL_STMT, (yyvsp[(1) - (3)].sval), NULL, AST_LOC((yyloc)));
           free((yyvsp[(1) - (3)].sval));
@@ -2293,7 +2293,7 @@ yyreduce:
     break;
 
   case 75:
-#line 571 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 571 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_call(AST_CALL_STMT, (yyvsp[(1) - (4)].sval), (yyvsp[(3) - (4)].node), AST_LOC((yyloc)));
           free((yyvsp[(1) - (4)].sval));
@@ -2301,7 +2301,7 @@ yyreduce:
     break;
 
   case 76:
-#line 576 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 576 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           parser_note_at((yylsp[(3) - (4)]).first_line,
                          (yylsp[(3) - (4)]).first_column,
@@ -2317,7 +2317,7 @@ yyreduce:
     break;
 
   case 77:
-#line 592 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 592 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new(AST_EXPRESSION_LIST, AST_LOC((yyloc)));
           ast_append_list((yyval.node), (yyvsp[(1) - (1)].node));
@@ -2325,21 +2325,21 @@ yyreduce:
     break;
 
   case 78:
-#line 597 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 597 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_append_list((yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node));
       ;}
     break;
 
   case 79:
-#line 604 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 604 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(1) - (1)].node);
       ;}
     break;
 
   case 80:
-#line 608 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 608 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_binary_expr((yyvsp[(2) - (3)].sval), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), AST_LOC((yyloc)));
           free((yyvsp[(2) - (3)].sval));
@@ -2347,14 +2347,14 @@ yyreduce:
     break;
 
   case 81:
-#line 616 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 616 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(1) - (1)].node);
       ;}
     break;
 
   case 82:
-#line 620 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 620 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_binary_expr((yyvsp[(2) - (3)].sval), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), AST_LOC((yyloc)));
           free((yyvsp[(2) - (3)].sval));
@@ -2362,14 +2362,14 @@ yyreduce:
     break;
 
   case 83:
-#line 628 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 628 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(1) - (1)].node);
       ;}
     break;
 
   case 84:
-#line 632 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 632 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_binary_expr((yyvsp[(2) - (3)].sval), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node), AST_LOC((yyloc)));
           free((yyvsp[(2) - (3)].sval));
@@ -2377,28 +2377,28 @@ yyreduce:
     break;
 
   case 85:
-#line 640 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 640 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(1) - (1)].node);
       ;}
     break;
 
   case 86:
-#line 644 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 644 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(1) - (1)].node);
       ;}
     break;
 
   case 87:
-#line 648 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 648 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = (yyvsp[(2) - (3)].node);
       ;}
     break;
 
   case 88:
-#line 652 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 652 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_call(AST_CALL_EXPR, (yyvsp[(1) - (4)].sval), (yyvsp[(3) - (4)].node), AST_LOC((yyloc)));
           free((yyvsp[(1) - (4)].sval));
@@ -2406,7 +2406,7 @@ yyreduce:
     break;
 
   case 89:
-#line 657 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 657 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           parser_note_at((yylsp[(3) - (4)]).first_line,
                          (yylsp[(3) - (4)]).first_column,
@@ -2422,7 +2422,7 @@ yyreduce:
     break;
 
   case 90:
-#line 670 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 670 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_call(AST_CALL_EXPR, (yyvsp[(1) - (3)].sval), NULL, AST_LOC((yyloc)));
           free((yyvsp[(1) - (3)].sval));
@@ -2430,21 +2430,21 @@ yyreduce:
     break;
 
   case 91:
-#line 675 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 675 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_bool_literal(true, AST_LOC((yylsp[(1) - (1)])));
       ;}
     break;
 
   case 92:
-#line 679 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 679 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_bool_literal(false, AST_LOC((yylsp[(1) - (1)])));
       ;}
     break;
 
   case 93:
-#line 683 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 683 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new_text(AST_STRING_LITERAL, AST_LOC((yylsp[(1) - (1)])), (yyvsp[(1) - (1)].sval));
           free((yyvsp[(1) - (1)].sval));
@@ -2452,133 +2452,133 @@ yyreduce:
     break;
 
   case 94:
-#line 688 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 688 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_unary_expr("not", (yyvsp[(2) - (2)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 95:
-#line 692 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 692 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_unary_expr("+", (yyvsp[(2) - (2)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 96:
-#line 696 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 696 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_make_unary_expr("-", (yyvsp[(2) - (2)].node), AST_LOC((yyloc)));
       ;}
     break;
 
   case 97:
-#line 703 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 703 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("=");
       ;}
     break;
 
   case 98:
-#line 707 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 707 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("<>");
       ;}
     break;
 
   case 99:
-#line 711 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 711 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("<");
       ;}
     break;
 
   case 100:
-#line 715 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 715 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("<=");
       ;}
     break;
 
   case 101:
-#line 719 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 719 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text(">");
       ;}
     break;
 
   case 102:
-#line 723 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 723 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text(">=");
       ;}
     break;
 
   case 103:
-#line 730 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 730 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("+");
       ;}
     break;
 
   case 104:
-#line 734 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 734 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("-");
       ;}
     break;
 
   case 105:
-#line 738 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 738 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("or");
       ;}
     break;
 
   case 106:
-#line 745 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 745 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("*");
       ;}
     break;
 
   case 107:
-#line 749 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 749 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("/");
       ;}
     break;
 
   case 108:
-#line 753 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 753 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("div");
       ;}
     break;
 
   case 109:
-#line 757 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 757 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("mod");
       ;}
     break;
 
   case 110:
-#line 761 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 761 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.sval) = dup_text("and");
       ;}
     break;
 
   case 111:
-#line 768 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 768 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new_int(AST_INT_LITERAL, AST_LOC((yylsp[(1) - (1)])), (yyvsp[(1) - (1)].ival));
       ;}
     break;
 
   case 112:
-#line 772 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 772 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
     {
           (yyval.node) = ast_new_real(AST_REAL_LITERAL, AST_LOC((yylsp[(1) - (1)])), (yyvsp[(1) - (1)].fval));
       ;}
@@ -2586,7 +2586,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 2590 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/build/frontend/pascal_s_parser.tab.cpp"
+#line 2590 "/Users/yuanweitu/Desktop/college/编译课设/code/build/frontend/pascal_s_parser.tab.cpp"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2806,7 +2806,7 @@ yyreturn:
 }
 
 
-#line 777 "/Users/yuanweitu/Desktop/college/\347\274\226\350\257\221\350\257\276\350\256\276/code/frontend/pascal_s_parser.y"
+#line 777 "/Users/yuanweitu/Desktop/college/编译课设/code/frontend/pascal_s_parser.y"
 
 
 void yyerror(const char *msg) {
