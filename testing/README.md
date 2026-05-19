@@ -30,14 +30,14 @@
 ### 对于我们的编译器：
 对每个pascal源代码`program.pas`，生成`program.c`，再用gcc编译出`program.exe`
 ### 对于pascal编译器：
-对每个pascal源代码`program.pas`，用pascal编译器直接生成`program.exe`，这说明<u>**你需要装一个pascal编译器**</u>  
+对每个pascal源代码`program.pas`，用fpc pascal编译器直接生成`program.exe`，这说明<u>**你需要装一个fpc pascal编译器**</u>  
 
 之后比对这两个程序的<u>**输出结果是否一致**</u>
 
 
 ## 用法
 
-在根目录执行，可任选 shell 脚本或 Python 脚本。
+可任选 shell 脚本或 Python 脚本。
 
 开放集对拍：
 
@@ -50,7 +50,7 @@ Shell 入口（适合Mac和Linux）：
 Python 入口（适合Windows）：
 
 ```bash
-python ./testing/run_tests.py output-consistency
+python run_tests.py output-consistency
 ```
 
 脚本会自动：
@@ -61,7 +61,7 @@ python ./testing/run_tests.py output-consistency
 4. 用 `fpc` 编译同一份 Pascal 源程序
 5. 运行两边可执行文件并逐样例比对标准输出
 
-错误恢复样例可在仓库根目录执行：
+错误恢复样例：
 
 Shell 入口：
 
@@ -72,7 +72,7 @@ Shell 入口：
 Python 入口：
 
 ```bash
-python ./testing/run_tests.py error-recovery
+python run_tests.py error-recovery
 ```
 
 该脚本会：
@@ -93,7 +93,7 @@ Shell 入口（适合 Mac 和 Linux）：
 Python 入口（适合 Windows）：
 
 ```bash
-python ./testing/run_tests.py stage-dumps
+python run_tests.py stage-dumps
 ```
 
 该脚本会：
@@ -107,7 +107,7 @@ python ./testing/run_tests.py stage-dumps
 
 ### 错误恢复 & 错误处理：**18 / 18 通过**
 
-`bash testing/run_error_recovery_checks.sh` 与 `python3 testing/run_tests.py error-recovery` 输出
+`bash testing/run_error_recovery_checks.sh` 与 `python run_tests.py error-recovery` 输出
 `passed: 18/18  failed: 0/18`。stderr 与退出码均与金标准一致。覆盖矩阵：
 
 | 阶段 | 机制 | 锁住样例 |
@@ -146,7 +146,7 @@ python ./testing/run_tests.py stage-dumps
 
 ## 程序用法
 
-基本用法（在根目录，假设源程序是 `a.pas`）：
+基本用法（假设源程序是 `a.pas`）：
 
 ```bash
 ./build/bin/pascc -i a.pas        # 生成 a.c
@@ -188,7 +188,7 @@ AST dump 里每个节点末尾形如 `[起始行:起始列-结束行:结束列]`
 - `flex`
 - `bison`
 - `python3`
-- `cc`
+- `cc (C C++编译器)`
 - `fpc`
 
 ## 输出

@@ -43,13 +43,6 @@ cmake --build build --config Release
 在 Windows 上使用 MSVC 构建时，请确认以下几点，否则可能配置或编译失败：
 
 1. **flex / bison 必须用 Windows 原生版本，强烈推荐 `win_flex_bison`**。
-   - 安装方式任选其一：
-     ```powershell
-     choco install winflexbison3
-     # 或
-     scoop install winflexbison
-     ```
-     也可以从 [win_flex_bison releases](https://github.com/lexxmark/winflexbison/releases) 下载最新发行版（当前是 flex 2.6.4 + bison 3.x），解压到任意目录后加入 `PATH`。
    - `win_flex_bison` 的可执行文件叫 `win_flex.exe` / `win_bison.exe`，CMake 的 `FindFLEX` / `FindBISON` 模块**已经识别这两个名字**，不需要重命名也不需要 `-DFLEX_EXECUTABLE` 显式指定。
    - **不要使用 MSYS / MSYS2 移植版的 `flex.exe` / `bison.exe`**：那些是 POSIX 仿真二进制，依赖 `msys-2.0.dll`，在 Visual Studio 构建链下调用 `--version` 会因为找不到运行时 DLL 而失败，CMake 会报 `Command "..bison.exe --version" failed with output:` 后面空白。
    - 同理也不要使用 Cygwin、Git Bash 自带的 flex/bison。
