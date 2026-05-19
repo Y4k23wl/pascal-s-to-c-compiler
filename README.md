@@ -5,6 +5,7 @@
 `codegen/` 包含目标代码生成模块  
 `testing/` 包含自动化测试内容
 `docs/` 包含项目文档
+`pascal_s_driver.cpp` 程序入口
 
 # 程序编译
 
