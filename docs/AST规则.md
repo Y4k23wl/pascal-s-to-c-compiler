@@ -503,7 +503,7 @@ AST_ARRAY_TYPE
 
 ## 5. 校验规则
 
-`code/frontend/ast.cpp` 中实现了 `ast_validate(FILE *out, const AstNode *node)`，用于检查 AST 结构是否符合约定。
+`frontend/ast.cpp` 中实现了 `ast_validate(FILE *out, const AstNode *node)`，用于检查 AST 结构是否符合约定。
 
 当前校验重点包括：
 

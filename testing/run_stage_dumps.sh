@@ -5,7 +5,7 @@
 # - testing/test_ast/*.pas      : 走 --stop-after=parse --dump-ast，保存 AST
 # - testing/test_semantic/*.pas : 走 --stop-after=semantic --dump-symbols，保存符号表
 #
-# 用法（在 code/ 仓库根目录执行）：
+# 用法（在根目录执行）：
 #   ./testing/run_stage_dumps.sh
 #
 # 结果目录默认：testing/stage_dump_results/
