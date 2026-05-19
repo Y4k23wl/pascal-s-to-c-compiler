@@ -6,6 +6,9 @@
 `testing/` 包含自动化测试内容
 `docs/` 包含项目各阶段以及最终提交用的全部文档
 `pascal_s_driver.cpp` 程序入口
+`build_macos/` macOS系统下构建目录
+`build_windows/` Windows系统下构建目录
+`可执行程序/` 只包含Windows和MacOS的可执行程序
 
 # 程序编译
 

@@ -1,0 +1,6 @@
+C:\Users\A\Desktop\pascal-s-to-c-compiler-main\pascal_s_driver.cpp;C:\Users\A\Desktop\pascal-s-to-c-compiler-main\build\pascc.dir\Release\pascal_s_driver.obj
+C:\Users\A\Desktop\pascal-s-to-c-compiler-main\frontend\ast.cpp;C:\Users\A\Desktop\pascal-s-to-c-compiler-main\build\pascc.dir\Release\ast.obj
+C:\Users\A\Desktop\pascal-s-to-c-compiler-main\semantic\semantic.cpp;C:\Users\A\Desktop\pascal-s-to-c-compiler-main\build\pascc.dir\Release\semantic.obj
+C:\Users\A\Desktop\pascal-s-to-c-compiler-main\codegen\codegen.cpp;C:\Users\A\Desktop\pascal-s-to-c-compiler-main\build\pascc.dir\Release\codegen.obj
+C:\Users\A\Desktop\pascal-s-to-c-compiler-main\build\frontend\pascal_s_parser.tab.cpp;C:\Users\A\Desktop\pascal-s-to-c-compiler-main\build\pascc.dir\Release\pascal_s_parser.tab.obj
+C:\Users\A\Desktop\pascal-s-to-c-compiler-main\build\frontend\pascal_s_lexer.cpp;C:\Users\A\Desktop\pascal-s-to-c-compiler-main\build\pascc.dir\Release\pascal_s_lexer.obj

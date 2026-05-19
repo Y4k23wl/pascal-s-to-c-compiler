@@ -4,7 +4,8 @@
 #include <cctype>
 
 #ifdef _WIN32
-
+/* Windows 专用：用于把控制台输出代码页设为 UTF-8。Mac/Linux 上 _WIN32 未
+   定义，本块及下方 main() 中的相关调用都不会出现在编译单元中。 */
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>

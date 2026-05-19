@@ -1,0 +1,10 @@
+^C:\USERS\A\DESKTOP\PASCAL-S-TO-C-COMPILER-MAIN\BUILD\CMAKEFILES\7C3175C42964D754995F92F6C10E04B8\GENERATE.STAMP.RULE
+setlocal
+D:\CMake\bin\cmake.exe -SC:/Users/A/Desktop/pascal-s-to-c-compiler-main -BC:/Users/A/Desktop/pascal-s-to-c-compiler-main/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/A/Desktop/pascal-s-to-c-compiler-main/build/pascc.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

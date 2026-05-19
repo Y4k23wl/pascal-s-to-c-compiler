@@ -1,6 +1,6 @@
 # Testing
 
-这个目录收拢了仓库自带的测试资产，避免和编译器源码混在一起。
+这个目录收拢了仓库自带的测试资产。
 
 包含内容：
 
@@ -81,6 +81,9 @@ python run_tests.py error-recovery
 2. 逐个运行 `testing/error_recovery/*.pas` 和 `testing/semantic_errors/*.pas`，每个样例带 10 秒超时
 3. 把实际 stderr 与同名 `.expected.stderr` 做 diff，把退出码与 `.expected.exit` 做对比
 4. 将每个样例的标准输出、标准错误、退出码和差异写入结果目录；任一样例失败则脚本退出码非 0
+
+> **关于 Windows 上 stderr 行尾的说明**：
+> 在Windows测试error_recovery会因系统行为在每行报错间多处一个空行，经人工检验证实报错内容本身一致。
 
 阶段性中间产物 dump（AST / 符号表）：
 

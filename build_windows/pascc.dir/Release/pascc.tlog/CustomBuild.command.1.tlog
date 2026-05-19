@@ -1,0 +1,42 @@
+^C:\USERS\A\DESKTOP\PASCAL-S-TO-C-COMPILER-MAIN\BUILD\CMAKEFILES\37A5B47ACC348C77F1970159AB0023E1\PASCAL_S_PARSER.TAB.CPP.RULE
+setlocal
+cd C:\Users\A\Desktop\pascal-s-to-c-compiler-main\build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+D:\CMake\bin\cmake.exe -E make_directory C:/Users/A/Desktop/pascal-s-to-c-compiler-main/build/frontend
+if %errorlevel% neq 0 goto :cmEnd
+D:\winflexbison\win_bison.exe --defines=C:/Users/A/Desktop/pascal-s-to-c-compiler-main/build/frontend/pascal_s_parser.tab.h -o C:/Users/A/Desktop/pascal-s-to-c-compiler-main/build/frontend/pascal_s_parser.tab.cpp C:/Users/A/Desktop/pascal-s-to-c-compiler-main/frontend/pascal_s_parser.y
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\A\DESKTOP\PASCAL-S-TO-C-COMPILER-MAIN\BUILD\CMAKEFILES\37A5B47ACC348C77F1970159AB0023E1\PASCAL_S_LEXER.CPP.RULE
+setlocal
+cd C:\Users\A\Desktop\pascal-s-to-c-compiler-main
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+D:\CMake\bin\cmake.exe -E make_directory C:/Users/A/Desktop/pascal-s-to-c-compiler-main/build/frontend
+if %errorlevel% neq 0 goto :cmEnd
+D:\winflexbison\win_flex.exe -oC:/Users/A/Desktop/pascal-s-to-c-compiler-main/build/frontend/pascal_s_lexer.cpp C:/Users/A/Desktop/pascal-s-to-c-compiler-main/frontend/pascal_s_lexer.l
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\A\DESKTOP\PASCAL-S-TO-C-COMPILER-MAIN\CMAKELISTS.TXT
+setlocal
+D:\CMake\bin\cmake.exe -SC:/Users/A/Desktop/pascal-s-to-c-compiler-main -BC:/Users/A/Desktop/pascal-s-to-c-compiler-main/build --check-stamp-file C:/Users/A/Desktop/pascal-s-to-c-compiler-main/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
